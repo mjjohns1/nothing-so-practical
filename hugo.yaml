@@ -9,10 +9,10 @@ pagination:
 params:
   header_image: "img/home-bg.jpg"
   SEOTitle: "Nothing So Practical"
-  # description: ""
-  # slogan: "Where theory meets practice."
+  description: ""
+  slogan: "Where practical makes perfect"
 
-  sidebar_about_description: "A practical approach to research methods, statistics, ML, and beyond."
+  sidebar_about_description: "A practical approach to research methods, statistics, data science, and beyond."
   # sidebar_avatar: "img/avatar.jpg"   # place image in static/img/
 
   featured_tags: true
