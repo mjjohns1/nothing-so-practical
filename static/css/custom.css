@@ -27,6 +27,11 @@
     color: #d0d8e4;
 }
 
+/* Scrollable wide code/output blocks (e.g. from Jupyter notebooks) */
+.post-container pre {
+    overflow-x: auto;
+}
+
 /* Reduce home banner to ~1/3 screen height */
 .intro-header .site-heading {
     padding: 55px 0 !important;

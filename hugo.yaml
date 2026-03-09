@@ -1,4 +1,3 @@
-# baseURL: "https://mjjohns1.github.io/nothing-so-practical/"
 baseURL: "https://nothing-so-practical.com/"
 languageCode: "en-us"
 title: "Nothing So Practical"
@@ -10,7 +9,7 @@ pagination:
 params:
   header_image: "img/home-bg.jpg"
   SEOTitle: "Nothing So Practical"
-  description: "Data Science, Statistics, Research Methods, Psychological Science"
+  description: "Data Science, Statistics, Research Methods, Psychological Science, Epidemiology"
   slogan: "Practical makes perfect"
 
   sidebar_about_description: "A practical approach to data science, statistics, research methods, and beyond."
@@ -31,6 +30,8 @@ params:
       href: "/about"
     - title: "ARCHIVE"
       href: "/archive"
+
+  omit_categories: true
 
   social:
     rss: true
