@@ -2,3 +2,27 @@ baseURL: "https://mjjohns1.github.io/nothing-so-practical/"
 languageCode: "en-us"
 title: "Nothing So Practical"
 theme: "hugo-theme-cleanwhite"
+
+pagination:
+  pagerSize: 5
+
+params:
+  header_image: "img/home-bg.jpg"
+  SEOTitle: "Nothing So Practical"
+  # description: ""
+  # slogan: "Where theory meets practice."
+
+  sidebar_about_description: "A practical approach to research methods, statistics, ML, and beyond."
+  # sidebar_avatar: "img/avatar.jpg"   # place image in static/img/
+
+  featured_tags: true
+  featured_condition_size: 1
+
+  about_me: false
+  friends: false
+  bookmarks: false
+  last_posts: true
+
+  social:
+    rss: true
+    github: "https://github.com/mjjohns1"

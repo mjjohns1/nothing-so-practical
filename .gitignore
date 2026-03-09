@@ -1,0 +1,29 @@
+# Hugo
+public/
+.hugo_build.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.env
+.venv
+venv/
+env/
+*.log
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Claude
+.claude/
+CLAUDE.md
+claude.json
+.clauderc
