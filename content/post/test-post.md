@@ -1,7 +1,12 @@
 ---
-date: '2026-03-08T22:04:41-04:00'
-draft: false
 title: 'Test Post'
+subtitle: "Test posting, post testing"
+description: "A post about testing posts to test"
+date: '2026-03-08'
+Author: "MJ"
+tags: ["python", "statistics"]
+categories: ["Data Science"]
+draft: false
 ---
 
 
