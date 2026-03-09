@@ -12,7 +12,7 @@
 /* Nav item color */
 .navbar-custom .nav li a,
 .navbar-custom .navbar-brand {
-    color: #d0d8e4 !important;
+    color: #b0b3b8 !important;
 }
 .navbar-custom .nav li a:hover,
 .navbar-custom .nav li a:focus,
@@ -24,7 +24,7 @@
 /* Banner font color */
 .intro-header .site-heading h1,
 .intro-header .site-heading .subheading {
-    color: #d0d8e4;
+    color: #d7dfeb;
 }
 
 /* Scrollable wide code/output blocks (e.g. from Jupyter notebooks) */
