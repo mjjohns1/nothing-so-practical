@@ -1,0 +1,39 @@
+/* Dark blue banner */
+.intro-header {
+    background-image: none !important;
+    background-color: #1a2a4a !important;
+}
+
+/* Navbar background when scrolled */
+.navbar-custom.is-fixed {
+    background-color: #1a2a4a !important;
+}
+
+/* Nav item color */
+.navbar-custom .nav li a,
+.navbar-custom .navbar-brand {
+    color: #d0d8e4 !important;
+}
+.navbar-custom .nav li a:hover,
+.navbar-custom .nav li a:focus,
+.navbar-custom .navbar-brand:hover,
+.navbar-custom .navbar-brand:focus {
+    color: #ffffff !important;
+}
+
+/* Banner font color */
+.intro-header .site-heading h1,
+.intro-header .site-heading .subheading {
+    color: #d0d8e4;
+}
+
+/* Reduce home banner to ~1/3 screen height */
+.intro-header .site-heading {
+    padding: 55px 0 !important;
+}
+
+@media only screen and (min-width: 768px) {
+    .intro-header .site-heading {
+        padding: 55px 0 !important;
+    }
+}

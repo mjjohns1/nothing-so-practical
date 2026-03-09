@@ -1,4 +1,5 @@
-baseURL: "https://mjjohns1.github.io/nothing-so-practical/"
+# baseURL: "https://mjjohns1.github.io/nothing-so-practical/"
+baseURL: "https://nothing-so-practical.com/"
 languageCode: "en-us"
 title: "Nothing So Practical"
 theme: "hugo-theme-cleanwhite"
@@ -23,5 +24,30 @@ params:
   bookmarks: false
   last_posts: true
 
+  custom_css: ["css/custom.css"]
+
+  additional_menus:
+    - title: "ABOUT"
+      href: "/about"
+    - title: "ARCHIVE"
+      href: "/archive"
+
   social:
     rss: true
+    # email: "you@example.com"
+    # github: "https://github.com/youruser"
+    # linkedin: "https://www.linkedin.com/in/yourprofile"
+    # stackoverflow: "https://stackoverflow.com/users/yourid"
+    # facebook: "https://facebook.com/yourprofile"
+    # twitter: "https://twitter.com/yourhandle"
+    # instagram: "https://instagram.com/yourprofile"
+    # medium: "https://medium.com/@yourprofile"
+    # reddit: "https://reddit.com/user/yourprofile"
+    # gitlab: "https://gitlab.com/youruser"
+    # mastodon: "https://mastodon.social/@yourhandle"
+    # keybase: "https://keybase.io/yourprofile"
+    # xing: "https://www.xing.com/profile/yourid"
+    # slack: "https://yourworkspace.slack.com"
+    # pinterest: "https://pinterest.com/yourprofile"
+    # wechat: "img/wechat-qr.png"   # path to a QR code image
+    # git: "https://yourgitserver.com/youruser"
