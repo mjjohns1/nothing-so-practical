@@ -1,4 +1,4 @@
 baseURL: "https://mjjohns1.github.io/nothing-so-practical/"
 languageCode: "en-us"
 title: "Nothing So Practical"
-theme: "PaperMod"
+theme: "hugo-theme-cleanwhite"
