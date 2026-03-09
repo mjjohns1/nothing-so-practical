@@ -30,10 +30,8 @@ jobs:
           hugo-version: "latest"
           extended: true
 
-      # Key for subpath/project sites:
-      # Tell Hugo to build URLs relative to baseURL
       - name: Build
-        run: hugo --minify --baseURL "https://mjjohns1.github.io/${{ github.event.repository.name }}/"
+        run: hugo --minify
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
