@@ -2,7 +2,7 @@
 title:       "Causal Inference Is Easy"
 subtitle:    "Don't be fooled by the math"
 description: ' '
-date:        2026-03-09
+date:        2026-03-10
 author:      "MJ"
 image:       ""
 tags:        ["causal inference"]
