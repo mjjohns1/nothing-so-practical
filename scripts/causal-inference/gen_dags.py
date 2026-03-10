@@ -1,11 +1,3 @@
-"""
-DAG visualizations for the causal inference post.
-Outputs:
-  static/img/posts/causal-inference/dag-simple.svg
-  static/img/posts/causal-inference/dag-income.svg
-Run from repo root: python scripts/causal-inference/gen_dags.py
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -16,14 +8,14 @@ from pathlib import Path
 OUT_DIR = Path(__file__).parent.parent.parent / "static/img/posts/causal-inference"
 
 # --- Palette -------------------------------------------------------------
-NODE_FACE    = "#ECEEF2"
-NODE_EDGE    = "#6B7D92"
-TEXT_CLR     = "#1C2B3A"
+NODE_FACE = "#ECEEF2"
+NODE_EDGE = "#6B7D92"
+TEXT_CLR = "#1C2B3A"
 BACKDOOR_CLR = "#7A2A35"
-CAUSAL_CLR   = "#2C4A7A"
+CAUSAL_CLR = "#2C4A7A"
 
 plt.rcParams.update({
-    "font.family":      "sans-serif",
+    "font.family": "sans-serif",
     "figure.facecolor": "none",
     "axes.facecolor":   "none",
 })
@@ -32,7 +24,6 @@ NODE_W      = 0.21
 NODE_H      = 0.18
 NODE_H_TALL = 0.22   # Z node has 3 lines
 
-# --- Helpers -------------------------------------------------------------
 
 def box_edge(center, direction, w, h, pad=0.028):
     """Return the point on (or just outside) the node box boundary."""
@@ -153,7 +144,7 @@ def dag_simple():
 
     add_arrow(ax, Z_POS, X_POS, WH_TALL, WH_STD,  BACKDOOR_CLR)
     add_arrow(ax, Z_POS, Y_POS, WH_TALL, WH_STD,  BACKDOOR_CLR)
-    add_arrow(ax, X_POS, Y_POS, WH_STD,  WH_STD,  CAUSAL_CLR, label="?", dashed=True)
+    add_arrow(ax, X_POS, Y_POS, WH_STD,  WH_STD,  CAUSAL_CLR, dashed=True)
 
     add_node(ax, Z_POS, ["Health", "Consciousness", "(Z)"], h=NODE_H_TALL)
     add_node(ax, X_POS, ["HRT", "(X)"])
@@ -190,7 +181,7 @@ def dag_income():
     add_arrow(ax, INC,  Y,    WH_STD,  WH_STD,  BACKDOOR_CLR, rad=-0.15, pad=PAD)
     add_arrow(ax, Z,    X,    WH_TALL, WH_STD,  BACKDOOR_CLR, pad=PAD)
     add_arrow(ax, Z,    Y,    WH_TALL, WH_STD,  BACKDOOR_CLR, pad=PAD)
-    add_arrow(ax, X,    Y,    WH_STD,  WH_STD,  CAUSAL_CLR, label="?", dashed=True, pad=PAD)
+    add_arrow(ax, X,    Y,    WH_STD,  WH_STD,  CAUSAL_CLR, dashed=True, pad=PAD)
 
     add_node(ax, INC, ["Income"])
     add_node(ax, Z,   ["Health", "Consciousness", "(Z)"], h=NODE_H_TALL)

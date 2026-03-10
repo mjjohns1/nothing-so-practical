@@ -57,3 +57,14 @@
         padding: 55px 0 !important;
     }
 }
+
+/* Centered figure with reduced vertical padding */
+figure.img-center {
+    margin: 0.25rem auto;
+    padding: 0;
+}
+
+figure.img-center img {
+    display: inline-block;
+    margin: 0 auto;
+}
