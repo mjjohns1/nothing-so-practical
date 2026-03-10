@@ -1,6 +1,6 @@
-## Local Development Guide
+# Local Development Guide
 
-### Prerequisites
+## Prerequisites
 
 - [Hugo](https://gohugo.io/installation/) (extended version)
 - [Node.js / npx](https://nodejs.org/) (for Pagefind search indexing)
@@ -97,10 +97,12 @@ mv my-analysis_files/ static/img/my-analysis_files/
 `nbconvert` generates image paths like `my-analysis_files/figure-markdown_strict/cell-1-output-1.png`. Update them to Hugo's static path:
 
 Find and replace in the markdown file:
+
 - **Find:** `my-analysis_files/`
 - **Replace:** `/img/my-analysis_files/`
 
 Using sed:
+
 ```bash
 sed -i '' 's|my-analysis_files/|/img/my-analysis_files/|g' content/post/my-analysis.md
 ```

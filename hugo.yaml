@@ -33,9 +33,34 @@ params:
 
   omit_categories: true
 
+  auto_theme: true
+  dark_mode_toggle: true
+
   social:
     rss: true
     # email: "you@example.com"
     # github: "https://github.com/youruser"
     # linkedin: "https://www.linkedin.com/in/yourprofile"
     # bluesky: "https://bsky.app/profile/handle.bsky.social"
+
+markup:
+  highlight:
+    style: "dracula"
+    lineNos: false
+    noClasses: false
+  goldmark:
+    renderer:
+      unsafe: true
+    extensions:
+      passthrough:
+        enable: true
+        delimiters:
+          block:
+            - - $$
+              - $$
+          inline:
+            - - $
+              - $
+  tableOfContents:
+    startLevel: 1
+    endLevel: 3
