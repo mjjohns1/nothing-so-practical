@@ -43,6 +43,14 @@ params:
     # linkedin: "https://www.linkedin.com/in/yourprofile"
     # bluesky: "https://bsky.app/profile/handle.bsky.social"
 
+mediaTypes:
+  font/woff:
+    suffixes:
+      - woff
+  font/woff2:
+    suffixes:
+      - woff2
+
 markup:
   highlight:
     style: "dracula"
