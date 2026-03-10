@@ -39,7 +39,7 @@ def main():
     # Left axis — ice cream
     l1, = ax1.plot(x, ICE_CREAM, color=BLUE, linewidth=2.2,
                    marker="o", markersize=4, alpha=0.82,
-                   label="Ice cream sales ($M)")
+                   label="Ice cream sales")
     ax1.set_ylabel("Ice cream sales ($M)", color=BLUE, labelpad=8)
     ax1.tick_params(axis="y", labelcolor=BLUE)
     ax1.set_ylim(0, 2100)
@@ -67,7 +67,7 @@ def main():
     ax1.set_xlim(-0.5, 11.5)
 
     # Shade summer months (Jun–Sep: indices 5–8)
-    ax1.axvspan(4.5, 8.5, color="#FFF9C4", alpha=0.6, zorder=0)
+    ax1.axvspan(5, 8, color="#FFF9C4", alpha=0.6, zorder=0)
     ax1.text(6.5, 1980, "Summer", ha="center", va="top",
              fontsize=9, color="#9E6C00", style="italic")
 

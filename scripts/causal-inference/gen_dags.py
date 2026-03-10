@@ -176,9 +176,9 @@ WH_TALL: WH = (NODE_W, NODE_H_TALL)
 def dag_simple() -> None:
     fig: Figure
     ax: Axes
-    fig, ax = plt.subplots(figsize=(5.8, 3.6))
+    fig, ax = plt.subplots(figsize=(5.8, 3.0))
     ax.set_xlim(0, 1)
-    ax.set_ylim(-0.12, 1)
+    ax.set_ylim(-0.12, 0.82)
     ax.axis("off")
 
     add_arrow(ax, Z_POS, X_POS, WH_TALL, WH_STD, BACKDOOR_CLR)
