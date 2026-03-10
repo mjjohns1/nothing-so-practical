@@ -25,17 +25,15 @@ The key innovation of these approaches lies in their mathematical precision and 
 
 {{% notation-box %}}
 
-**Example notation from Potential Outcomes:**
+**Sample notation from Potential Outcomes:**
 
 $$\text{ATE} = E[Y_{1} - Y_{0}] =  E[E[Y_{1i}\mid D=1, X] - E[Y_{0i}\mid D=0, X]]$$
+*where $Y_{1}$, $Y_{0}$ are potential outcomes, $D$ is treatment, and $X$ are confounders*
 
-where $Y_{1}$, $Y_{0}$ are potential outcomes, $D$ is treatment, and $X$ are confounders
-
-**Example from DAG framework:**
+**Sample from DAG framework:**
 
 $$P(Y \mid \text{do}(X)) = \sum_z P(Y \mid X, Z=z) \, P(Z=z)$$
-
-the adjustment formula for blocking backdoor paths through Z
+*the adjustment formula for blocking backdoor paths through Z*
 
 {{% /notation-box %}}
 
@@ -47,21 +45,19 @@ Take the apocryphal correlation between ice cream sales and shark attacks. Both 
 
 ![Ice cream sales and shark attacks track together across three years](/img/posts/causal-inference/icecream-sharks.svg)
 
-Neither is true. The relationship exists because of a third variable, warm weather. During summer, more people buy ice cream and more people go in the ocean, increasing the chance of shark encounters. Once you account for seasonality, the relationship between ice cream and sharks disappears.
+Neither is true. The relationship exists because of a third variable, warm weather. During summer, more people buy ice cream and more people go in the ocean, increasing the chance of shark encounters. Once you account for seasonality, the relationship between ice cream and sharks disappears.[^1]
 
 This is what eliminating alternative explanations looks like in its simplest form. You observe a relationship, ice cream and shark attacks rise and fall together. You propose a causal story that shark attacks cause ice cream sales. Then you simply ask, what else could explain this pattern? Seasonal temperature changes provide a rival hypothesis that's more plausible. Rule out warm weather, and you've eliminated the alternative explanation. If the correlation persists, you might have something causal. If it vanishes, you probably don't.
 
 Now consider the relationship between hormone replacement therapy (HRT) and heart disease in postmenopausal women. Observational studies in the 1980s and 90s consistently showed that women taking HRT had lower rates of heart disease. The relationship was strong and persistent across multiple studies. Researchers concluded that HRT protected against heart disease and doctors began prescribing it widely.
-Then came the randomized trials. The Women's Health Initiative, a large-scale RCT published in the early 2000s, found the opposite: HRT increased the risk of heart disease. How could so many observational studies have been wrong?[^1]
+Then came the randomized trials. The Women's Health Initiative, a large-scale RCT published in the early 2000s, found the opposite: HRT increased the risk of heart disease. How could so many observational studies have been wrong?[^2]
 
 Selection bias is the usual suspect. Women who chose to take HRT in the observational studies tended to be more health-conscious than women who didn't. They exercised more, ate better, and saw their doctors more regularly. These factors, and not HRT, explained the lower heart disease rates. The observational studies had failed to eliminate a crucial alternative explanation. Perhaps women taking HRT were simply different from the women who weren't.
 
-The randomized trial eliminated this alternative by making the treatment independent of all background characteristics. Whether you got HRT or a placebo was determined by chance, not by health habits or socioeconomic status. This is actually what makes randomized experiments the gold standard: *it is the most effective method available for eliminating potential alternative explanations.*
+The randomized trial eliminated this alternative by making the treatment independent of all background characteristics. Whether you got HRT or a placebo was determined by chance, not by health habits or socioeconomic status. <mark>This is actually what makes randomized experiments the gold standard: *it is the most effective method available for eliminating potential alternative explanations.*</mark>
 At their core, the DAG and potential outcomes frameworks are systematic tools for determining how best to eliminate alternative explanations. Let’s examine how each approach accomplishes this task.
 
 ### Modern Causal Inference
-
-Observational studies on HRT had failed to eliminate a crucial alternative explanation. Randomized trials eliminated this by making treatment independent of all background characteristics. But when experiments aren't possible, we need systematic frameworks for determining what to control for. The potential outcomes and DAG approaches give us exactly that.
 
 #### Potential Outcomes
 
@@ -107,7 +103,11 @@ $$\text{ATE} = E\!\left[E[Y_i \mid X_i = 1, Z_i] - E[Y_i \mid X_i = 0, Z_i]\righ
 
 At their core, statistical methods like regression adjustment, propensity score matching and inverse probability weighting are all just different ways of estimating this conditional expectation.
 
-Notice what this assumption is really saying: once you control for $Z$, there are no remaining alternative explanations for differences in outcomes. All the confounding originates from $Z$. Any factor that affects both treatment choice and outcomes is captured in your set of covariates. If health consciousness affects both HRT uptake and heart disease risk, but you don't measure it, or you measure it poorly, or it interacts with other variables in complex ways, then the assumption can fail. You haven't eliminated the alternative, you've just assumed it away.
+Notice what this assumption is really saying: once you control for $Z$, there are no remaining alternative explanations for differences in outcomes. All the confounding originates from $Z$. Any factor that affects both treatment choice and outcomes is captured in your set of covariates.
+
+{{< figure src="/img/posts/causal-inference/conditioning-on-z.svg" caption="<strong>Left:</strong> A naive comparison of treated and control groups suggests treated individuals have better outcomes. But this difference is driven by confounding: the confounder Z influences both who receives treatment and the outcome. <strong>Right:</strong> When we condition on Z, comparing treated and control units within the same level of Z, the apparent effect disappears. The outcome distributions are nearly identical within each stratum, revealing that the naive difference was entirely due to confounding." class="img-center" >}}
+
+If health consciousness affects both HRT uptake and heart disease risk, but you don't measure it, or you measure it poorly, or it interacts with other variables in complex ways, then the assumption can fail. You haven't eliminated the alternative, you've just assumed it away.
 
 All the assumptions are just formal statements about having eliminated alternative explanations. Unconfoundedness says you've eliminated selection bias. The stable unit treatment value assumption (SUTVA) says you've eliminated interference and hidden versions of treatment as an explanation. Common support says you've eliminated the problem of groups that are too different to be comparable. Each assumption corresponds to a specific alternative explanation that could undermine your causal claim. The equations formalize these assumptions and show what estimator to use. But the assumptions themselves are about alternative explanations, not about math.
 
@@ -158,7 +158,7 @@ The assumptions encoded in a DAG are just formal statements about alternative ex
 
 ### The Real Work of Causal Inference
 
-Both frameworks can be seen as formalizing the process of ruling out competing explanations for an observed association. Potential outcomes does this through assumptions about conditional independence. The DAG approach does it through graphical heuristics for blocking non-causal paths. But neither framework can identify those competing alternatives in the first place. That requires subject matter knowledge. What factors influence whether someone receives treatment? What factors influence the outcome? How do these factors relate to each other?
+Both frameworks can be seen as formalizing the process of ruling out competing explanations for an observed association. Potential outcomes does this through assumptions about conditional independence. The DAG approach does it through graphical heuristics for blocking non-causal paths. But neither framework can identify those competing alternatives in the first place.
 
 The real work of causal inference isn’t technical, it's substantive. It requires talking to people who understand the topic. It requires thinking carefully about mechanisms and processes, not just running regressions or drawing graphs. The epidemiologist studying HRT needs to understand women's healthcare decisions, medical practice patterns, socioeconomic determinants of health, and cardiovascular disease mechanisms. The economist studying labor market interventions needs to understand how companies make hiring decisions, how people search for jobs, and what micro-economic factors constrain choices. The data scientist optimizing a digital product needs to understand product mechanics, the business model, user behavior and selection into usage.
 
@@ -171,10 +171,16 @@ Causal inference ultimately comes down to knowing the subject matter well enough
 
 Grady D, Rubin SM, Petitti DB, Fox CS, Black D, Ettinger B, Ernster VL, Cummings SR. Hormone therapy to prevent disease and prolong life in postmenopausal women. *Ann Intern Med*. 1992; 117(12): 1016-1037.
 
+Manson JE, Chlebowski RT, Stefanick ML, et al. Menopausal hormone therapy and health outcomes during the intervention and extended poststopping phases of the Women's Health Initiative randomized trials. *JAMA*. 2013; 310(13): 1353-1368.
+
 Manson JE, Chlebowski RT, Stefanick ML, et al. Hormone therapy use and risk of chronic disease in the Nurses' Health Study: a comparative analysis with the Women's Health Initiative. *Am J Epidemiol*. 2017; 186(6): 696-707.
 
-Rossouw JE, et al. Risks and benefits of estrogen plus progestin in healthy postmenopausal women: principal results from the Women's Health Initiative randomized controlled trial. *JAMA* 2002; 288: 321–33.
+Rossouw JE, Prentice RL, Manson JE, et al. Postmenopausal hormone therapy and risk of cardiovascular disease by age and years since menopause. *JAMA*. 2007; 297(13): 1465-1477.
 
-Stampfer MJ, Colditz GA, Willett WC, et al. Postmenopausal estrogen therapy and cardiovascular disease: ten-year follow-up from the Nurses' Health Study. *N Engl J Med*. 1991; 325(11) :756-762.
+Stampfer MJ, Colditz GA, Willett WC, et al. Postmenopausal estrogen therapy and cardiovascular disease: ten-year follow-up from the Nurses' Health Study. *N Engl J Med*. 1991; 325(11): 756-762.
 
-[^1]: Our understanding of HRT has evolved since 2002. Subsequent analyses found that age and time since menopause matter. Women aged 50-59 at hormone therapy initiation showed similar results in observational studies and the WHI, with some analyses suggesting potential cardiovascular benefits in younger women close to menopause. A 2012 re-analysis and follow-up data showed that younger women (50-59 years) or those within 10 years of menopause who took HRT had a more favorable risk-benefit ratio, including potential cardiovascular benefits.
+Writing Group for the Women's Health Initiative. Risks and benefits of estrogen plus progestin in healthy postmenopausal women: principal results from the Women's Health Initiative randomized controlled trial. *JAMA* 2002; 288: 321–33.
+
+[^1]: For more spurioius correlations likely to disapear before your eyes, see [Tyler Vigen's wonderful site](https://www.tylervigen.com/spurious-correlations).
+
+[^2]: Our understanding of HRT has evolved since 2002. Subsequent analyses found that age and time since menopause matter. Women aged 50-59 at hormone therapy initiation showed similar results in observational studies and the WHI, with some analyses suggesting potential cardiovascular benefits in younger women close to menopause (Rossouw et al. 2007; Manson et al. 2017). A 2013 re-analysis and follow-up data showed that younger women (50-59 years) or those within 10 years of menopause who took HRT had a more favorable risk-benefit ratio, including potential cardiovascular benefits (Manson et al. 2013).
