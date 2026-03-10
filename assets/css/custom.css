@@ -1,0 +1,23 @@
+/* ============================================================
+   Nothing So Practical — custom overrides
+   Applied after the theme stylesheet via params.custom_css
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   Typography
+   ---------------------------------------------------------- */
+
+/* Slightly wider max content width for readability */
+.post-container {
+  max-width: 780px;
+}
+
+/* Code blocks */
+pre, code {
+  font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+  font-size: 0.88em;
+}
+
+/* ----------------------------------------------------------
+   Placeholder — add site-specific overrides below
+   ---------------------------------------------------------- */
