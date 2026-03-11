@@ -57,3 +57,29 @@
         padding: 55px 0 !important;
     }
 }
+
+/* Centered figure with reduced vertical padding */
+figure.img-center {
+    margin: 0.25rem auto;
+    padding: 0;
+}
+
+figure.img-center img {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+/* Subtle aqua highlight for <mark> */
+mark {
+    background-color: #d4f0f0;
+    color: inherit;
+    padding: 0.1em 0.25em;
+    border-radius: 3px;
+}
+
+/* Figure captions */
+figure figcaption {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+}
