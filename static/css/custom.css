@@ -78,8 +78,9 @@ mark {
 }
 
 /* Figure captions */
-figure figcaption {
-    font-size: 0.9rem;
+.post-container figure figcaption {
+    font-size: 14px !important;
     color: #666;
     line-height: 1.5;
+    margin-top: 0.4rem;
 }

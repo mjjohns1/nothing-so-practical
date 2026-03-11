@@ -15,7 +15,7 @@ draft:       false
 
 Causal inference seems to be having a moment. Why the sudden interest? The tech industry's belated realization that correlation really doesn't equal causation, no matter how big the data, could have something to do with it. It might also be that we've collectively worked through all the easy prediction problems and now need to answer harder questions about why things happen. Certainly, some of it is just methodological fashion.
 
-Whatever the reason, available methods now make it possible to go beyond the mere association of machine learning. Of course, AB testing has been the workhorse of causal inference in the tech industry since the beginning of the dot-com era. Randomized experiments work well for identifying the best landing page design, or figuring out which creative drives the most site traffic. Determining if an out-of-home marketing campaign was cost effective, or if a new customer retention strategy increased lifetime value is not so straightforward.
+Whatever the reason, available methods now make it possible to go beyond the mere association of machine learning models. Of course, AB testing has been the workhorse of causal inference in the tech industry since the beginning of the dot-com era. Randomized experiments work well for identifying the best landing page design, or figuring out which creative drives the most site traffic. Determining if an out-of-home marketing campaign was cost effective, or if a new customer retention strategy increased lifetime value is not so straightforward.
 
 {{< figure src="/img/posts/causal-inference/linkedin_causal_inference.png" alt="Important evidence of causal inference having a moment" width="67%" class="img-center" >}}
 
