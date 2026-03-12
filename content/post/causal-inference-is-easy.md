@@ -1,6 +1,6 @@
 ---
 title:       "Causal Inference Is Easy"
-subtitle:    "Don't be fooled by the math"
+subtitle:    "Don't be fooled by the maths"
 description: ' '
 date:        2026-03-10
 author:      "MJ"
@@ -105,7 +105,7 @@ At their core, statistical methods like regression adjustment, propensity score 
 
 Notice what this assumption is really saying: once you control for $Z$, there are no remaining alternative explanations for differences in outcomes. All the confounding originates from $Z$. Any factor that affects both treatment choice and outcomes is captured in your set of covariates.
 
-{{< figure src="/img/posts/causal-inference/conditioning-on-z.svg" caption="<strong>Left:</strong> A naive comparison of treated and control groups suggests treated individuals have better outcomes. But this difference is driven by confounding: the confounder Z influences both who receives treatment and the outcome. <strong>Right:</strong> When we condition on Z, comparing treated and control units within the same level of Z, the apparent effect disappears. The outcome distributions are nearly identical within each stratum, revealing that the naive difference was entirely due to confounding." class="img-center" >}}
+{{< figure src="/img/posts/causal-inference/conditioning-on-z.svg" caption="<strong>Left:</strong> A naive comparison of treated and control groups suggests treated individuals have better outcomes. But this difference is driven by the confounder, Z. <strong>Right:</strong> When we condition on Z, comparing treated and control units <i>within</i> the same level of Z, the apparent effect disappears. The outcome distributions are nearly identical within each stratum, revealing that the naive difference was due to confounding." class="img-center" >}}
 
 If health consciousness affects both HRT uptake and heart disease risk, but you don't measure it, or you measure it poorly, or it interacts with other variables in complex ways, then the assumption can fail. You haven't eliminated the alternative, you've just assumed it away.
 
