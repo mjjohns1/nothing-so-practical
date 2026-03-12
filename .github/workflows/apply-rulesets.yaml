@@ -1,0 +1,45 @@
+name: Apply Repository Rulesets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/rulesets/**"
+
+permissions:
+  contents: read
+  administration: write
+
+jobs:
+  apply-rulesets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply rulesets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Fetch current rulesets once to avoid repeated API calls
+          EXISTING_RULESETS=$(gh api "repos/$REPO/rulesets")
+
+          for RULESET_FILE in .github/rulesets/*.json; do
+            RULESET_NAME=$(jq -r '.name' "$RULESET_FILE")
+            echo "Processing ruleset: $RULESET_NAME (from $RULESET_FILE)"
+
+            EXISTING_ID=$(echo "$EXISTING_RULESETS" \
+              | jq -r ".[] | select(.name == \"$RULESET_NAME\") | .id")
+
+            if [ -n "$EXISTING_ID" ]; then
+              echo "Updating existing ruleset (id=$EXISTING_ID): $RULESET_NAME"
+              gh api --method PUT "repos/$REPO/rulesets/$EXISTING_ID" \
+                --input "$RULESET_FILE"
+            else
+              echo "Creating new ruleset: $RULESET_NAME"
+              gh api --method POST "repos/$REPO/rulesets" \
+                --input "$RULESET_FILE"
+            fi
+          done
