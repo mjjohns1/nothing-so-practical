@@ -1,7 +1,7 @@
 ---
 title:       "Causal Inference Is Easy"
 subtitle:    "Don't be fooled by the maths"
-description: ' '
+description: 'Part one of a two-part series'
 date:        2026-03-10
 author:      "MJ"
 image:       ""
