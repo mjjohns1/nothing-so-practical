@@ -93,7 +93,8 @@ def add_arrow(
     label: str = "",
     rad: float = 0.0,
     dashed: bool = False,
-    pad: float = 0.028
+    pad: float = 0.028,
+    shrink_offset: float = 0.0
 ) -> None:
     """
     src / dst      : node center (data coords)
@@ -116,7 +117,7 @@ def add_arrow(
         # Curved arrow: use the node centre and let shrink handle it.
         p_src, p_dst = src, dst
         shrink_a = _edge_shrink_pts((ux, uy), src_wh)
-        shrink_b = _edge_shrink_pts((-ux, -uy), dst_wh)
+        shrink_b = _edge_shrink_pts((-ux, -uy), dst_wh) - shrink_offset
 
     ls: str | tuple[int, tuple[int, int]] = (
         (0, (5, 3)) if dashed else "solid"
@@ -221,8 +222,10 @@ def dag_income() -> None:
     pad: float = 0.018
     add_arrow(ax, inc_pos, z_pos, WH_STD, WH_TALL,
               BACKDOOR_CLR, pad=pad)
+    add_arrow(ax, inc_pos, x_pos, WH_STD, WH_STD,
+              BACKDOOR_CLR, rad=0.15, pad=pad, shrink_offset=12)
     add_arrow(ax, inc_pos, y_pos, WH_STD, WH_STD,
-              BACKDOOR_CLR, rad=-0.15, pad=pad)
+              BACKDOOR_CLR, rad=-0.15, pad=pad, shrink_offset=12)
     add_arrow(ax, z_pos, x_pos, WH_TALL, WH_STD,
               BACKDOOR_CLR, pad=pad)
     add_arrow(ax, z_pos, y_pos, WH_TALL, WH_STD,

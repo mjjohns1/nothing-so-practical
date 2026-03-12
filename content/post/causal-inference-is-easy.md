@@ -141,18 +141,18 @@ However, the DAG only helps if you've specified it correctly. If there's a varia
 
 Drawing the DAG requires a thorough understanding of the data generating process. You need to know what causes treatment selection, what causes the outcome, what variables cause both, what variables are caused by both, just to name a few. The graphical framework makes your assumptions explicit and provides rules for determining what you need to control for. But it doesn't tell you whether your graph is right. That requires understanding the domain.
 
-Suppose income affects health consciousness, and income also independently affects heart disease risk (through stress, diet, healthcare access). Now your DAG looks like:
+Suppose income affects health consciousness, and income also independently affects both heart disease risk (through stress, diet, healthcare access) and HRT use (through access to care). Now your DAG looks like:
 
 ![A more complex DAG with multiple confounding paths](/img/posts/causal-inference/dag-income.svg)
 
-Now there are two backdoor paths:
+Now there are two distinct confounding channels:
 
 - $X \leftarrow Z \rightarrow Y$
-- $X \leftarrow Z \leftarrow \text{Income} \rightarrow Y$
+- $X \leftarrow \text{Income} \rightarrow Y$
 
-To block both paths, you could control for health consciousness alone (which also blocks the path through income), or you could control for income alone (which blocks the path from income to heart disease and makes health consciousness irrelevant), or both. The backdoor criterion tells you what's sufficient.
+Controlling for health consciousness alone blocks the first path but not the second. Income still creates a spurious association between HRT and heart disease through a route that doesn't pass through health consciousness. Controlling for income alone blocks the second path but not the first. You need to control for both. The backdoor criterion tells you what's sufficient.
 
-However, if you don't know about the income variable, or if you think health consciousness fully mediates the effect of income on heart disease, you'll draw the wrong graph and reach the wrong conclusion about what to control. You might think controlling for health consciousness is enough when it isn't. You haven't eliminated the alternative explanation; you've failed to recognize it exists.
+However, if you don't know about the income variable, you'll draw the wrong graph and reach the wrong conclusion about what to control. You might think controlling for health consciousness is enough when it isn't. You haven't eliminated the alternative explanation; you've failed to recognize it exists.
 
 The assumptions encoded in a DAG are just formal statements about alternative explanations and how they operate. Each arrow (or absence of an arrow) represents a claim about the data generating process. Backdoor paths are literally the alternative explanations. The backdoor criterion is a systematic procedure for identifying which variables you need to condition on to block those alternatives. D-separation is a mathematical statement that you've successfully eliminated the spurious associations. The causal graph formalizes your understanding of confounding, but drawing the correct graph requires you to actually know what the confounders are and how they relate to each other.
 
