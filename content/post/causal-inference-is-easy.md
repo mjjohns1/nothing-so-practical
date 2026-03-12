@@ -145,12 +145,12 @@ Suppose income affects health consciousness, and income also independently affec
 
 ![A more complex DAG with multiple confounding paths](/img/posts/causal-inference/dag-income.svg)
 
-Now there are two distinct confounding channels:
+Now there are two distinct confounding paths:
 
 - $X \leftarrow Z \rightarrow Y$
 - $X \leftarrow \text{Income} \rightarrow Y$
 
-Controlling for health consciousness alone blocks the first path but not the second. Income still creates a spurious association between HRT and heart disease through a route that doesn't pass through health consciousness. Controlling for income alone blocks the second path but not the first. You need to control for both. The backdoor criterion tells you what's sufficient.
+Controlling for health consciousness alone blocks the first but not the second. Income still creates a spurious association between HRT and heart disease through a route that doesn't pass through health consciousness. Controlling for income alone blocks the second path but not the first. You need to control for both. The backdoor criterion tells you what's sufficient.
 
 However, if you don't know about the income variable, you'll draw the wrong graph and reach the wrong conclusion about what to control. You might think controlling for health consciousness is enough when it isn't. You haven't eliminated the alternative explanation; you've failed to recognize it exists.
 
