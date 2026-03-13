@@ -60,7 +60,7 @@ The treatment effect estimate is τ. The coefficient β plays the same role as �
 
 To put numbers on it: in your 10,000-user search experiment, suppose the unadjusted standard error on the treatment effect is 0.8 percentage points. Without adjustment, you'd need a true effect of about 1.6 points to detect it reliably (roughly two standard errors). With a pre-experiment covariate that has a 0.7 correlation with the outcome, the residual variance drops by 51%, the standard error shrinks to about 0.57 percentage points, and you can now reliably detect effects as small as 1.1 points. Same data, meaningfully more sensitive experiment.
 
-![ANCOVA vs CUPED: same data, same treatment effect, different approach](ancova_vs_cuped.png)
+![ANCOVA vs CUPED: same data, same treatment effect, different approach](/static/img/posts/cuped/cuped_vs_ancova.png)
 *Left: ANCOVA fits parallel regression lines — the treatment effect is the constant vertical gap. Right: CUPED removes the pre-experiment relationship entirely, tightening the scatter and leaving two flat group means. Both arrive at the same estimate.*
 
 ## CUPED as Regression Adjustment
