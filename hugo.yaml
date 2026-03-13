@@ -1,4 +1,5 @@
 baseURL: "https://nothing-so-practical.com/"
+enableRobotsTXT: true
 languageCode: "en-us"
 title: "Nothing So Practical"
 theme: "hugo-theme-cleanwhite"
