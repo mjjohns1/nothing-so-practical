@@ -1,7 +1,7 @@
 ---
 title:       "Causal Inference Is Hard"
-subtitle:    "COMING SOON"
-description: "Part two of a two-part series"
+subtitle:    "COMING SOON: Part two of a two-part series"
+description: "The real reasons that causal inference is hard to pull in practice"
 date:        2026-03-09
 author:      "MJ"
 image:       ""
