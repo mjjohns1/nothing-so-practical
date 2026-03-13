@@ -20,15 +20,13 @@ The results were impressive. Deng et al. found CUPED reduced variance by roughly
 
 ### How Does it Work?
 
-Say you're a data scientist at a search company running an experiment on a new ranking algorithm. Your outcome metric is click-through rate — the share of searches where the user clicked at least one result. You have 10,000 users split evenly between treatment and control.
+Imagine you want to run an experiment to test if your updated page layout increases use of a neglected search feature. You have 50,000 users split evenly between treatment (new layout) and control (old layout). Users vary in how often they need to do a search. Heavy users use search less while casual actually use it more. This natural variation is a source of noise. It has nothing to do with whether the new layout is effective, but it inflates the uncertainty in your estimate of the treatment effect.
 
-The challenge is that users vary enormously in how often they click. Heavy searchers click constantly. Casual users barely engage. This user-to-user variation is noise from the perspective of your experiment. It has nothing to do with whether your new ranking algorithm works, but it inflates the uncertainty in your estimate of the treatment effect.
+Most of those 50,000 used the search feature before the experiment started. You have their usage rate from the prior year. A user's past search use is a strong predictor of future use. CUPED uses that pre-experiment behavior to reduce the noise that was always going to be there regardless of treatment.
 
-Here's the key insight. Most of those 10,000 users were using your search product before the experiment started. You have their click-through rates from the prior month. And it turns out that a user's click-through rate before the experiment is a strong predictor of their click-through rate during it — a correlation of around 0.7 is typical for this kind of metric. CUPED uses that pre-experiment behavior to filter out the noise that was always going to be there regardless of treatment.
+The adjustment works like this. Suppose the average pre-experiment search rate (SR) across all users is 32%. For each user, you compute an adjusted outcome:
 
-The adjustment works like this. Suppose the average pre-experiment click-through rate across all users is 32%. For each user, you compute an adjusted outcome:
-
-**Adjusted CTR = Observed CTR − θ × (Pre-experiment CTR − 32%)**
+**Adjusted SR = Observed ST − θ × (Pre-experiment SR − 32%)**
 
 The coefficient θ captures how strongly a user's pre-experiment behavior predicts their in-experiment behavior. A user who clicked 10 percentage points more than average before the experiment would also tend to click more during it, for reasons having nothing to do with the treatment. The adjustment subtracts that expected excess, leaving behind variation that is more plausibly due to the treatment itself.
 
@@ -48,7 +46,7 @@ If the correlation were higher — say 0.9, which you might see if users have ve
 
 ## How is CUPED Related to Other Methods?
 
-At this point you might be wondering whether CUPED is really a new idea, or whether you've seen this before under a different name. You have.
+At this point you might be wondering whether CUPED is really a new idea, or whether you've seen this before under a different name.
 
 Fisher introduced Analysis of Covariance (ANCOVA) in the 1920s and 1930s. He called pre-treatment variables "concomitant variables" and showed how to use them to improve precision in experiments. Cochran formalized the modern treatment in the 1950s. The technique appeared in Cochran and Cox's influential 1957 textbook on experimental design. ANCOVA has been standard practice in clinical trials, agricultural experiments, and psychology research for decades.
 
@@ -74,6 +72,8 @@ There is one real methodological distinction. ANCOVA estimates β simultaneously
 In large samples this distinction disappears. Under random assignment, a user's pre-experiment behavior is independent of which condition they're assigned to, so estimating β from experiment data versus pre-experiment data converges to the same answer. Both methods achieve the same variance reduction of Var(Y) × (1 − ρ²). The two approaches are equivalent in the limit.
 
 There is also a narrow practical advantage to CUPED's separation. Because θ only requires knowing how the pre- and post-experiment metrics co-vary on average, you can estimate it from aggregate historical statistics rather than fitting a model on individual experimental subjects. In large tech platforms where data pipelines are complex and experiment infrastructure is centralized, being able to pre-compute θ once and apply it to many experiments has real engineering value — even if the statistical content is identical.
+
+To motivate CUPED, the authors argue, "Moreover, the technique should preferably not be based on any parametric model because model assumptions tend to be unreliable and a model that works for one metric does not necessarily work for another."
 
 ## What You Gain by Recognizing the Connection
 
