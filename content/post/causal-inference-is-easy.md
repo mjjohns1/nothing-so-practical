@@ -37,7 +37,7 @@ $$P(Y \mid \text{do}(X)) = \sum_z P(Y \mid X, Z=z) \, P(Z=z)$$
 
 {{% /notation-box %}}
 
-Looking at the notation, it’s easy to think that modern causal inference is a complicated math problem. But strip away the notation, graphical models and estimators, and you're left with one simple task: eliminating alternative explanations for what you observe. That’s it. That’s all you’re doing. Easy.
+Looking at the notation above, it’s easy to think that modern causal inference is a complicated math problem. But strip away the notation, graphical models and estimators, and you're left with one simple task: eliminating alternative explanations for what you observe. That’s it. That’s all you’re doing. Easy.
 
 ### Let’s go to the Beach
 
