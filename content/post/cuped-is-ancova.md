@@ -12,9 +12,10 @@ draft:       true
 
 ## What is CUPED?
 
-In 2013, Deng et al. proposed a method for improving the sensitivity of online experiments. CUPED, which stands for Controlled-experiment Using Pre-Experiment Data, addressed a problem familiar to anyone running A/B tests in industry. Even with millions of users, detecting small treatment effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some real effects will go undetected. None of those options are appealing when you're running thousands of experiments a year and trying to move fast.
+[short intro about the use and challenges of AB testing in industry]
+Anyone running AB tests in industry is familiar with the challenges. Even with millions of users, detecting small but important effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some real effects will go undetected. None of those options are appealing when you're running thousands of experiments a year and trying to move fast.
 
-The idea behind CUPED is simple. Collect outcome data on users before the experiment starts. When analyzing the results, statistically adjust for those pre-experiment observations. Random assignment ensures the pre-treatment version of the outcome is unrelated to treatment assignment, so the adjustment doesn't bias your estimate of the treatment effect. What it does do is reduce the noise in your estimates, letting you detect smaller effects with the same sample size.
+To tackle these challenges, Deng et al. (2013) proposed a method for improving the sensitivity of online experiments. The idea behind CUPED (Controlled-experiment Using Pre-Experiment Data) is simple. Collect outcome data on users before the experiment starts. When analyzing the results, statistically adjust for those pre-experiment observations. Random assignment ensures the pre-treatment version of the outcome is unrelated to treatment assignment, so the adjustment doesn't bias your estimate of the treatment effect. What it does do is reduce the noise in your estimates, letting you detect smaller effects with the same sample size.
 
 The results were impressive. Deng et al. found CUPED reduced variance by roughly 50 percent in practice, meaning experiments could achieve the same power with half the users or half the duration. For a company running thousands of experiments annually, this is a substantial win.
 
@@ -65,7 +66,7 @@ To put numbers on it: in your 10,000-user search experiment, suppose the unadjus
 
 So what exactly is CUPED doing that ANCOVA isn't? Less than it might appear.
 
-The optimal θ that Deng and colleagues derive is the OLS regression coefficient — the same number β that ANCOVA estimates. The adjusted outcome Ỹ that CUPED constructs is exactly what you'd get if you regressed the outcome on the pre-experiment metric and took the residuals. The control variates formulation in the paper is regression in different notation.
+The optimal θ is the OLS regression coefficient, i.e., the same number β that ANCOVA estimates. The adjusted outcome Ỹ that CUPED constructs is exactly what you'd get if you regressed the outcome on the pre-experiment metric and took the residuals. The control variates formulation in the paper is regression in different notation.
 
 There is one real methodological distinction. ANCOVA estimates β simultaneously with the treatment effect, using the experimental data. CUPED estimates θ separately, in a prior step, from pre-experiment data. In practice this means that in CUPED, θ is fixed before you ever look at treatment versus control — it's treated as a known constant during inference, not an estimated quantity. In your search experiment, you'd estimate θ from the prior month of data, then apply it to the experiment. ANCOVA estimates β from the experiment data itself.
 
@@ -73,7 +74,23 @@ In large samples this distinction disappears. Under random assignment, a user's 
 
 There is also a narrow practical advantage to CUPED's separation. Because θ only requires knowing how the pre- and post-experiment metrics co-vary on average, you can estimate it from aggregate historical statistics rather than fitting a model on individual experimental subjects. In large tech platforms where data pipelines are complex and experiment infrastructure is centralized, being able to pre-compute θ once and apply it to many experiments has real engineering value — even if the statistical content is identical.
 
-To motivate CUPED, the authors argue, "Moreover, the technique should preferably not be based on any parametric model because model assumptions tend to be unreliable and a model that works for one metric does not necessarily work for another."
+The main argument against using ANCOVA and regression is the fact that the assumptions of parametric models are often violated in real data. The authors argue:
+
+    Moreover, the technique should preferably not be based on any parametric model because model assumptions tend to be unreliable and a model that works for one metric does not necessarily work for another.
+
+    However, the linear model makes strong assumptions that are usually not satisfied in practice, i.e., the conditional expectation of the outcome metric is linear in the treatment assignment and covariates. In addition, it also requires all residuals to have a common variance.
+
+Whether these are "strong" assumptions is debatable. Gelman argues that not all assumptions are equal. He ranks them as follows:
+
+    1. Validity. Most importantly, the data you are analyzing should map to the research question you are trying to answer. This sounds obvious but is often overlooked or ignored because it can be inconvenient
+    1. Additivity and linearity. The most important mathematical assumption of the regression model is that its deterministic component is a linear function of the separate predictors
+    1. Independence of errors
+    1. Equal variance of errors
+    1. Normality of errors
+
+The linearity assumption is about whether it is valid to describe the relationship between a covariate the outcome using a straight line. If not, a simple solution is to apply a transformation to the covariate. Polynomial regeression is a common an example of this technique. The assumption that residuals have common variance is actually a weak assumption, despite what econometricians would have you believe. Most methods are robust to violations of homoscedasticity. If you are worried about it, you can just use a robust method, like the sandwich estimator.
+
+The point is, solutions to these problems already exist. We didn't need an entirely new method to deal with them.
 
 ## What You Gain by Recognizing the Connection
 
