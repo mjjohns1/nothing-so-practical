@@ -30,12 +30,13 @@ params:
   additional_menus:
     - title: "ABOUT"
       href: "/about"
-    - title: "READING"
+    - title: "STUFF WE LIKE"
       href: "/reading"
     - title: "ARCHIVE"
       href: "/archive"
 
   omit_categories: true
+  hide_all_posts: true
 
   auto_theme: false
   dark_mode_toggle: false
