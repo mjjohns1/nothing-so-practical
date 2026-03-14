@@ -1,7 +1,7 @@
 ---
 title:       "Abelson's Laws"
 subtitle:    "Chance is lumpy"
-description: "You've probably never heard of Statistics as Principled Argument. Well, now you have."
+description: "Statistics as Principled Argument is 30 years old. Abelson's laws are timeless"
 date:        2026-03-02
 author:      "MJ"
 image:       "img/posts/ableson/stats-as-principled-arg.jpg"
