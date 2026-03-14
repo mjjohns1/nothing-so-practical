@@ -16,7 +16,7 @@ draft:       false
 
 Among contemporary researchers, he is probably best known for his work in statistics and methods. I discovered Abelson in graduate school when digging into the literature on statistical interactions. A faculty member subsequently introduced me to his 1995 book, [*Statistics as Principled Argument*](https://books.google.com/books/about/Statistics_as_Principled_Argument.html?id=TgmbosIA7N0C). It instantly became my favorite stats book, mainly because it's not a stats book. It also doesn't hurt that it's a quick and entertaining read, at least for a book about analyzing data.
 
-SAPA is based on 40 years of experience teaching statistics to first year grad students. At its heart it is a philosophy book. Abelson's approach to statistics and analysis is more conceptual, an approach I have always preferred. He drills to the core of what statistics are really for. The results of any analysis are not a 'truth' but merely pieces of evidence used to support an argument. Data can't speak for themselves. A convincing finding is as much about narrative and rhetoric as it is about the specific technique used to compute the results.
+SAPA is based on 40 years of experience teaching statistics to first-year grad students. At its heart, SAPA is a philosophy book. Abelson's approach to statistics and analysis is more conceptual, an approach I have always preferred. He drills to the core of what statistics are really for. The results of any analysis are not a 'truth' but merely pieces of evidence used to support an argument. Data can't speak for themselves. A convincing finding is as much about narrative and rhetoric as it is about the specific technique used to compute the results.
 
 The book contains a lot of useful heuristics, like the ["MAGIC"](https://en.wikipedia.org/wiki/MAGIC_criteria) criteria, and plenty of campy humor. That unruly data point? It isn't an outlier, it's a Klinker\! But for me the most useful and memorable insights are the laws, delivered right up front before Chapter 1:
 
@@ -32,7 +32,7 @@ The book contains a lot of useful heuristics, like the ["MAGIC"](https://en.wiki
 8. Criticism is the mother of methodology.
 
 
-I've invoked the first Law on many occasions when discussing the pitfalls of small samples and the confusion that follows weird or surprising results. Lumpiness. People forget this, and small samples make it worse. I'm also fond of Law 4, which captures a problem I've observed too often in communicating about quantitative methods. Equations are not a replacement for understanding. If you can't explain your model in plain language, you probably don't understand it.
+I've invoked the first Law on many occasions when discussing the pitfalls of small samples and the confusion that follows weird or surprising results. Lumpiness is easy to overlook, and small samples make it worse. I'm also fond of Law 4, which captures a problem I've observed too often in communicating about quantitative methods. Equations are not a replacement for understanding. If you can't explain your model in plain language, you probably don't understand it.
 
 But it is the 2nd Law, "Overconfidence abhors uncertainty," that has always stuck with me. I didn't appreciate its importance at first. Over the years I've come to realize that unshakeable *certainty* is one of the best ways to end up being wrong.
 
@@ -42,9 +42,9 @@ The replication crisis drove this point home. When the Open Science Collaboratio
 
 > The idea you should focus on, however, is that disbelief is not an option. The results are not made up, nor are they statistical flukes. You have no choice but to accept that the major conclusions of these studies are true. More important, you must accept that they are true about you.
 
-Yes, that Daniel Kahneman. He came to regret this statement once the full scope of the problem became clear, calling it a trainwreck and a mess. But it illustrates what can happens when a field treats statistical results as certainties. The most we can ever hope to achieve in quantitative work is reducing uncertainty.
+Yes, that Daniel Kahneman. He came to regret this statement once the full scope of the problem became clear, calling it a trainwreck and a mess. But it illustrates what can happen when a field treats statistical results as certainties. The most we can hope to achieve with a piece of quantitative work is reducing our uncertainty.
 
-Many of Abelson's laws can be seen as warnings against the pitfalls of overconfidence. Law 1 reminds you that randomness can look like a signal. Law 2 warns that you'll want to believe the signal anyway. Law 6 tells you the cost of chasing patterns after the fact. Law 7 says you have to actively look for what's wrong. Together, they form a practical checklist for intellectual honesty. Abelson wrote these decades before the replication crisis made their value obvious. Solid frameworks outlast the problems they anticipate.
+Many of Abelson's laws can be seen as warnings against the pitfalls of overconfidence. Law 1 reminds you that randomness can look like a signal. Law 2 warns that you'll want to believe the signal anyway. Law 6 tells you the cost of chasing patterns after the fact. Law 7 says you have to actively look for what's wrong. Together, they form a practical checklist for intellectual honesty. Abelson wrote these ideas down decades before the replication crisis made their value obvious.
 
 ##### References
 
