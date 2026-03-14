@@ -30,6 +30,8 @@ params:
   additional_menus:
     - title: "ABOUT"
       href: "/about"
+    - title: "READING"
+      href: "/reading"
     - title: "ARCHIVE"
       href: "/archive"
 
