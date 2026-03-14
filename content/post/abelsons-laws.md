@@ -2,7 +2,7 @@
 title:       "Abelson's Laws"
 subtitle:    "Chance is lumpy"
 description: "You've probably never heard of Statistics as Principled Argument. Well, now you have."
-date:        2026-03-08
+date:        2026-03-02
 author:      "MJ"
 image:       "img/posts/ableson/stats-as-principled-arg.jpg"
 tags:        ['statistics', 'psychology']
