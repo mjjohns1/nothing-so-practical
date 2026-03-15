@@ -1,7 +1,7 @@
 ---
-title:       "Old Wine in a New Bottle: CUPED"
-subtitle:    "COMING SOON"
-description: "CUPED has become a popular feature in online experimentation platforms. You could have just used ANCOVA"
+title:       "CUPED: Old Wine in a New Bottle?"
+subtitle:    ""
+description: "CUPED has become a popular feature in online experimentation platforms. You can just use regression."
 date:        2026-03-09
 author:      "MJ"
 image:       ""
@@ -12,93 +12,113 @@ draft:       FALSE
 
 ## What is CUPED?
 
-Anyone running AB tests in industry is familiar with the challenges. Detecting small but important effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some real effects will go undetected. None of those options are appealing when you're running lots of experiments and your stakeholders wanted the results yesterday.
+Anyone running AB tests in industry knows the challenges. Detecting small but meaningful effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some real effects will go undetected. None of those options appeal when you're running lots of experiments and your stakeholders wanted the results yesterday.
 
-Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Data) to address these issues. The idea is to collect outcome data on users before the experiment starts and statistically adjust for those pre-experiment observations when analyzing the results. The pre-treatment versoin of the outcome contains information about user-specific variance. This variance adds noise to your estimates. Removing it allows you to detect a smaller effect with the same sample size, or the same effect with a smaller sample size.
+Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Data) to address this problem. The idea is to collect outcome data on users *before* the experiment starts and statistically adjust for those pre-experiment observations when analyzing results. The pre-treatment version of the outcome captures user-specific variance that adds noise to your estimates. Removing it lets you detect a smaller effect with the same sample size, or the same effect with a smaller sample size.
 
-### How Does it Work?
+## A Worked Example
 
-Imagine you plan to run an experiment to test if an updated page layout increases use of a (neglected) search feature. You randomly assign 50,000 users between treatment (new layout) and control (old layout). Users vary in how often they need to search. Heavy users tend to search less while casual users search more. This natural variation is a source of noise. It has nothing to do with whether the new layout is effective.
+Suppose you're testing whether an updated page layout increases use of a search feature. You randomly assign 10,000 users, 5,000 to treatment (new layout) and 5,000 to control (old layout). Users vary in how often they search. Heavy users tend to search less while casual users search more. This natural variation is noise. It has nothing to do with whether the new layout works.
 
-Most of those 50,000 used the search feature at least once before the experiment started. You have their usage rate from the prior year. Past search use is a moderatly strong predictor of future use. To apply CUPED, average the pre-experiment search rate (SR) across all users. Let's say it comes out to 32%. For each user, subtract the average from their actual pre-experiment rate, weight it by the strength of the relationship between the pre-experiment rate and experiment rate, finally subtracting that from the observed search rate in the experiment.
+Most of those 10,000 users used the search feature before the experiment started, and you have their prior usage rate. The average pre-experiment search rate across all users is 21%. For each user, CUPED subtracts the average from their pre-experiment rate, weights the difference by a coefficient $\theta$, and subtracts the result from the observed in-experiment search rate.
 
-**Adjusted SR = In-experiment SR − $θ$ × (Pre-experiment SR − 32%)**
+$$Y_i^{adj} = Y_i - \theta \cdot (X_i - \bar{X})$$
 
-The coefficient $θ$ captures how strongly a user's pre-experiment behavior predicts their in-experiment behavior. A user who used search 10 percentage points more than average before the experiment would also tend to click more during, for reasons having nothing to do with the treatment. The adjustment subtracts that expected excess, leaving behind variation that is attributable to the treatment itself.
+<div style="background: #f7f7f7; border-left: 3px solid #ccc; padding: 12px 16px; margin: 1rem 0; font-size: 0.95em;">
 
-To make it concrete, suppose we estimate $θ$ = 0.6 (more on where this number comes from shortly). A user with a pre-experiment SR of 42% has their observed SR adjusted downward by 0.6 × (.42 - .32) = 6 percentage *points*. A user with a pre-experiment SR of 22%, 10 points below average, gets their SR adjusted upward by 6 points. Users right at the average get no adjustment at all.
+**In words:** Take each user's in-experiment search rate ($Y_i$), then subtract an adjustment. The adjustment is $\theta$ (a weight capturing how predictive the pre-experiment metric is) times how far that user's pre-experiment rate ($X_i$) falls from the overall pre-experiment average ($\bar{X}$). Users above average get adjusted down. Users below average get adjusted up.
+</div>
 
-After this adjustment, you estimate the treatment effect as a simple difference in adjusted SR between treatment and control.
+The coefficient $\theta$ captures how strongly pre-experiment behavior predicts in-experiment behavior. A user who searched 10 percentage points more than average before the experiment will tend to search more during it, for reasons unrelated to the treatment. The adjustment subtracts that expected excess, leaving behind variation attributable to the treatment.
 
-To estimate $θ$ we need to calculate the covariance between the pre-experiment SR and in-experiment SR, and divide that by the variance of the pre-experiment metric. You might recogonize this values as the slope coefficient in a simple linear regression model. In fact, the easiest way to calculate $θ$ to fit a model regressing the SR observed in the experiment onto the pre-experiment SR.
+### Where does $\theta$ come from?
 
-How much variance does this remove? It depends entirely on the correlation between the pre-experiment and experiment metric. With a correlation of 0.7 the variance of the adjusted outcome is:
+To estimate $\theta$, calculate the covariance between the pre-experiment and in-experiment search rates and divide by the variance of the pre-experiment metric.
 
-**Var(adjusted) = Var(observed) × (1 − 0.7²) = Var(observed) × 0.51**
+$$\theta = \frac{\text{Cov}(Y, X)}{\text{Var}(X)}$$
 
-In other words, the variance of the outcome is nearly halfed. The standard error of your treatment effect estimate, which is proportional to the square root of that variance, shrinks by about 29%. In practice this means you'd need roughly half as many users to achieve the same statistical power.
+You might recognize this as the slope coefficient in a simple linear regression of $Y$ on $X$. In our simulation, $\hat{\theta}$ = 0.60. A user with a pre-experiment SR of 31% (10 points above the 21% average) gets their observed SR adjusted downward by 0.60 $\times$ 10 = 6.0 percentage points. A user at 11% (10 points below average) gets adjusted upward by 6.0 points. Users at the mean get no adjustment.
 
-If the correlation were higher, say 0.9, the variance reduction would be even more dramatic: 1 − 0.9² = 19% of the original variance, an 81% reduction. If the correlation were lower, say 0.5, you'd reduce variance by only 25%. The pre-experiment metric only helps you to the extent that it actually predicts the experiment outcome.
+After adjusting, you estimate the treatment effect as a simple difference in adjusted means between treatment and control.
 
-## CUPED in Context
+### How much does it help?
 
-Anyone with formal training in the design and analysis of experiments will probably recognize this technique. You typically learn about analysis of covariance (ANCOVA) and how it can be used to produce more precise treatment esitimates. For ANCOVA, the ideal covariate has a strong linear relationship with the outcome and no relationship with the treatment. Because randomization makes all background variables independent of the treatment, there are often many potential covariates. However, the *optimal* covariate is the pre-treatment version of the outcome, by definition.
+The variance reduction depends on the correlation between the pre-experiment and in-experiment metrics. In our data, pre-experiment and in-experiment search rates are positively correlated. Users who searched more before the experiment tend to search more during it.
 
+![Pre-experiment vs in-experiment search rates](/img/posts/cuped/pre_post_covariation.svg)
+*Each point is a user. The correlation ($\rho$ = 0.65) is the signal CUPED exploits.*
 
-CUPED bares a striking resemblance to ANCOVA. Instead of first adjusting each user's outcome and then comparing group means, you fit a single regression model that estimates the treatment effect and the pre-experiment adjustment simultaneously:
+The variance of the adjusted outcome is
 
-**SR = α + τ × Treatment + β × Pre-experiment SR + error**
+$$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 66.3 \times 0.57 = 37.9$$
 
-The treatment effect estimate is $τ$. The coefficient $β$ plays the same role as $θ$ in CUPED. It accounts for the fact that users with higher pre-experiment search rates will tend to have higher in-experiment search rates. By explaining that variation, it reduces the residual error in the model. Lower residual error means a more precise estimate of $τ$.
+That's a 43% reduction in variance. The standard error of the treatment effect estimate drops from 0.16 to 0.12, a 26% reduction. In practice, that means you'd need roughly 45% fewer users to achieve the same statistical power.
 
-Here's what the two methods look like side-by-side.
+If the correlation were 0.9, the variance reduction would be dramatic: $1 - 0.81 = 0.19$, an 81% reduction. At 0.5, you'd reduce variance by only 25%. The pre-experiment metric only helps to the extent it predicts the in-experiment outcome.
 
-![ANCOVA vs CUPED: same data, same treatment effect, different approach](/img/posts/cuped/cuped_vs_ancova.png)
-*Left: ANCOVA fits parallel regression lines — the treatment effect is the constant vertical gap. Right: CUPED removes the pre-experiment relationship entirely, tightening the scatter and leaving two flat group means. Both arrive at the same estimate.*
+## CUPED is ANCOVA
 
-The treatment estimates are the exactly same (3). The main difference is that CUPED multiplies $θ$ by the mean-centered version of the pre-experiment outcome. This has the effect of zeroing out the slopes. The notable methodological distinction is that ANCOVA estimates $β$ simultaneously while CUPED estimates $θ$ separately, in a prior step. In practice this means that $θ$ is fixed before you ever estimate the treatment effect. It's treated as a known constant during inference, not an estimated quantity.
+Anyone trained in experimental design will recognize this technique. Analysis of covariance (ANCOVA) adjusts for covariates to produce more precise treatment estimates. The ideal covariate has a strong linear relationship with the outcome and no relationship with the treatment. Random assignment guarantees the second condition for all pre-treatment variables, but the *optimal* covariate is the pre-treatment version of the outcome, by definition.
 
-Under random assignment, a user's pre-experiment behavior is independent of assigned condition, so estimating $β$ from experiment data versus pre-experiment data converges to the same answer. Both methods achieve the same variance reduction of
+Instead of first adjusting each user's outcome and then comparing group means, ANCOVA fits a single regression that estimates the treatment effect and the covariate adjustment simultaneously.
 
-$$Var(Y) × (1 − ρ²)$$
+$$Y_i = \alpha + \tau \cdot T_i + \beta \cdot X_i + \epsilon_i$$
 
-There is one potential advantage to using CUPED. Because $θ$ only requires knowing how the pre- and in-experiment metrics covary on average, you can estimate it from aggregate historical statistics rather than fitting a model on participants. In large tech platforms where data pipelines are complex and experiment infrastructure is centralized, being able to pre-compute $θ$ once has some potential engineering value. But the statistical impact is identical.
+The treatment effect estimate is $\hat{\tau}$. The coefficient $\beta$ plays the same role as $\theta$ in CUPED. It accounts for the fact that users with higher pre-experiment search rates tend to have higher in-experiment rates. By explaining that variation, the model reduces residual error and produces a more precise estimate of $\tau$.
 
-The main argument against using ANCOVA (and regression) is the fact that the assumptions of parametric models are often violated in real data.
+Here's what the two methods look like side-by-side on our simulated data.
+
+![ANCOVA vs CUPED](/img/posts/cuped/cuped_vs_ancova.svg)
+*Left: ANCOVA fits parallel regression lines. The treatment effect is the constant vertical gap. Right: CUPED removes the pre-experiment relationship, tightening the scatter and leaving two flat group means. Both arrive at $\hat{\tau}$ = 3.0.*
+
+The treatment effect estimates are identical. Our ANCOVA regression gives $\hat{\tau}$ = 3.03 with $\hat{\beta}$ = 0.61. CUPED gives $\hat{\tau}$ = 3.03 with $\hat{\theta}$ = 0.60. This isn't a coincidence.
+
+The main difference is mechanical. CUPED multiplies $\theta$ by the mean-centered pre-experiment outcome, which zeros out the slopes and collapses the parallel lines into flat group means. The methodological distinction is that ANCOVA estimates $\beta$ simultaneously with $\tau$, while CUPED estimates $\theta$ in a prior step, treating it as a known constant during inference.
+
+Under random assignment, a user's pre-experiment behavior is independent of their assigned condition. Estimating the covariate coefficient from experiment data versus historical data converges to the same answer. Both methods achieve a variance reduction of
+
+$$\text{Var}(Y) \times (1 - \rho^2)$$
+
+There is one practical advantage to CUPED. Because $\theta$ only requires knowing how the pre- and in-experiment metrics covary on average, you can estimate it from aggregate historical statistics rather than fitting a model on experiment participants. For large tech platforms with complex data pipelines and centralized experiment infrastructure, pre-computing $\theta$ once has engineering value. But the statistical result is identical.
+
+## But What About the Assumptions?
+
+The main argument against ANCOVA is that regression assumptions are violated in real data. From Deng et al.:
 
 >Moreover, the technique should preferably not be based on any parametric model because model assumptions tend to be unreliable and a model that works for one metric does not necessarily work for another.
 
 >However, the linear model makes strong assumptions that are usually not satisfied in practice, i.e., the conditional expectation of the outcome metric is linear in the treatment assignment and covariates. In addition, it also requires all residuals to have a common variance.
 
-Whether these are "strong" assumptions is a constant topic of debate. Gelman and Hill (2006) argue that not all assumptions are created equal. They rank them as follows:
+Whether these are "strong" assumptions depends on which assumptions you mean. Gelman and Hill (2006) rank regression assumptions by importance:
 
-1. Validity: The data should map to the research question.
-2. Additivity and linearity: The most important mathematical assumption. The deterministic component is a linear function of the separate predictors.
-3. Independence of errors:
-4. Equal variance of errors
-5. Normality of errors
+1. **Validity.** The data should map to the research question.
+2. **Additivity and linearity.** The deterministic component is a linear function of the separate predictors. This is the most important mathematical assumption.
+3. **Independence of errors.** Each observation provides independent information.
+4. **Equal variance of errors.** The spread of residuals is constant across fitted values.
+5. **Normality of errors.** The least important. Matters for small-sample inference, not for large experiments.
 
+The linearity assumption asks whether a straight line adequately describes the relationship between the covariate and the outcome. If not, you can transform the covariate. Polynomial terms and splines are standard tools. The equal variance assumption is weaker than many believe. OLS estimates remain unbiased under heteroscedasticity. If you're worried about inference, use robust standard errors.
 
-The linearity assumption is about whether it is valid to describe the relationship between a covariate the outcome using a straight line. If not, a simple solution is to apply a transformation to the covariate. Polynomial regeression is a common an example of this technique. The assumption that residuals have common variance is actually a weak assumption, despite what econometricians would have you believe. Most methods are robust to violations of homoscedasticity. If you are worried about it, you can just use a robust method, like the sandwich estimator.
-
-The point is, solutions to these problems already exist. We didn't need an entirely new method to deal with them.
+Solutions to these problems already exist. We didn't need an entirely new method to deal with them.
 
 ## What You Gain by Recognizing the Connection
 
 Once you see CUPED as regression adjustment, the entire toolkit of regression becomes available.
 
-Why use only one pre-period metric? If you have multiple variables that predict the outcome — prior click rate, prior session length, user tenure — include them all. Variance reduction depends on how much additional outcome variance each new predictor explains beyond what the others already captured. In the search example, adding session length as a second covariate might push your correlation from 0.7 to 0.8, cutting residual variance to 36% of the original instead of 51%.
+Why use only one pre-period metric? If you have multiple variables that predict the outcome (prior click rate, session length, user tenure) include them all. Variance reduction depends on how much additional outcome variance each new predictor explains beyond what the others already capture. Adding session length as a second covariate might push $\rho$ from 0.65 to 0.80, cutting residual variance to 36% of the original instead of 57%.
 
-What if the relationship between the pre-period metric and the experiment outcome isn't linear? Heavy users and light users might respond differently. Add a squared term, transform the variable, use a spline. Standard regression techniques apply directly. CUPED as a recipe doesn't tell you any of this. Regression thinking does.
+What if the relationship between the pre-period metric and the outcome isn't linear? Heavy users and light users might respond differently. Add a squared term, transform the variable, use a spline. Standard regression techniques apply directly. CUPED as a recipe doesn't tell you any of this. Regression thinking does.
 
-Deng et al. warn against using post-treatment data as covariates, and they're right to. If your covariate is affected by the treatment, adjusting for it can absorb part of the treatment effect you're trying to measure, biasing your estimate in unpredictable ways. In the search example, adjusting for clicks during a "warm-up period" at the start of the experiment would be dangerous if the new ranking algorithm was already affecting behavior. This isn't a quirk of CUPED — it's a fundamental property of regression adjustment. Pre-treatment covariates are safe because treatment can't have caused them. Once you understand the method as regression, this assumption is obvious and easy to check.
+Deng et al. warn against using post-treatment data as covariates, and they're right. If your covariate is affected by the treatment, adjusting for it can absorb part of the effect you're trying to measure, biasing your estimate in unpredictable ways. Adjusting for clicks during a "warm-up period" at the start of the experiment would be dangerous if the new layout was already influencing behavior. This isn't a quirk of CUPED. It's a fundamental property of regression adjustment. Pre-treatment covariates are safe because treatment can't have caused them. Once you understand the method as regression, this constraint is obvious and easy to check.
 
 ## What to Make of CUPED
 
-For data scientists and engineers who weren't trained in experimental methods, the paper provides an accessible entry point into a powerful and underused technique. If CUPED is the method that finally convinced your organization to use pre-treatment covariates, then CUPED did its job. But the underlying statistical idea is not new. Covariance adjustment has been standard practice in experimental design since Fisher's work in the 1920s. The statistical research community has been working on the problem of detecting small effects with limited resources for a century. The answers are in the literature.
+For data scientists and engineers who weren't trained in experimental methods, the Deng et al. paper provides an accessible entry point into a powerful technique. If CUPED convinced your organization to use pre-treatment covariates, it did its job. But the underlying idea is not new. Covariance adjustment has been standard practice in experimental design since Fisher's work in the 1920s. The statistical research community has been working on the problem of detecting small effects with limited resources for a century. The answers are in the literature.
 
-Recognizing that CUPED is regression adjustment isn't pedantry. It's the difference between knowing a recipe and understanding why it works. A researcher who understands regression adjustment can handle novel situations that CUPED can't. A data scientist who only knows CUPED must wait for the next paper.
+Recognizing that CUPED is regression adjustment isn't pedantry. It's the difference between knowing a recipe and understanding why it works. A researcher who understands regression adjustment can handle situations that CUPED as a formula cannot. A data scientist who only knows CUPED must wait for the next paper.
 
 ##### References
 
-Gelman, A. & Hill, J. (2006) *Data Analysis Using Regression and Multilevel/Hierarchical Models*
+Deng, A., Xu, Y., Kohavi, R., & Walker, T. (2013). Improving the Sensitivity of Online Controlled Experiments by Utilizing Pre-Experiment Data. *Proceedings of the Sixth ACM International Conference on Web Search and Data Mining*, 123–132.
+
+Gelman, A. & Hill, J. (2006). *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge University Press.
