@@ -43,7 +43,7 @@ params:
 
   social:
     rss: true
-    # email: "you@example.com"
+    email: "nothing.so.practical.blog@gmail.com"
     # github: "https://github.com/youruser"
     # linkedin: "https://www.linkedin.com/in/yourprofile"
     # bluesky: "https://bsky.app/profile/handle.bsky.social"
