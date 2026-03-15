@@ -77,6 +77,19 @@ mark {
     border-radius: 3px;
 }
 
+/* Reading page: larger font, tighter list spacing */
+.reading-page .post-container {
+    font-size: 18px;
+}
+.reading-page .post-container ul {
+    list-style: none;
+    padding-left: 0;
+}
+.reading-page .post-container li {
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+}
+
 /* Figure captions */
 .post-container figure figcaption {
     font-size: 14px !important;
