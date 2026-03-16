@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
+from scipy.stats import norm
 
-# ── Paths ────────────────────────────────────────────────────────────────────
+# Paths
 OUT_DIR = Path(__file__).parent.parent.parent / "static/img/posts/cuped"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 FIG_PATH = OUT_DIR / "cuped_vs_ancova.svg"
@@ -10,14 +11,16 @@ FIG_COV_PATH = OUT_DIR / "pre_post_covariation.svg"
 FIG_VARRED_PATH = OUT_DIR / "variance_reduction.svg"
 FIG_DIST_PATH = OUT_DIR / "tx_effect_distributions.svg"
 
-# ── Colors ───────────────────────────────────────────────────────────────────
-# Line / annotation colors
+# Colors
 BLUE = "#2C4A7A"
 RED = "#7A2A35"
-# Lighter point colors for scatter (less visual density)
 PT_BLUE = "#6B9BD2"
 PT_RED = "#C47A85"
 GRAY = "#9E9E9E"
+DARK_GRAY = "#333333"
+MID_GRAY = "#666666"
+INDIGO = "#3B3F6E"
+PT_INDIGO = "#7A7FB5"
 
 plt.rcParams.update({
     "font.family": "sans-serif",
@@ -29,7 +32,34 @@ plt.rcParams.update({
 })
 
 
-# ── Simulation ───────────────────────────────────────────────────────────────
+# Helpers
+def _downsample(arrays, n_plot=750, seed=99):
+    """Return downsampled views of arrays for plotting."""
+
+    rng = np.random.default_rng(seed)
+    n = len(arrays[0])
+    idx = rng.choice(n, size=min(n_plot, n), replace=False)
+
+    return tuple(a[idx] for a in arrays)
+
+
+def _style_spines(*axes):
+    """Apply consistent spine colors to axes."""
+
+    for ax in axes:
+        ax.spines["bottom"].set_color(GRAY)
+        ax.spines["left"].set_color(GRAY)
+
+
+def _save_figure(fig, path):
+    """Save figure as SVG, print path, and close."""
+
+    fig.savefig(path, format="svg", bbox_inches="tight")
+    print(f"Saved figure → {path}")
+    plt.close(fig)
+
+
+# Simulation
 def simulate(n=5000, tau=3.0, seed=42):
     """
     Simulate an AB test with a pre-experiment covariate.
@@ -50,16 +80,13 @@ def simulate(n=5000, tau=3.0, seed=42):
     rng = np.random.default_rng(seed)
 
     # Pre-experiment search rate (%), drawn from a Beta → scaled to [0, 60]
-    # Beta(2, 5) gives a right-skewed distribution with values near zero.
-    pre_raw = rng.beta(2, 5, size=2 * n)
-    pre = 60 * pre_raw  # map to [0, 60] range
+    pre = 60 * rng.beta(2, 5, size=2 * n)
 
     # Treatment assignment (random)
     treatment = np.concatenate([np.zeros(n), np.ones(n)])
     rng.shuffle(treatment)
 
-    # In-experiment search rate:
-    #   post = intercept + slope * pre + tau * treatment + noise
+    # In-experiment search rate
     slope = 0.6
     intercept = 12.0
     noise = rng.normal(0, 6.0, size=2 * n)
@@ -69,18 +96,20 @@ def simulate(n=5000, tau=3.0, seed=42):
             "true_tau": tau, "true_slope": slope}
 
 
-# ── OLS via normal equations ─────────────────────────────────────────────────
+# OLS via normal equations
 def ols(X, y):
     """Return (coefficients, residuals, R²) from OLS."""
+
     beta = np.linalg.lstsq(X, y, rcond=None)[0]
     resid = y - X @ beta
     ss_res = resid @ resid
     ss_tot = np.sum((y - y.mean()) ** 2)
     r2 = 1 - ss_res / ss_tot
+
     return beta, resid, r2
 
 
-# ── CUPED adjustment ────────────────────────────────────────────────────────
+# CUPED adjustment
 def cuped_adjust(pre, post):
     """
     Return CUPED-adjusted outcome and theta.
@@ -88,15 +117,59 @@ def cuped_adjust(pre, post):
     adjusted_i = post_i - theta * (pre_i - mean(pre))
     where theta = cov(post, pre) / var(pre)
     """
+
     theta = np.cov(post, pre)[0, 1] / np.var(pre, ddof=1)
     adjusted = post - theta * (pre - pre.mean())
+
     return adjusted, theta
 
 
-# ── Print summary statistics ─────────────────────────────────────────────────
-def print_stats(data):
+# Compute statistics
+def compute_stats(data):
+    """Compute all summary statistics from simulated data."""
     pre, post, treat = data["pre"], data["post"], data["treatment"]
     n = len(pre)
+
+    rho = np.corrcoef(pre, post)[0, 1]
+
+    # CUPED
+    adjusted, theta = cuped_adjust(pre, post)
+    cuped_est = adjusted[treat == 1].mean() - adjusted[treat == 0].mean()
+
+    # ANCOVA
+    X = np.column_stack([np.ones(n), treat, pre])
+    ancova_beta, resid, r2 = ols(X, post)
+    sigma2 = (resid @ resid) / (n - 3)
+    var_beta = sigma2 * np.linalg.inv(X.T @ X)
+    se_tau = np.sqrt(var_beta[1, 1])
+
+    # Simple t-test (no covariate)
+    X_simple = np.column_stack([np.ones(n), treat])
+    beta_s, resid_s, _ = ols(X_simple, post)
+    sigma2_s = (resid_s @ resid_s) / (n - 2)
+    var_beta_s = sigma2_s * np.linalg.inv(X_simple.T @ X_simple)
+    se_simple = np.sqrt(var_beta_s[1, 1])
+
+    return {
+        "rho": rho,
+        "theta": theta,
+        "cuped_est": cuped_est,
+        "ancova_beta": ancova_beta,
+        "ancova_r2": r2,
+        "adjusted": adjusted,
+        "se_tau": se_tau,
+        "se_simple": se_simple,
+        "naive_est": beta_s[1],
+    }
+
+
+# Print summary
+def print_stats(data, stats):
+    """Print a formatted summary of simulation results."""
+
+    pre, post, treat = data["pre"], data["post"], data["treatment"]
+    n = len(pre)
+    beta = stats["ancova_beta"]
 
     print("=" * 60)
     print("SIMULATION SUMMARY")
@@ -106,92 +179,63 @@ def print_stats(data):
     print(f"True treatment effect: {data['true_tau']:.1f} pp")
     print()
 
-    # Pre-experiment descriptives
     print(f"Pre-experiment SR:  mean = {pre.mean():.1f}%,  "
           f"sd = {pre.std():.1f}")
     print(f"In-experiment SR:   mean = {post.mean():.1f}%,  "
           f"sd = {post.std():.1f}")
     print()
 
-    # Correlation
-    rho = np.corrcoef(pre, post)[0, 1]
+    rho = stats["rho"]
     print(f"Correlation(pre, post): {rho:.3f}")
     print(f"Variance reduction:     1 - rho^2 = {1 - rho**2:.3f}  "
-          f"({(rho**2) * 100:.1f}% removed)")
+          f"({rho**2 * 100:.1f}% removed)")
     print()
 
-    # ── Naive difference in means ────────────────────────────────────────
-    diff_naive = post[treat == 1].mean() - post[treat == 0].mean()
-    print(f"Naive difference in means: {diff_naive:.2f}")
+    print(f"Naive difference in means: {stats['naive_est']:.2f}")
     print()
 
-    # ── CUPED ────────────────────────────────────────────────────────────
-    adjusted, theta = cuped_adjust(pre, post)
-    adj_treat = adjusted[treat == 1].mean()
-    adj_ctrl = adjusted[treat == 0].mean()
-    cuped_est = adj_treat - adj_ctrl
-    print(f"CUPED theta:              {theta:.4f}")
-    print(f"CUPED treatment estimate: {cuped_est:.2f}")
+    print(f"CUPED theta:              {stats['theta']:.4f}")
+    print(f"CUPED treatment estimate: {stats['cuped_est']:.2f}")
     print(f"  Var(observed):  {np.var(post, ddof=1):.2f}")
-    print(f"  Var(adjusted):  {np.var(adjusted, ddof=1):.2f}")
+    print(f"  Var(adjusted):  {np.var(stats['adjusted'], ddof=1):.2f}")
     print()
 
-    # ── ANCOVA (regression) ──────────────────────────────────────────────
-    X = np.column_stack([np.ones(n), treat, pre])
-    beta, resid, r2 = ols(X, post)
     print(f"ANCOVA regression:  post = {beta[0]:.2f} + "
           f"{beta[1]:.2f}*treat + {beta[2]:.4f}*pre")
     print(f"  Treatment effect (tau): {beta[1]:.2f}")
     print(f"  Pre-experiment coef:    {beta[2]:.4f}")
-    print(f"  R²: {r2:.3f}")
-
-    # Standard errors (OLS, homoscedastic)
-    sigma2 = (resid @ resid) / (n - 3)
-    var_beta = sigma2 * np.linalg.inv(X.T @ X)
-    se_tau = np.sqrt(var_beta[1, 1])
-    print(f"  SE(tau): {se_tau:.2f}")
+    print(f"  R²: {stats['ancova_r2']:.3f}")
+    print(f"  SE(tau): {stats['se_tau']:.2f}")
     print()
 
-    # ── Simple t-test (no covariate) ─────────────────────────────────────
-    X_simple = np.column_stack([np.ones(n), treat])
-    beta_s, resid_s, _ = ols(X_simple, post)
-    sigma2_s = (resid_s @ resid_s) / (n - 2)
-    var_beta_s = sigma2_s * np.linalg.inv(X_simple.T @ X_simple)
-    se_simple = np.sqrt(var_beta_s[1, 1])
-    print(f"Simple t-test estimate:  {beta_s[1]:.2f}  (SE = {se_simple:.2f})")
-    print(f"SE reduction from ANCOVA: {(1 - se_tau / se_simple) * 100:.1f}%")
+    print(f"Simple t-test estimate:  {stats['naive_est']:.2f}  "
+          f"(SE = {stats['se_simple']:.2f})")
+    print(f"SE reduction from ANCOVA: "
+          f"{(1 - stats['se_tau'] / stats['se_simple']) * 100:.1f}%")
     print("=" * 60)
 
-    return {
-        "rho": rho, "theta": theta, "cuped_est": cuped_est,
-        "ancova_beta": beta, "adjusted": adjusted,
-        "se_tau": se_tau, "se_simple": se_simple,
-    }
 
-
-# ── Figure ───────────────────────────────────────────────────────────────────
+# Figure
 def make_figure(data, stats, n_plot=750):
     pre, post, treat = data["pre"], data["post"], data["treatment"]
     adjusted = stats["adjusted"]
     beta = stats["ancova_beta"]
 
-    # Downsample for plotting (use all data for stats, fewer points for clarity)
-    rng = np.random.default_rng(99)
-    idx = rng.choice(len(pre), size=min(n_plot, len(pre)), replace=False)
-    pre_p, post_p, treat_p, adj_p = pre[idx], post[idx], treat[idx], adjusted[idx]
+    pre_p, post_p, treat_p, adj_p = _downsample(
+        [pre, post, treat, adjusted], n_plot,
+    )
 
     ctrl_p = treat_p == 0
     tx_p = treat_p == 1
-
-    # Full-data masks (for mean lines)
     ctrl = treat == 0
     tx = treat == 1
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.5),
-                                    sharey=True,
-                                    gridspec_kw={"wspace": 0.15})
+    fig, (ax1, ax2) = plt.subplots(
+        1, 2, figsize=(10, 4.5),
+        sharey=True, gridspec_kw={"wspace": 0.15},
+    )
 
-    # ── Left panel: ANCOVA ───────────────────────────────────────────────
+    # Left panel: ANCOVA
     ax1.scatter(pre_p[ctrl_p], post_p[ctrl_p], s=16, alpha=0.4,
                 color=PT_RED, edgecolors="none", label="Control")
     ax1.scatter(pre_p[tx_p], post_p[tx_p], s=16, alpha=0.4,
@@ -201,26 +245,26 @@ def make_figure(data, stats, n_plot=750):
     xbar = pre.mean()
     ax1.axvline(xbar, color=GRAY, ls="--", lw=1.0, alpha=0.85)
     ax1.text(xbar + 0.8, ax1.get_ylim()[0] + 1, f"Grand mean\n({xbar:.0f}%)",
-             fontsize=8, color="#666666", va="bottom")
+             fontsize=8, color=MID_GRAY, va="bottom")
 
-    # Regression lines (extend to y-axis)
+    # Regression lines
     x_range = np.array([0, pre.max() + 1])
-    y_ctrl_line = beta[0] + beta[2] * x_range
-    y_tx_line = beta[0] + beta[1] + beta[2] * x_range
-    ax1.plot(x_range, y_ctrl_line, color=RED, lw=1.8, alpha=0.8)
-    ax1.plot(x_range, y_tx_line, color=BLUE, lw=1.8, alpha=0.8)
+    ax1.plot(x_range, beta[0] + beta[2] * x_range,
+             color=RED, lw=1.8, alpha=0.8)
+    ax1.plot(x_range, beta[0] + beta[1] + beta[2] * x_range,
+             color=BLUE, lw=1.8, alpha=0.8)
 
-    # Annotate treatment effect (vertical gap, right of grand mean)
+    # Annotate treatment effect
     y_mid_ctrl = beta[0] + beta[2] * xbar
     y_mid_tx = y_mid_ctrl + beta[1]
     ax1.annotate(
         "", xy=(xbar + 4, y_mid_tx), xytext=(xbar + 4, y_mid_ctrl),
-        arrowprops=dict(arrowstyle="<->", color="#333333", lw=1.5),
+        arrowprops=dict(arrowstyle="<->", color=DARK_GRAY, lw=1.5),
     )
     ax1.text(xbar + 5, (y_mid_ctrl + y_mid_tx) / 2,
              f"$\\hat{{\\tau}}$ = {beta[1]:.1f}",
              ha="left", va="center", fontsize=10, fontweight="semibold",
-             color="#333333")
+             color=DARK_GRAY)
 
     ax1.set_xlabel("Pre-experiment SR (%)")
     ax1.set_ylabel("Adjusted Search Rate (%)")
@@ -228,18 +272,11 @@ def make_figure(data, stats, n_plot=750):
     ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#BDBDBD",
                loc="upper left")
 
-    # Subtitle
-    ax1.text(0.5, -0.15,
-             "Parallel regression lines. The treatment\n"
-             "effect is the constant vertical gap.",
-             transform=ax1.transAxes, ha="center", va="top",
-             fontsize=8.5, color="#666666", style="italic")
-
-    # ── Right panel: CUPED ───────────────────────────────────────────────
+    # Right panel: CUPED
     ax2.scatter(pre_p[ctrl_p], adj_p[ctrl_p], s=16, alpha=0.4,
-                color=PT_RED, edgecolors="none", label="Control (adj.)")
+                color=PT_RED, edgecolors="none", label="Control")
     ax2.scatter(pre_p[tx_p], adj_p[tx_p], s=16, alpha=0.4,
-                color=PT_BLUE, edgecolors="none", label="Treatment (adj.)")
+                color=PT_BLUE, edgecolors="none", label="Treatment")
 
     # Flat group means
     mean_adj_ctrl = adjusted[ctrl].mean()
@@ -251,73 +288,51 @@ def make_figure(data, stats, n_plot=750):
     x_ann = pre.max() - 2
     ax2.annotate(
         "", xy=(x_ann, mean_adj_tx), xytext=(x_ann, mean_adj_ctrl),
-        arrowprops=dict(arrowstyle="<->", color="#333333", lw=1.5),
+        arrowprops=dict(arrowstyle="<->", color=DARK_GRAY, lw=1.5),
     )
     ax2.text(x_ann + 1.5, (mean_adj_ctrl + mean_adj_tx) / 2,
              f"$\\hat{{\\tau}}$ = {mean_adj_tx - mean_adj_ctrl:.1f}",
              ha="left", va="center", fontsize=10, fontweight="semibold",
-             color="#333333")
+             color=DARK_GRAY)
 
     ax2.set_xlabel("Pre-experiment SR (%)")
     ax2.set_title("CUPED", fontsize=13, fontweight="semibold", pad=10)
     ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#BDBDBD",
                loc="upper left")
 
-    # Subtitle
-    ax2.text(0.5, -0.15,
-             "After subtracting $\\theta \\times (X_i - \\bar{X})$, the slope\n"
-             "disappears. The treatment effect is the gap\nbetween the "
-             "two flat means.",
-             transform=ax2.transAxes, ha="center", va="top",
-             fontsize=8.5, color="#666666", style="italic")
-
-    for ax in (ax1, ax2):
-        ax.spines["bottom"].set_color(GRAY)
-        ax.spines["left"].set_color(GRAY)
-
-    fig.savefig(FIG_PATH, format="svg", bbox_inches="tight")
-    print(f"\nSaved figure → {FIG_PATH}")
-    plt.close(fig)
+    _style_spines(ax1, ax2)
+    _save_figure(fig, FIG_PATH)
 
 
-# ── Covariation figure ───────────────────────────────────────────────────────
+# Covariation figure
 def make_covariation_figure(data, stats, n_plot=750):
-    pre, post, treat = data["pre"], data["post"], data["treatment"]
+    pre, post = data["pre"], data["post"]
     rho = stats["rho"]
 
-    # Downsample for plotting
-    rng = np.random.default_rng(99)
-    idx = rng.choice(len(pre), size=min(n_plot, len(pre)), replace=False)
-    pre_p, post_p = pre[idx], post[idx]
+    pre_p, post_p = _downsample([pre, post], n_plot)
 
-    # Simple regression line (ignoring treatment for this plot)
     slope, intercept = np.polyfit(pre, post, 1)
 
     fig, ax = plt.subplots(figsize=(5.5, 4.5))
 
     ax.scatter(pre_p, post_p, s=16, alpha=0.4,
-               color="#7A7FB5", edgecolors="none")
+               color=PT_INDIGO, edgecolors="none")
 
     x_range = np.array([0, pre.max() + 1])
     ax.plot(x_range, intercept + slope * x_range,
-            color="#3B3F6E", lw=2, alpha=0.85)
+            color=INDIGO, lw=2, alpha=0.85)
 
-    # Annotate correlation
     ax.text(0.95, 0.08, f"$\\rho$ = {rho:.2f}",
             transform=ax.transAxes, ha="right", va="bottom",
-            fontsize=12, fontweight="semibold", color="#3B3F6E")
+            fontsize=12, fontweight="semibold", color=INDIGO)
 
     ax.set_xlabel("Pre-experiment SR (%)")
-    ax.set_ylabel("In-experiment SR (%)")
-    ax.spines["bottom"].set_color(GRAY)
-    ax.spines["left"].set_color(GRAY)
-
-    fig.savefig(FIG_COV_PATH, format="svg", bbox_inches="tight")
-    print(f"Saved figure → {FIG_COV_PATH}")
-    plt.close(fig)
+    ax.set_ylabel("Experiment SR (%)")
+    _style_spines(ax)
+    _save_figure(fig, FIG_COV_PATH)
 
 
-# ── Variance reduction figure ────────────────────────────────────────────────
+# Variance reduction figure
 def make_variance_reduction_figure(stats):
     rho_data = stats["rho"]
 
@@ -326,61 +341,43 @@ def make_variance_reduction_figure(stats):
 
     fig, ax = plt.subplots(figsize=(6, 4))
 
-    # Curve
-    ax.plot(rho, var_remaining, color="#3B3F6E", lw=2.5)
-
-    # Fill under curve
-    ax.fill_between(rho, var_remaining, alpha=0.08, color="#3B3F6E")
+    ax.plot(rho, var_remaining, color=INDIGO, lw=2.5)
+    ax.fill_between(rho, var_remaining, alpha=0.08, color=INDIGO)
 
     # Mark our data point
     our_y = 1 - rho_data ** 2
-    ax.plot(rho_data, our_y, "o", color="#2C4A7A", markersize=8, zorder=5)
+    ax.plot(rho_data, our_y, "o", color=BLUE, markersize=8, zorder=5)
     ax.annotate(
         f"Our data\n$\\rho$ = {rho_data:.2f}",
         xy=(rho_data, our_y),
         xytext=(rho_data + 0.12, our_y + 0.08),
-        fontsize=9, color="#2C4A7A", fontweight="semibold",
-        arrowprops=dict(arrowstyle="-", color="#2C4A7A", lw=1.2),
+        fontsize=9, color=BLUE,
+        fontweight="semibold",
+        arrowprops=dict(arrowstyle="-", color=BLUE, lw=1.2),
     )
 
-    # Mark ρ = 0.5
-    r05_y = 1 - 0.5 ** 2
-    ax.plot(0.5, r05_y, "o", color=GRAY, markersize=6, zorder=5)
-    ax.annotate(
-        "$\\rho$ = 0.5",
-        xy=(0.5, r05_y),
-        xytext=(0.58, 0.85),
-        fontsize=8.5, color="#666666",
-        arrowprops=dict(arrowstyle="-", color=GRAY, lw=0.8),
-    )
-
-    # Mark ρ = 0.9
-    r09_y = 1 - 0.9 ** 2
-    ax.plot(0.9, r09_y, "o", color=GRAY, markersize=6, zorder=5)
-    ax.annotate(
-        "$\\rho$ = 0.9",
-        xy=(0.9, r09_y),
-        xytext=(0.75, 0.42),
-        fontsize=8.5, color="#666666",
-        arrowprops=dict(arrowstyle="-", color=GRAY, lw=0.8),
-    )
+    # Reference points
+    for rho_ref, label_offset in [(0.5, (0.58, 0.85)), (0.9, (0.94, 0.23))]:
+        ref_y = 1 - rho_ref ** 2
+        ax.plot(rho_ref, ref_y, "o", color=GRAY, markersize=6, zorder=5)
+        ax.annotate(
+            f"$\\rho$ = {rho_ref}",
+            xy=(rho_ref, ref_y),
+            xytext=label_offset,
+            fontsize=8.5, color=MID_GRAY,
+            arrowprops=dict(arrowstyle="-", color=GRAY, lw=0.8),
+        )
 
     ax.set_xlabel("Correlation ($\\rho$)")
     ax.set_ylabel("Fraction of variance remaining")
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1.05)
-    ax.spines["bottom"].set_color(GRAY)
-    ax.spines["left"].set_color(GRAY)
-
-    fig.savefig(FIG_VARRED_PATH, format="svg", bbox_inches="tight")
-    print(f"Saved figure → {FIG_VARRED_PATH}")
-    plt.close(fig)
+    _style_spines(ax)
+    _save_figure(fig, FIG_VARRED_PATH)
 
 
-# ── Treatment effect distribution figure ─────────────────────────────────────
+# Treatment effect distribution figure
 def make_tx_distribution_figure(stats):
-    from scipy.stats import norm
-
     tau = stats["cuped_est"]
     se_naive = stats["se_simple"]
     se_adj = stats["se_tau"]
@@ -392,42 +389,27 @@ def make_tx_distribution_figure(stats):
     fig, ax = plt.subplots(figsize=(6.5, 4))
 
     # Naive (wider)
-    ax.plot(x, y_naive, color=RED, lw=2, label="Without adjustment")
+    ax.plot(x, y_naive, color=RED, lw=2, label="Unadjustment")
     ax.fill_between(x, y_naive, alpha=0.12, color=RED)
 
     # Adjusted (narrower)
-    ax.plot(x, y_adj, color="#2C4A7A", lw=2.2, label="With CUPED / ANCOVA")
-    ax.fill_between(x, y_adj, alpha=0.15, color="#2C4A7A")
+    ax.plot(x, y_adj, color=BLUE, lw=2.2, label="With CUPED")
+    ax.fill_between(x, y_adj, alpha=0.15, color=BLUE)
 
     # Treatment effect line
-    ax.axvline(tau, color="#333333", ls="--", lw=0.9, alpha=0.5)
-    ax.text(tau, max(y_adj) * 1.05,
-            f"$\\hat{{\\tau}}$ = {tau:.1f}",
-            ha="center", va="bottom", fontsize=10,
-            fontweight="semibold", color="#333333")
+    ax.axvline(tau, color=DARK_GRAY, ls="--", lw=0.9, alpha=0.5)
 
-    # SE annotations — arrows from center, labels outside right tail
-    # Naive
-    h_naive = norm.pdf(tau + se_naive, tau, se_naive)
-    ax.annotate(
-        "", xy=(tau + se_naive, h_naive), xytext=(tau, h_naive),
-        arrowprops=dict(arrowstyle="<->", color=RED, lw=1.3),
-    )
-    ax.text(tau + se_naive + 0.02, h_naive,
-            f"SE = {se_naive:.2f}",
-            ha="left", va="center", fontsize=9, color=RED,
-            fontweight="semibold")
-
-    # Adjusted — place bracket higher so it visually spans the distribution
-    h_adj = norm.pdf(tau + se_adj * 0.8, tau, se_adj)
-    ax.annotate(
-        "", xy=(tau + se_adj, h_adj), xytext=(tau, h_adj),
-        arrowprops=dict(arrowstyle="<->", color="#2C4A7A", lw=1.3),
-    )
-    ax.text(tau + se_adj + 0.02, h_adj,
-            f"SE = {se_adj:.2f}",
-            ha="left", va="center", fontsize=9, color="#2C4A7A",
-            fontweight="semibold")
+    # SE annotations
+    for se, color in [(se_naive, RED), (se_adj, BLUE)]:
+        h = norm.pdf(tau + se * 0.8, tau, se)
+        ax.annotate(
+            "", xy=(tau + se, h), xytext=(tau, h),
+            arrowprops=dict(arrowstyle="<->", color=color, lw=1.3),
+        )
+        ax.text(tau + se + 0.02, h,
+                f"SE = {se:.2f}",
+                ha="left", va="center", fontsize=9, color=color,
+                fontweight="semibold")
 
     ax.set_xlabel("Treatment effect (percentage points)")
     ax.set_ylabel("Density")
@@ -436,16 +418,14 @@ def make_tx_distribution_figure(stats):
               loc="upper left")
     ax.spines["bottom"].set_color(GRAY)
     ax.spines["left"].set_visible(False)
-
-    fig.savefig(FIG_DIST_PATH, format="svg", bbox_inches="tight")
-    print(f"Saved figure → {FIG_DIST_PATH}")
-    plt.close(fig)
+    _save_figure(fig, FIG_DIST_PATH)
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
+# Main
 def main():
     data = simulate()
-    stats = print_stats(data)
+    stats = compute_stats(data)
+    print_stats(data, stats)
     make_covariation_figure(data, stats)
     make_variance_reduction_figure(stats)
     make_tx_distribution_figure(stats)
