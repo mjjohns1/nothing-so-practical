@@ -7,7 +7,7 @@ author:      "MJ"
 image:       ""
 tags:        ["causal inference"]
 categories:  []
-draft:       false
+draft:       FALSE
 ---
 
 ## Causal Inference Is Hard

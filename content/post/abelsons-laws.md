@@ -7,7 +7,7 @@ author:      "MJ"
 image:       "img/posts/abelson/stats-as-principled-arg.jpg"
 tags:        ['statistics', 'psychology']
 categories:  []
-draft:       false
+draft:       FALSE
 ---
 
 ## Abelson's Laws
