@@ -1,7 +1,7 @@
 ---
 title:       "CUPED: Old Wine in a New Bottle?"
 subtitle:    ""
-description: "CUPED has become a popular feature in online experimentation platforms. You can just use regression."
+description: "CUPED has become a popular feature in online experimentation platforms. Regression works fine too."
 date:        2026-03-09
 author:      "MJ"
 image:       ""
