@@ -7,6 +7,8 @@ OUT_DIR = Path(__file__).parent.parent.parent / "static/img/posts/cuped"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 FIG_PATH = OUT_DIR / "cuped_vs_ancova.svg"
 FIG_COV_PATH = OUT_DIR / "pre_post_covariation.svg"
+FIG_VARRED_PATH = OUT_DIR / "variance_reduction.svg"
+FIG_DIST_PATH = OUT_DIR / "tx_effect_distributions.svg"
 
 # ── Colors ───────────────────────────────────────────────────────────────────
 # Line / annotation colors
@@ -47,10 +49,10 @@ def simulate(n=5000, tau=3.0, seed=42):
     """
     rng = np.random.default_rng(seed)
 
-    # Pre-experiment search rate (%), drawn from a Beta → scaled to [5, 60]
-    # Beta(2, 5) gives a right-skewed distribution centered ~25-30%.
+    # Pre-experiment search rate (%), drawn from a Beta → scaled to [0, 60]
+    # Beta(2, 5) gives a right-skewed distribution with values near zero.
     pre_raw = rng.beta(2, 5, size=2 * n)
-    pre = 5 + 55 * pre_raw  # map to [5, 60] range
+    pre = 60 * pre_raw  # map to [0, 60] range
 
     # Treatment assignment (random)
     treatment = np.concatenate([np.zeros(n), np.ones(n)])
@@ -315,11 +317,138 @@ def make_covariation_figure(data, stats, n_plot=750):
     plt.close(fig)
 
 
+# ── Variance reduction figure ────────────────────────────────────────────────
+def make_variance_reduction_figure(stats):
+    rho_data = stats["rho"]
+
+    rho = np.linspace(0, 0.99, 200)
+    var_remaining = 1 - rho ** 2
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+
+    # Curve
+    ax.plot(rho, var_remaining, color="#3B3F6E", lw=2.5)
+
+    # Fill under curve
+    ax.fill_between(rho, var_remaining, alpha=0.08, color="#3B3F6E")
+
+    # Mark our data point
+    our_y = 1 - rho_data ** 2
+    ax.plot(rho_data, our_y, "o", color="#2C4A7A", markersize=8, zorder=5)
+    ax.annotate(
+        f"Our data\n$\\rho$ = {rho_data:.2f}",
+        xy=(rho_data, our_y),
+        xytext=(rho_data + 0.12, our_y + 0.08),
+        fontsize=9, color="#2C4A7A", fontweight="semibold",
+        arrowprops=dict(arrowstyle="-", color="#2C4A7A", lw=1.2),
+    )
+
+    # Mark ρ = 0.5
+    r05_y = 1 - 0.5 ** 2
+    ax.plot(0.5, r05_y, "o", color=GRAY, markersize=6, zorder=5)
+    ax.annotate(
+        "$\\rho$ = 0.5",
+        xy=(0.5, r05_y),
+        xytext=(0.58, 0.85),
+        fontsize=8.5, color="#666666",
+        arrowprops=dict(arrowstyle="-", color=GRAY, lw=0.8),
+    )
+
+    # Mark ρ = 0.9
+    r09_y = 1 - 0.9 ** 2
+    ax.plot(0.9, r09_y, "o", color=GRAY, markersize=6, zorder=5)
+    ax.annotate(
+        "$\\rho$ = 0.9",
+        xy=(0.9, r09_y),
+        xytext=(0.75, 0.42),
+        fontsize=8.5, color="#666666",
+        arrowprops=dict(arrowstyle="-", color=GRAY, lw=0.8),
+    )
+
+    ax.set_xlabel("Correlation ($\\rho$)")
+    ax.set_ylabel("Fraction of variance remaining")
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1.05)
+    ax.spines["bottom"].set_color(GRAY)
+    ax.spines["left"].set_color(GRAY)
+
+    fig.savefig(FIG_VARRED_PATH, format="svg", bbox_inches="tight")
+    print(f"Saved figure → {FIG_VARRED_PATH}")
+    plt.close(fig)
+
+
+# ── Treatment effect distribution figure ─────────────────────────────────────
+def make_tx_distribution_figure(stats):
+    from scipy.stats import norm
+
+    tau = stats["cuped_est"]
+    se_naive = stats["se_simple"]
+    se_adj = stats["se_tau"]
+
+    x = np.linspace(tau - 4 * se_naive, tau + 4 * se_naive, 300)
+    y_naive = norm.pdf(x, tau, se_naive)
+    y_adj = norm.pdf(x, tau, se_adj)
+
+    fig, ax = plt.subplots(figsize=(6.5, 4))
+
+    # Naive (wider)
+    ax.plot(x, y_naive, color=RED, lw=2, label="Without adjustment")
+    ax.fill_between(x, y_naive, alpha=0.12, color=RED)
+
+    # Adjusted (narrower)
+    ax.plot(x, y_adj, color="#2C4A7A", lw=2.2, label="With CUPED / ANCOVA")
+    ax.fill_between(x, y_adj, alpha=0.15, color="#2C4A7A")
+
+    # Treatment effect line
+    ax.axvline(tau, color="#333333", ls="--", lw=0.9, alpha=0.5)
+    ax.text(tau, max(y_adj) * 1.05,
+            f"$\\hat{{\\tau}}$ = {tau:.1f}",
+            ha="center", va="bottom", fontsize=10,
+            fontweight="semibold", color="#333333")
+
+    # SE annotations — arrows from center, labels outside right tail
+    # Naive
+    h_naive = norm.pdf(tau + se_naive, tau, se_naive)
+    ax.annotate(
+        "", xy=(tau + se_naive, h_naive), xytext=(tau, h_naive),
+        arrowprops=dict(arrowstyle="<->", color=RED, lw=1.3),
+    )
+    ax.text(tau + se_naive + 0.02, h_naive,
+            f"SE = {se_naive:.2f}",
+            ha="left", va="center", fontsize=9, color=RED,
+            fontweight="semibold")
+
+    # Adjusted — place bracket higher so it visually spans the distribution
+    h_adj = norm.pdf(tau + se_adj * 0.8, tau, se_adj)
+    ax.annotate(
+        "", xy=(tau + se_adj, h_adj), xytext=(tau, h_adj),
+        arrowprops=dict(arrowstyle="<->", color="#2C4A7A", lw=1.3),
+    )
+    ax.text(tau + se_adj + 0.02, h_adj,
+            f"SE = {se_adj:.2f}",
+            ha="left", va="center", fontsize=9, color="#2C4A7A",
+            fontweight="semibold")
+
+    ax.set_xlabel("Treatment effect (percentage points)")
+    ax.set_ylabel("Density")
+    ax.set_yticks([])
+    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#BDBDBD",
+              loc="upper left")
+    ax.spines["bottom"].set_color(GRAY)
+    ax.spines["left"].set_visible(False)
+
+    fig.savefig(FIG_DIST_PATH, format="svg", bbox_inches="tight")
+    print(f"Saved figure → {FIG_DIST_PATH}")
+    plt.close(fig)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 def main():
     data = simulate()
     stats = print_stats(data)
     make_covariation_figure(data, stats)
+    make_variance_reduction_figure(stats)
+    make_tx_distribution_figure(stats)
     make_figure(data, stats)
 
 

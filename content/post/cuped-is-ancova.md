@@ -20,7 +20,7 @@ Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Da
 
 Suppose you're testing whether an updated page layout increases use of a search feature. You randomly assign 10,000 users, 5,000 to treatment (new layout) and 5,000 to control (old layout). Users vary in how often they search. Heavy users tend to search less while casual users search more. This natural variation is noise. It has nothing to do with whether the new layout works.
 
-Most of those 10,000 users used the search feature before the experiment started, and you have their prior usage rate. The average pre-experiment search rate across all users is 21%. For each user, CUPED subtracts the average from their pre-experiment rate, weights the difference by a coefficient $\theta$, and subtracts the result from the observed in-experiment search rate.
+Most of those 10,000 users used the search feature before the experiment started, and you have their prior usage rate. The average pre-experiment search rate across all users is 17%. For each user, CUPED subtracts the average from their pre-experiment rate, weights the difference by a coefficient $\theta$, and subtracts the result from the observed in-experiment search rate.
 
 $$Y_i^{adj} = Y_i - \theta \cdot (X_i - \bar{X})$$
 
@@ -37,7 +37,7 @@ To estimate $\theta$, calculate the covariance between the pre-experiment and in
 
 $$\theta = \frac{\text{Cov}(Y, X)}{\text{Var}(X)}$$
 
-You might recognize this as the slope coefficient in a simple linear regression of $Y$ on $X$. In our simulation, $\hat{\theta}$ = 0.60. A user with a pre-experiment SR of 31% (10 points above the 21% average) gets their observed SR adjusted downward by 0.60 $\times$ 10 = 6.0 percentage points. A user at 11% (10 points below average) gets adjusted upward by 6.0 points. Users at the mean get no adjustment.
+You might recognize this as the slope coefficient in a simple linear regression of $Y$ on $X$. In our simulation, $\hat{\theta}$ = 0.60. A user with a pre-experiment SR of 27% (10 points above the 17% average) gets their observed SR adjusted downward by 0.60 $\times$ 10 = 6.0 percentage points. A user at 7% (10 points below average) gets adjusted upward by 6.0 points. Users at the mean get no adjustment.
 
 After adjusting, you estimate the treatment effect as a simple difference in adjusted means between treatment and control.
 
@@ -46,15 +46,21 @@ After adjusting, you estimate the treatment effect as a simple difference in adj
 The variance reduction depends on the correlation between the pre-experiment and in-experiment metrics. In our data, pre-experiment and in-experiment search rates are positively correlated. Users who searched more before the experiment tend to search more during it.
 
 ![Pre-experiment vs in-experiment search rates](/img/posts/cuped/pre_post_covariation.svg)
-*Each point is a user. The correlation ($\rho$ = 0.65) is the signal CUPED exploits.*
+*Each point is a user. The correlation ($\rho$ = 0.69) is the signal CUPED exploits.*
 
 The variance of the adjusted outcome is
 
-$$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 66.3 \times 0.57 = 37.9$$
+$$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 71.7 \times 0.53 = 37.9$$
 
-That's a 43% reduction in variance. The standard error of the treatment effect estimate drops from 0.16 to 0.12, a 26% reduction. In practice, that means you'd need roughly 45% fewer users to achieve the same statistical power.
+That's a 47% reduction in variance. The standard error of the treatment effect estimate drops from 0.17 to 0.12, a 29% reduction. The sampling distribution of $\hat{\tau}$ gets visibly tighter.
 
-If the correlation were 0.9, the variance reduction would be dramatic: $1 - 0.81 = 0.19$, an 81% reduction. At 0.5, you'd reduce variance by only 25%. The pre-experiment metric only helps to the extent it predicts the in-experiment outcome.
+![Sampling distribution of the treatment effect estimate](/img/posts/cuped/tx_effect_distributions.svg)
+*Both distributions are centered on the same estimate ($\hat{\tau}$ = 3.0). The adjusted estimate (blue) is more precise, concentrating probability mass closer to the true effect. In practice, this means you'd need roughly half as many users to achieve the same statistical power.*
+
+How much you gain depends entirely on the strength of the correlation. The relationship between $\rho$ and variance remaining follows a curve that accelerates as $\rho$ increases.
+
+![Variance reduction as a function of correlation](/img/posts/cuped/variance_reduction.svg)
+*At $\rho$ = 0.69, just over half the original variance remains. At $\rho$ = 0.9, only 19% remains. The pre-experiment metric only helps to the extent it predicts the in-experiment outcome.*
 
 ## CUPED is ANCOVA
 
@@ -71,7 +77,7 @@ Here's what the two methods look like side-by-side on our simulated data.
 ![ANCOVA vs CUPED](/img/posts/cuped/cuped_vs_ancova.svg)
 *Left: ANCOVA fits parallel regression lines. The treatment effect is the constant vertical gap. Right: CUPED removes the pre-experiment relationship, tightening the scatter and leaving two flat group means. Both arrive at $\hat{\tau}$ = 3.0.*
 
-The treatment effect estimates are identical. Our ANCOVA regression gives $\hat{\tau}$ = 3.03 with $\hat{\beta}$ = 0.61. CUPED gives $\hat{\tau}$ = 3.03 with $\hat{\theta}$ = 0.60. This isn't a coincidence.
+The treatment effect estimates are identical. Our ANCOVA regression gives $\hat{\tau}$ = 3.03 with $\hat{\beta}$ = 0.61. CUPED gives $\hat{\tau}$ = 3.03 with $\hat{\theta}$ = 0.60. Not a coincidence.
 
 The main difference is mechanical. CUPED multiplies $\theta$ by the mean-centered pre-experiment outcome, which zeros out the slopes and collapses the parallel lines into flat group means. The methodological distinction is that ANCOVA estimates $\beta$ simultaneously with $\tau$, while CUPED estimates $\theta$ in a prior step, treating it as a known constant during inference.
 
@@ -105,7 +111,7 @@ Solutions to these problems already exist. We didn't need an entirely new method
 
 Once you see CUPED as regression adjustment, the entire toolkit of regression becomes available.
 
-Why use only one pre-period metric? If you have multiple variables that predict the outcome (prior click rate, session length, user tenure) include them all. Variance reduction depends on how much additional outcome variance each new predictor explains beyond what the others already capture. Adding session length as a second covariate might push $\rho$ from 0.65 to 0.80, cutting residual variance to 36% of the original instead of 57%.
+Why use only one pre-period metric? If you have multiple variables that predict the outcome (prior click rate, session length, user tenure) include them all. Variance reduction depends on how much additional outcome variance each new predictor explains beyond what the others already capture. Adding session length as a second covariate might push $\rho$ from 0.69 to 0.80, cutting residual variance to 36% of the original instead of 53%.
 
 What if the relationship between the pre-period metric and the outcome isn't linear? Heavy users and light users might respond differently. Add a squared term, transform the variable, use a spline. Standard regression techniques apply directly. CUPED as a recipe doesn't tell you any of this. Regression thinking does.
 
