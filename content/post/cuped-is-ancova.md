@@ -36,9 +36,9 @@ After performing the adjustment, we can estimate the treatment effect as a simpl
 
 The variance reduction depends on the correlation between the pre-experiment and in-experiment metrics. In our data, pre-experiment and in-experiment search rates are positively correlated, $\rho$ = 0.69. The variance of the adjusted outcome is:
 
-$$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 71.7 \times 0.53 = 37.9$$
+$$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 71.7 \times 0.52 = 37.5$$
 
-That's a 47% reduction in the variance of $Y$. The standard error of the treatment effect, $\tau$, drops from 0.17 to 0.12, a 29% reduction. The sampling distribution of $\hat{\tau}$ (the estimated treatment effect) gets visibly tighter.
+That's a 48% reduction in the variance of $Y$. The standard error of the treatment effect, $\tau$, drops from 0.17 to 0.12, a 28% reduction. The sampling distribution of $\hat{\tau}$ (the estimated treatment effect) gets visibly tighter.
 
 ![Sampling distribution of the treatment effect estimate](/img/posts/cuped/tx_effect_distributions.svg)
 *The adjusted estimate (blue) is more precise, concentrating probability mass closer to the true effect. In practice, this means you'd need roughly half as many users to achieve the same statistical power.*
@@ -53,7 +53,7 @@ Anyone trained in the design and analysis of experiments will likely recognize t
 
 Instead of first adjusting each user's outcome and then comparing group means, ANCOVA fits a single regression model that estimates the treatment effect and the covariate adjustment simultaneously.[^1]
 
-$$y_i = \mu + \tau_i + \beta X_i + \epsilon_i$$
+$$y_i = \mu + \tau T_i + \beta X_i + \epsilon_i$$
 
 The treatment effect estimate is $\tau$. The coefficient $\beta$ plays the same role as $\theta$ in CUPED. It accounts for the fact that users with higher pre-experiment search rates tend to have higher in-experiment rates. By explaining that variation, the model reduces residual error and produces a more precise estimate of $\tau$.
 
@@ -83,9 +83,9 @@ Whether these are actually "strong" assumptions is open to debate. In their clas
 4. **Equal variance of errors**
 5. Normality of errors
 
-The linearity assumption is concerned with the model coefficients, not the shape of the relationship between $X$ and $Y$. When a straight line is inappropriate, we can add polynomial terms without violating linearity. The same goes for covariate adjustment in experiments. The real issue is whether the slopes for $\text{Cov}(Y, X)$ in treatment and control are parallel, not whether they are straight lines. If they aren't parallel, the treatment condition and the covariate are not independent. Adjusting for the pre-experiment outcome only works when it is unrelated to treatment. CUPED would also be inappropriate in this situation.
+The linearity assumption is concerned with the model coefficients, not the shape of the relationship between $X$ and $Y$. When a straight line is inappropriate, we can add polynomial terms without violating linearity. The same goes for covariate adjustment in experiments. The real issue is whether the regression slopes of $Y$ on $X$ in treatment and control are parallel. Non-parallel slopes mean the treatment effect varies with $X$ (e.g., the new layout helps light searchers more than heavy ones). Under randomization, both ANCOVA and CUPED still produce consistent estimates of the *average* treatment effect even when slopes differ. What you lose is efficiency and the ability to interpret $\tau$ as a constant effect for all users. An interaction term would capture the heterogeneity and recover additional variance reduction.
 
-The equal variance assumption (aka, homoscedasticity) sits near the bottom of the list. This assumption is weaker than most econometricians would have you believe. In large samples, regression estimates are generally robust to unequal error variance. Robust standard errors have been available for decades to deal with this problem. While they can be difficult to use in some situations, robust methods are prefectly suitable for a simple treatment model with only two variables.
+The equal variance assumption (aka, homoscedasticity) sits near the bottom of the list. This assumption is weaker than most econometricians would have you believe. In large samples, regression estimates are generally robust to unequal error variance. Robust standard errors have been available for decades to deal with this problem. While they can be difficult to use in some situations, robust methods are perfectly suitable for a simple treatment model with only two variables.
 
 CUPED does have a practical advantage worth noting. The two-step structure makes it natural to pre-compute $\theta$ outside the experiment. If a platform has historical paired observations (e.g., user behavior in two consecutive weeks before the experiment), it can estimate the covariance structure once and reuse it across experiments. You could technically do the same with regression, pre-computing $\beta$ from historical data and plugging it in. CUPED's formulation makes this separation obvious, which has engineering value for platforms running hundreds of experiments. The statistical result is identical either way.
 
