@@ -34,7 +34,7 @@ Astute readers might recognize this as the slope coefficient for a simple linear
 
 After performing the adjustment, we can estimate the treatment effect as a simple difference in means of the new outcome values, $Y_i^{adj}$.
 
-The variance reduction depends on the correlation between the pre-experiment and in-experiment metrics. In our data, pre-experiment and in-experiment search rates are positively correlated, $\rho$ = 0.69. The variance of the adjusted outcome is:
+The amount of variance reduction depends on the correlation between the pre-experiment and in-experiment metrics. In our data, the two search rates are positively correlated, $\rho$ = 0.69. The variance of the adjusted outcome is:
 
 $$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 71.7 \times 0.53 = 37.9$$
 
