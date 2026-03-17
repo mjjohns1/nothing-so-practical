@@ -2,7 +2,7 @@
 title:       "Causal Inference Is Easy"
 subtitle:    "Part one of a two-part series"
 description: "An accessible approach to thinking about causal inference"
-date:        2026-03-10
+date:        2026-03-16
 author:      "MJ"
 image:       ""
 tags:        ["causal inference"]
