@@ -12,7 +12,7 @@ draft:       FALSE
 
 ## CUPED: Old Wine in a New Bottle?
 
-Anyone running AB tests in industry knows the challenges. Detecting small but meaningful effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some effects will go undetected. None of those options appealing when you're running lots of tests and your stakeholders wanted the results yesterday.
+Anyone running AB tests in industry knows the challenges. Detecting small but meaningful effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some effects will go undetected. None of those options are appealing when you're running lots of tests and your stakeholders wanted the results yesterday.
 
 Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Data) to address this problem. The idea is to collect outcome data on users *before* the experiment starts and statistically adjust for those pre-experiment observations when analyzing results. The pre-treatment version of the outcome captures user-specific variance that adds noise to your estimates. Removing it lets you detect a smaller effect with the same sample size, or the same effect with a smaller sample size. Let's see how this works in practice.
 
@@ -20,7 +20,7 @@ Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Da
 
 Imagine we are running an experiment to test if an updated page layout increases the use of a search feature on our platform. We end up randomly assigning about 10,000 users to either treatment (new layout) or control (old layout). Users vary in how likely they are to use the search function. Some search more while others users search less, on average. This natural variation acts as noise when estimating the treatment effect.
 
-Most of those 10,000 users used the search feature at least once before the experiment started, and we have their prior usage rate. The average pre-experiment search rate across the users is 17%. For each user, CUPED subtracts that average, $\bar{X}$, from their individual pre-experiment search rate, $X_i$, adjusts this difference by a weight $\theta$, and then subtracts the result from the rate observed during the experiment, $Y_i$. The result is a version of the outcome, $Y_i^{adj}$, free of individual differences in search tendencies. Putting it all together, we get the following adjustment formula:
+Most of those 10,000 users used the search feature at least once before the experiment started, and we have their prior usage rate. The average pre-experiment search rate across the users is 17%. For each user, CUPED subtracts that average, $\bar{X}$, from their individual pre-experiment search rate, $X_i$, adjusts this difference by a weight, $\theta$, and then subtracts the result from the rate observed during the experiment, $Y_i$. The result is a version of the outcome, $Y_i^{adj}$, free of individual differences in search tendencies. Putting it all together, we get the following adjustment formula:
 
 $$Y_i^{adj} = Y_i - \theta (X_i - \bar{X})$$
 
@@ -34,7 +34,7 @@ Astute readers might recognize this as the slope coefficient for a simple linear
 
 After performing the adjustment, we can estimate the treatment effect as a simple difference in means of the new outcome values, $Y_i^{adj}$.
 
-The variance reduction depends on the correlation between the pre-experiment and in-experiment metrics. In our data, pre-experiment and in-experiment search rates are positively correlated, $\rho$ = 0.69. The variance of the adjusted outcome is:
+The amount of variance reduction depends on the correlation between the pre-experiment and in-experiment metrics. In our data, the two search rates are positively correlated, $\rho$ = 0.69. The variance of the adjusted outcome is:
 
 $$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 71.7 \times 0.53 = 37.9$$
 
