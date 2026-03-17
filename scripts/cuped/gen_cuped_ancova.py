@@ -258,11 +258,11 @@ def make_figure(data, stats, n_plot=750):
     y_mid_ctrl = beta[0] + beta[2] * xbar
     y_mid_tx = y_mid_ctrl + beta[1]
     ax1.annotate(
-        "", xy=(xbar + 4, y_mid_tx), xytext=(xbar + 4, y_mid_ctrl),
-        arrowprops=dict(arrowstyle="<->", color=DARK_GRAY, lw=1.5),
+        "", xy=(xbar, y_mid_tx), xytext=(xbar, y_mid_ctrl),
+        arrowprops=dict(arrowstyle="|-|", color=DARK_GRAY, lw=1.5),
     )
-    ax1.text(xbar + 5, (y_mid_ctrl + y_mid_tx) / 2,
-             f"$\\hat{{\\tau}}$ = {beta[1]:.1f}",
+    ax1.text(xbar + 8, (y_mid_ctrl + y_mid_tx) / 2,
+             f"$\\tau$ = {beta[1]:.1f}",
              ha="left", va="center", fontsize=10, fontweight="semibold",
              color=DARK_GRAY)
 
@@ -291,7 +291,7 @@ def make_figure(data, stats, n_plot=750):
         arrowprops=dict(arrowstyle="<->", color=DARK_GRAY, lw=1.5),
     )
     ax2.text(x_ann + 1.5, (mean_adj_ctrl + mean_adj_tx) / 2,
-             f"$\\hat{{\\tau}}$ = {mean_adj_tx - mean_adj_ctrl:.1f}",
+             f"$\\tau$ = {mean_adj_tx - mean_adj_ctrl:.1f}",
              ha="left", va="center", fontsize=10, fontweight="semibold",
              color=DARK_GRAY)
 
