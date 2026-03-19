@@ -16,7 +16,7 @@ Anyone running AB tests in industry knows the challenges. Detecting small but me
 
 Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Data) to address this problem. The idea is to collect outcome data on users *before* the experiment starts and statistically adjust for those pre-experiment observations when analyzing results. The pre-treatment version of the outcome captures user-specific variance that adds noise to your estimates. Removing it lets you detect a smaller effect with the same sample size, or the same effect with a smaller sample size. Let's see how this works in practice.
 
-#### A Working Example
+#### Yet Another Search Experiment
 
 Imagine we are running an experiment to test if an updated page layout increases the use of a search feature on our platform. We end up randomly assigning about 10,000 users to either treatment (new layout) or control (old layout). Users vary in how likely they are to use the search function. Some search more while others users search less, on average. This natural variation acts as noise when estimating the treatment effect.
 
@@ -24,9 +24,9 @@ Most of those 10,000 users used the search feature at least once before the expe
 
 $$Y_i^{adj} = Y_i - \theta (X_i - \bar{X})$$
 
-The coefficient $\theta$ represents how strongly the pre-experiment search behavior correlates with behavior measured during the experiment. A user with a search rate 10 percentage points higher than average before the experiment will tend to search more during, for reasons unrelated to the treatment. The adjustment subtracts that expected excess, leaving behind variation attributable to the treatment.
+The coefficient $\theta$ represents how strongly the pre-experiment search behavior correlates with behavior measured during the experiment. A user with a search rate 10 percentage points higher than average before the experiment will tend to search more during, for reasons unrelated to the treatment. The adjustment subtracts that expected excess, leaving behind variation more about the treatment effect and less about individual differences.
 
-To estimate $\theta$, we need to calculate the covariance between the pre-experiment and in-experiment search rates, and divide by the variance of the pre-experiment metric.
+To estimate $\theta$, we compute the covariance between the pre-experiment and in-experiment search rates, divided by the variance of the pre-experiment metric (using the full pooled sample).
 
 $$\theta = \frac{\text{Cov}(Y, X)}{\text{Var}(X)}$$
 
@@ -38,10 +38,10 @@ The amount of variance reduction depends on the correlation between the pre-expe
 
 $$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 71.7 \times 0.53 = 37.9$$
 
-That's a 47% reduction in the variance of $Y$. The standard error of the treatment effect, $\tau$, drops from 0.17 to 0.12, a 29% reduction. The sampling distribution of $\hat{\tau}$ (the estimated treatment effect) gets visibly tighter.
+That's a 47% reduction in the variance of $Y$. The standard error of the treatment effect, $\tau$, drops proportionally by about 27% ($1 - \sqrt{0.53} \approx 0.27$). The sampling distribution of $\hat{\tau}$ gets visibly tighter.
 
 ![Sampling distribution of the treatment effect estimate](/img/posts/cuped/tx_effect_distributions.svg)
-*The adjusted estimate (blue) is more precise, concentrating probability mass closer to the true effect. In practice, this means you'd need roughly half as many users to achieve the same statistical power.*
+*The adjusted estimate (blue) is more precise, concentrating probability mass closer to the true effect.*
 
 The relationship between $\rho$ and variance remaining follows a curve that accelerates as $\rho$ increases.
 
@@ -53,13 +53,13 @@ Anyone trained in the design and analysis of experiments will likely recognize t
 
 Instead of first adjusting each user's outcome and then comparing group means, ANCOVA fits a single regression model that estimates the treatment effect and the covariate adjustment simultaneously.[^1]
 
-$$y_i = \mu + \tau T_i + \beta X_i + \epsilon_i$$
+$$y_i = \mu + \tau T_i + \beta (X_i - \bar{X}) + \epsilon_i$$
 
-The treatment effect estimate is $\tau$. The coefficient $\beta$ plays the same role as $\theta$ in CUPED. It accounts for the fact that users with higher pre-experiment search rates tend to have higher in-experiment rates. By explaining that variation, the model reduces residual error and produces a more precise estimate of $\tau$.
+The treatment effect estimate is $\tau$. The coefficient $\beta$ plays the same role as $\theta$ in CUPED. It accounts for the fact that users with higher pre-experiment search rates tend to have higher in-experiment rates. By explaining that variation, the model reduces residual error and produces a more precise treatment estimate.
 
 Here's what the two methods look like side-by-side using data from our hypothetical experiment.
 
-{{< figure src="/img/posts/cuped/cuped_vs_ancova.svg" caption="<strong>Left:</strong> ANCOVA fits parallel regression lines. The treatment effect is the constant vertical gap. <strong>Right:</strong> CUPED removes the pre-experiment relationship, tightening the scatter and leaving two flat group means. Both arrive at the same treatment effect of 3.0." class="img-center" >}}
+{{< figure src="/img/posts/cuped/cuped_vs_ancova.svg" caption="<strong>Left:</strong> ANCOVA fits parallel regression lines. The treatment effect is the constant vertical gap, estimated at the grand mean. <strong>Right:</strong> CUPED removes the pre-experiment relationship, tightening the scatter and leaving two flat group means. Both arrive at the same treatment effect of 3.0." class="img-center" >}}
 
 The treatment effect estimates are functionally equivalent.[^2] Our ANCOVA model produces $\hat{\tau}$ = 3.03 with $\hat{\beta}$ = 0.61. CUPED produces $\hat{\tau}$ = 3.03 with $\hat{\theta}$ = 0.60.
 
@@ -83,9 +83,9 @@ Whether these are actually "strong" assumptions is open to debate. In their clas
 4. **Equal variance of errors**
 5. Normality of errors
 
-The linearity assumption is concerned with the model coefficients, not the shape of the relationship between $X$ and $Y$. When a straight line is inappropriate, we can add polynomial terms without violating linearity. The same goes for covariate adjustment in experiments. The real issue is whether the regression slopes of $Y$ on $X$ in treatment and control are parallel. Non-parallel slopes mean the treatment effect varies with $X$ (maybe the new layout helps light searchers more than heavy ones). Under randomization, both ANCOVA and CUPED still produce consistent estimates of the *average* treatment effect even when slopes differ. What you lose is efficiency and the ability to interpret $\tau$ as a constant effect for all users. An interaction term would capture the heterogeneity and recover additional variance reduction.
+The linearity assumptoin is about bias. If the true relationship between $X$ and $Y$ is non-linear the estimate of $\tau$ will not suffer under randomization. Both ANCOVA and CUPED produce consistent estimates of the *average* treatment effect even when the $XY    $ relationship is non-linear or when slopes differ across groups. What you lose is efficiency and the ability to interpret $\tau$ as a constant effect for all users. Non-linearity can be addressed by adding polynomial or spline terms. Non-parallel slopes (treatment effect heterogeneity) can be captured with an interaction term.[^4]
 
-The equal variance assumption (aka, homoscedasticity) sits near the bottom of the list. This assumption is weaker than most econometricians would have you believe. In large samples, regression estimates are generally robust to unequal error variance. Robust standard errors have been available for decades to deal with this problem. While they can be difficult to use in some situations, robust methods are perfectly suitable for a simple treatment model with only two variables.
+Equality of variances is about the standard errors. Heteroscedasticity does not bias $\hat{\tau}$ but can make the default standard errors unreliable. In practice, this is a weaker concern than most econometricians would have you believe. Robust standard errors have been available for decades. While they can be difficult to use in some situations, robust methods are perfectly suitable for a simple treatment model with only two variables.
 
 CUPED does have a practical advantage worth noting. The two-step structure makes it natural to pre-compute $\theta$ outside the experiment. If a platform has historical paired observations (e.g., user behavior in two consecutive weeks before the experiment), it can estimate the covariance structure once and reuse it across experiments. You could technically do the same with regression, pre-computing $\beta$ from historical data and plugging it in. CUPED's formulation makes this separation obvious, which has engineering value for platforms running hundreds of experiments. The statistical result is identical either way.
 
@@ -105,8 +105,12 @@ Gelman, A. & Hill, J. (2006). *Data Analysis Using Regression and Multilevel/Hie
 
 Keppel, G. (1991). *Design and analysis: A researcher's handbook* (3rd ed.). Prentice-Hall, Inc.
 
-[^1]: I'm using ANCOVA and regression interchangeably to emphasize the fact that all you're doing is fitting a linear model to estimate a treatment effect, $\tau$, while controlling for a covariate, $X$. ANCOVA is typically used when the treatment variable is categorical. Regression can handle categorical treatment variables, as well as continuous treatments. Thus, ANCOVA can be seen as a special case of regression.
+Lin, W. (2013). Agnostic Notes on Regression Adjustments to Experimental Data: Reexamining Freedman's Critique. *Annals of Applied Statistics*, 7(1), 295–318.
 
-[^2]: Technically, they are not algebraically identical in finite samples. CUPED uses the marginal slope $θ = Cov(Y,X)/Var(X)$; ANCOVA technically estimates a partial regression coefficient. These converge asymptotically under random assignment but can differ in any given sample.
+[^1]: I'm using ANCOVA and regression interchangeably to emphasize the fact that all you're doing is fitting a linear model to estimate a treatment effect, $\tau$, while controlling for a covariate, $X$. ANCOVA is used when the treatment variable is categorical. Regression can handle categorical treatment variables, as well as continuous treatments. ANCOVA can be seen as a special case of regression.
 
-[^3]: Because CUPED ignores estimation uncertainty in $\theta$, its standard errors will tend to be optimistic (too small). ANCOVA accounts for this through joint estimation of $\beta$ and $\tau$. The difference will be negligible in large samples but matters for smaller experiments.
+[^2]: The two estimators are not algebraically identical in finite samples. CUPED uses the marginal slope $\hat{\theta} = \text{Cov}(Y,X)/\text{Var}(X)$ pooled across groups, while ANCOVA estimates a partial slope $\hat{\beta}$ that conditions on treatment assignment.
+
+[^3]: Because CUPED ignores estimation uncertainty in $\theta$, its standard errors will tend to be optimistic (too small). ANCOVA accounts for this through joint estimation of $\beta$ and $\tau$. The difference will be negligible in large samples but matters for smaller experiments, where variance reduction techiniques are most valuable.
+
+[^4]: For a formal treatment, see Lin (2013), who shows that ANCOVA with treatment-covariate interactions is asymptotically at least as efficient as any linear adjustment under randomization alone.
