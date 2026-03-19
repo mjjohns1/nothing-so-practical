@@ -164,7 +164,8 @@ The real work of causal inference isn’t technical, it's substantive. It requir
 
 Technical frameworks are valuable precisely because they make reasoning explicit and systematic. Researchers are forced to articulate their assumptions about the data generating process. They provide formal rules for translating those assumptions into valid causal estimates. They provide a check on whether your logic is internally consistent. But they really only work if you understand the domain you're studying. No amount of technical sophistication can substitute for that knowledge.
 
-Causal inference ultimately comes down to knowing the subject matter well enough to identify the ways you could be wrong, then using experiments or statistical methods to rule them out. DAGs and potential outcomes help ensure rigor in the latter. But identifying how you could be wrong requires expertise that no equation or code can provide. Causal inference is easy once you understand this. Actually doing it well? That’s the hard part.
+Causal inference ultimately comes down to knowing the subject matter well enough to identify the ways you could be wrong, then using experiments or statistical methods to rule them out. DAGs and potential outcomes help ensure rigor in the latter. But identifying how you could be wrong requires expertise that no equation or code can provide. Causal inference is easy once you understand this. Actually doing it well? That’s the [hard part](/post/causal-inference-is-hard/).
+
 
 ----
 ##### References
