@@ -12,7 +12,7 @@ draft:       FALSE
 
 ## CUPED: Old Wine in a New Bottle?
 
-Anyone running AB tests in industry knows the challenges. Detecting small but meaningful effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some effects will go undetected. None of those options are appealing when you're running lots of tests and your stakeholders wanted the results yesterday.
+Running AB tests in industry comes with several challenges. Detecting small but meaningful effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some effects will go undetected. None of those options are appealing when you're running lots of tests and your stakeholders wanted the results yesterday.
 
 Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Data) to address this problem. The idea is to collect outcome data on users *before* the experiment starts and statistically adjust for those pre-experiment observations when analyzing results. The pre-treatment version of the outcome captures user-specific variance that adds noise to your estimates. Removing it lets you detect a smaller effect with the same sample size, or the same effect with a smaller sample size. Let's see how this works in practice.
 
