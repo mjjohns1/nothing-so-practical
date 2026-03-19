@@ -24,7 +24,7 @@ Most of those 10,000 users used the search feature at least once before the expe
 
 $$Y_i^{adj} = Y_i - \theta (X_i - \bar{X})$$
 
-The coefficient $\theta$ represents how strongly the pre-experiment search behavior correlates with behavior measured during the experiment. A user with a search rate 10 percentage points higher than average before the experiment will tend to search more during, for reasons unrelated to the treatment. The adjustment subtracts that expected excess, leaving behind variation more about the treatment effect and less about individual differences.
+The coefficient $\theta$ represents how strongly the pre-experiment search behavior correlates with behavior measured during the experiment. A user with a search rate 10 percentage points higher than average before the experiment will tend to search more during, for reasons unrelated to the treatment. The adjustment subtracts that expected excess, leaving behind variation that is more about the treatment effect and less about individual differences.
 
 To estimate $\theta$, we compute the covariance between the pre-experiment and in-experiment search rates, divided by the variance of the pre-experiment metric (using the full pooled sample).
 
