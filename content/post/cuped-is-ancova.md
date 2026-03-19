@@ -12,7 +12,7 @@ draft:       FALSE
 
 ## CUPED: Old Wine in a New Bottle?
 
-Anyone running AB tests in industry knows the challenges. Detecting small but meaningful effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some effects will go undetected. None of those options are appealing when you're running lots of tests and your stakeholders wanted the results yesterday.
+Running AB tests in industry comes with several challenges. Detecting small but meaningful effects is difficult and time consuming. You can run the experiment longer, recruit more users, or accept that some effects will go undetected. None of those options are appealing when you're running lots of tests and your stakeholders wanted the results yesterday.
 
 Deng et al. (2013) proposed CUPED (Controlled-experiment Using Pre-Experiment Data) to address this problem. The idea is to collect outcome data on users *before* the experiment starts and statistically adjust for those pre-experiment observations when analyzing results. The pre-treatment version of the outcome captures user-specific variance that adds noise to your estimates. Removing it lets you detect a smaller effect with the same sample size, or the same effect with a smaller sample size. Let's see how this works in practice.
 
@@ -24,7 +24,7 @@ Most of those 10,000 users used the search feature at least once before the expe
 
 $$Y_i^{adj} = Y_i - \theta (X_i - \bar{X})$$
 
-The coefficient $\theta$ represents how strongly the pre-experiment search behavior correlates with behavior measured during the experiment. A user with a search rate 10 percentage points higher than average before the experiment will tend to search more during, for reasons unrelated to the treatment. The adjustment subtracts that expected excess, leaving behind variation more about the treatment effect and less about individual differences.
+The coefficient $\theta$ represents how strongly the pre-experiment search behavior correlates with behavior measured during the experiment. A user with a search rate 10 percentage points higher than average before the experiment will tend to search more during, for reasons unrelated to the treatment. The adjustment subtracts that expected excess, leaving behind variation that is more about the treatment effect and less about individual differences.
 
 To estimate $\theta$, we compute the covariance between the pre-experiment and in-experiment search rates, divided by the variance of the pre-experiment metric (using the full pooled sample).
 
