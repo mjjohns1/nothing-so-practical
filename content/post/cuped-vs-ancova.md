@@ -38,7 +38,7 @@ The amount of variance reduction depends on the correlation between the pre-expe
 
 $$\text{Var}(Y^{adj}) = \text{Var}(Y) \times (1 - \rho^2) = 71.7 \times 0.53 = 37.9$$
 
-That's a 47% reduction in the variance of $Y$. The standard error of the treatment effect, $\tau$, drops proportionally by about 27% ($1 - \sqrt{0.53} \approx 0.27$). The sampling distribution of $\hat{\tau}$ gets visibly tighter.
+That's a 47% reduction in the variance of $Y$. Because the standard error is proportional to the square root of the variance, cutting variance in half doesn't cut the standard error in half. It drops by about 27% ($1 - \sqrt{0.53} \approx 0.27$). Still a meaningful gain. The sampling distribution of $\hat{\tau}$ gets visibly tighter.
 
 ![Sampling distribution of the treatment effect estimate](/img/posts/cuped/tx_effect_distributions.svg)
 *The adjusted estimate (blue) is more precise, concentrating probability mass closer to the true effect.*
@@ -87,14 +87,15 @@ The linearity assumption is about bias. If the true relationship between $X$ and
 
 Equality of variances is about the standard errors. Heteroscedasticity does not bias $\hat{\tau}$ but can make the default standard errors unreliable. In practice, this is a weaker concern than most econometricians would have you believe. Robust standard errors have been available for decades. While they can be difficult to use in some situations, robust methods are perfectly suitable for a simple treatment model with only two variables.
 
-There is one instance where CUPED has an advantage worth nothing. Think about what happens when you adjust each user's outcome and then compare group means. The CUPED treatment effect equals the raw difference in means minus a correction for any chance imbalance in pre-experiment search rates between groups. Randomization ensures this imbalance averages to zero, so the correction is just removing noise. It doesn't matter whether $\theta$ is optimal. The estimator is still unbiased. This means if you pre-compute $\theta$ from historical data (e.g., user behavior in two consecutive weeks before the experiment), no model assumptions are needed. You can even reuse the same $\theta$ across experiments. But when $\theta$ is instead estimated from the experimental data, which is common practice, it becomes a random variable that depends on outcomes, and the estimator collapses to ANCOVA.
+There is one instance where CUPED has an advantage worth noting. Think about what happens when you adjust each user's outcome and then compare group means. The CUPED treatment effect equals the raw difference in means minus a correction for any chance imbalance in pre-experiment search rates between groups. Randomization ensures this imbalance averages to zero, so the correction is just removing noise. It doesn't matter whether $\theta$ is optimal. The estimator is still unbiased.
+
+This means if you pre-compute $\theta$ from historical data (e.g., user behavior in two consecutive weeks before the experiment), no model assumptions are needed. You can even reuse the same $\theta$ across experiments (see Deng et al, 2023). But when $\theta$ is instead estimated from the experimental data, which is common practice, it becomes a random variable that depends on outcomes, and the estimator collapses to ANCOVA.
 
 ### What to Make of CUPED
 
 On the surface, CUPED appears to be a novel method for improving statistical power when analyzing online experiments. Once you peer below the surface, the novelty is less obvious. Both methods reduce residual variance by the same amount, governed by $\rho$. The differences are largely mechanical in practice. But recognizing the equivalence with regression opens up possibilities the CUPED formula obscures. Multiple variables correlated with the outcome (prior click rate, session length, user tenure) can all go into the model. Non-linear relationships can be handled with polynomial terms. If you suspect the layout change works differently for new users versus veteran users, add an interaction term. With CUPED, incorporating multiple covariates requires constructing a composite score, which amounts to fitting a regression anyway.
 
-CUPED brought covariate adjustment into the online experimentation mainstream at a time when many platforms still analyzed raw means.
-When computed using historical data, it earns genuine separation from regression. In practice, most implementations use outcome data from the experiment itself. In that case, you're doing regression adjustment whether you call it that or not. Knowing the difference can be helpful. Defaulting to CUPED when you really need regression is generally not.
+None of this diminishes the value of CUPED. It brought covariate adjustment into the online experimentation mainstream at a time when many platforms still analyzed raw means. When computed using purely historical data, it earns genuine separation from regression. But this case is not all that common. In practice, many platforms use pre-experiment metrics as covariates and estimate the adjustment coefficient from the experimental data. In that case, you're doing regression adjustment whether you call it that or not.
 
 ##### References
 
