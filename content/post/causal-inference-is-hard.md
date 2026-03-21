@@ -10,10 +10,6 @@ categories:  []
 draft:       FALSE
 ---
 
-## Causal Inference Is Hard
-
-Coming soon: part two of a two-part series. In the meantime, checkout [part one](/post/causal-inference-is-easy/)
-
 ## Causal Inference is Hard
 
 Is causal inference really just a matter of ruling out alternative hypotheses? That sounds fairly straightforward. Why is it so difficult in practice? Why did observational studies on hormone replacement therapy (HRT) get it so wrong? Why do causal claims from observational data often fail to replicate?
