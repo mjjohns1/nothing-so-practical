@@ -399,17 +399,19 @@ def make_tx_distribution_figure(stats):
     # Treatment effect line
     ax.axvline(tau, color=DARK_GRAY, ls="--", lw=0.9, alpha=0.5)
 
-    # SE annotations
-    for se, color in [(se_naive, RED), (se_adj, BLUE)]:
-        h = norm.pdf(tau + se * 0.8, tau, se)
+    # SE annotations — arrows from outside pointing inward, touching the curve
+    for se, color, side in [(se_naive, RED, 1), (se_adj, BLUE, -1)]:
+        curve_x = tau + side * se
+        h = norm.pdf(curve_x, tau, se)
+        start_x = curve_x + side * se  # one SE further out
         ax.annotate(
-            "", xy=(tau + se, h), xytext=(tau, h),
-            arrowprops=dict(arrowstyle="<->", color=color, lw=1.3),
+            "", xy=(curve_x, h), xytext=(start_x, h),
+            arrowprops=dict(arrowstyle="->", color=color, lw=1.3),
         )
-        ax.text(tau + se + 0.02, h,
+        ax.text(start_x + side * 0.01, h,
                 f"SE = {se:.2f}",
-                ha="left", va="center", fontsize=9, color=color,
-                fontweight="semibold")
+                ha="left" if side == 1 else "right", va="center",
+                fontsize=9, color=color, fontweight="semibold")
 
     ax.set_xlabel("Treatment effect (percentage points)")
     ax.set_ylabel("Density")
