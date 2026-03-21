@@ -96,7 +96,7 @@ Pre-computing $\theta$ using historical observations (e.g., user behavior in two
 On the surface, CUPED appears to be a novel method for improving statistical power when analyzing online experiments. Once you peer below the surface, the novelty is less obvious. Both methods reduce residual variance by the same amount, governed by $\rho$. The differences are mechanical. But recognizing the equivalence with regression opens up possibilities the CUPED formula obscures. Multiple variables correlated with the outcome (prior click rate, session length, user tenure) can all go into the model. Non-linear relationships can be handled with polynomial terms. If you suspect the layout change works differently for new users versus veteran users, add an interaction term. With CUPED, incorporating multiple covariates requires constructing a composite score, which amounts to fitting a regression anyway.
 
 CUPED brought covariate adjustment into the online experimentation mainstream at a time when many platforms still analyzed raw means.
-When $\theta$ is pre-computed from historical data, it earns genuine separation from regression. In practice, most implementations use outcome data from the experiment itself. In that case, you're doing regression adjustment whether you call it that or not. Knowing the difference is helpful. Defaulting to CUPED when you really need regression is not.
+When $\theta$ is pre-computed from historical data, it earns genuine separation from regression. In practice, most implementations use outcome data from the experiment itself. In that case, you're doing regression adjustment whether you call it that or not. Knowing the difference can be helpful. Defaulting to CUPED when you really need regression is not.
 
 ##### References
 
