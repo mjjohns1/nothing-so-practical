@@ -137,7 +137,7 @@ def compute_stats(data):
     cuped_est = adjusted[treat == 1].mean() - adjusted[treat == 0].mean()
 
     # ANCOVA
-    X = np.column_stack([np.ones(n), treat, pre])
+    X = np.column_stack([np.ones(n), treat, pre - pre.mean()])
     ancova_beta, resid, r2 = ols(X, post)
     sigma2 = (resid @ resid) / (n - 3)
     var_beta = sigma2 * np.linalg.inv(X.T @ X)
@@ -389,7 +389,7 @@ def make_tx_distribution_figure(stats):
     fig, ax = plt.subplots(figsize=(6.5, 4))
 
     # Naive (wider)
-    ax.plot(x, y_naive, color=RED, lw=2, label="Unadjustment")
+    ax.plot(x, y_naive, color=RED, lw=2, label="Unadjusted")
     ax.fill_between(x, y_naive, alpha=0.12, color=RED)
 
     # Adjusted (narrower)

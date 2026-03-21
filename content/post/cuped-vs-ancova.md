@@ -65,7 +65,7 @@ The treatment effect estimates are functionally equivalent.[^2] Our ANCOVA model
 
 The primary difference between methods appears to be mechanical. CUPED multiplies $\theta$ by the mean-centered pre-experiment outcome, which zeros out the slopes and collapses the parallel lines into flat group means. The methodological distinction is that ANCOVA estimates $\beta$ simultaneously with $\tau$, while CUPED estimates $\theta$ in a prior step, treating it as a known constant during inference.[^3]
 
-Under random assignment, a user's pre-experiment search behavior is independent of their assigned condition. Estimating the covariate coefficient from experiment data versus historical data converges to the same answer as sample size increases. Both methods achieve a variance reduction of $\text{Var}(Y) \times (1 - \rho^2)$.
+Under random assignment, a user's pre-experiment search behavior is independent of their assigned condition. Estimating the covariate coefficient from experiment data versus historical data converges to the same answer as sample size increases. Both methods reduce the variance of the outcome to $\text{Var}(Y) \times (1 - \rho^2)$.
 
 #### The Case for CUPED
 
@@ -89,7 +89,7 @@ Equality of variances is about the standard errors. Heteroscedasticity does not 
 
 CUPED does have an advantage worth noting. When you adjust each user's outcome and then compare group means, the resulting treatment effect equals the raw difference in group means minus a correction for chance imbalance in the pre-experiment covariate. This is referred to as the augmentation view (Deng, 2023). You take an already-unbiased estimator and subtract a noise term. Randomization guarantees that the pre-experiment covariate is balanced across groups in expectation, so the correction term averages to zero. This leaves the estimator unbiased whether $\theta$ is optimal or arbitrary.
 
-Pre-computing $\theta$ using historical observations (e.g., user behavior in two consecutive weeks before the experiment) means no model assumptions are needed. You can even reuse the same $\theta$ across experiments. However, when $\theta$ is instead computed using data from the experiment, which is common practice, $\theta$ becomes a random variable that depends on outcomes, and the estimator collapses to ANCOVA. With heterogeneous treatment effects, the pooled slope blends treatment and control group relationships, which can shift the estimand away from the simple average treatment effect. Adding an interaction term between the treatment indicator and the covariate fixes this. Pre-computing $\theta$ isn't just an engineering shortcut. It's the one instance where CUPED is distinct from regression.
+Pre-computing $\theta$ using historical observations (e.g., user behavior in two consecutive weeks before the experiment) means no model assumptions are needed. You can even reuse the same $\theta$ across experiments. However, when $\theta$ is instead computed using data from the experiment, which is common practice, $\theta$ becomes a random variable that depends on outcomes, and the estimator collapses to ANCOVA. With heterogeneous treatment effects, the pooled slope blends treatment and control relationships, which can introduce small-sample bias in the treatment effect estimate. This bias vanishes asymptotically (Lin, 2013), but adding an interaction term between the treatment indicator and the covariate eliminates it entirely. Pre-computing $\theta$ isn't just an engineering shortcut. It's the one instance where CUPED is distinct from regression.
 
 ### What to Make of CUPED
 
@@ -114,7 +114,7 @@ Lin, W. (2013). Agnostic Notes on Regression Adjustments to Experimental Data: R
 
 [^2]: The two estimators are not algebraically identical in finite samples. CUPED uses the marginal slope $\hat{\theta} = \text{Cov}(Y,X)/\text{Var}(X)$ pooled across groups, while ANCOVA estimates a partial slope $\hat{\beta}$ that conditions on treatment assignment.
 
-[^3]: Because CUPED ignores estimation uncertainty in $\theta$, its standard errors will tend to be optimistic (too small). ANCOVA accounts for this through joint estimation of $\beta$ and $\tau$. The difference will be negligible in large samples but matters for smaller experiments, where variance reduction techniques are most valuable.
+[^3]: Because CUPED ignores estimation uncertainty in $\theta$, its standard errors may be slightly miscalibrated in finite samples. ANCOVA accounts for this through joint estimation of $\beta$ and $\tau$. The difference is negligible in large samples but can matter for smaller experiments, where variance reduction techniques are most valuable.
 
 [^4]: For a formal treatment, see Lin (2013), who shows that ANCOVA with treatment-covariate interactions is asymptotically at least as efficient as any linear adjustment under randomization alone.
 
