@@ -142,11 +142,11 @@ def compute_stats(data):
     cuped_est = adjusted[treat == 1].mean() - adjusted[treat == 0].mean()
 
     # ANCOVA
-    X = np.column_stack([np.ones(n), treat, pre])
-    ancova_beta, ss_res, r2 = ols(X, post)
-    sigma2 = ss_res / (n - 3)
-    XtX_inv_diag1 = np.linalg.solve(X.T @ X, np.eye(3))[:, 1]
-    se_tau = np.sqrt(sigma2 * XtX_inv_diag1[1])
+    X = np.column_stack([np.ones(n), treat, pre - pre.mean()])
+    ancova_beta, resid, r2 = ols(X, post)
+    sigma2 = (resid @ resid) / (n - 3)
+    var_beta = sigma2 * np.linalg.inv(X.T @ X)
+    se_tau = np.sqrt(var_beta[1, 1])
 
     # Simple t-test (no covariate)
     X_simple = np.column_stack([np.ones(n), treat])
@@ -390,7 +390,7 @@ def make_tx_distribution_figure(stats):
     fig, ax = plt.subplots(figsize=(6.5, 4))
 
     # Naive (wider)
-    ax.plot(x, y_naive, color=RED, lw=2, label="Unadjustment")
+    ax.plot(x, y_naive, color=RED, lw=2, label="Unadjusted")
     ax.fill_between(x, y_naive, alpha=0.12, color=RED)
 
     # Adjusted (narrower)
@@ -400,17 +400,19 @@ def make_tx_distribution_figure(stats):
     # Treatment effect line
     ax.axvline(tau, color=DARK_GRAY, ls="--", lw=0.9, alpha=0.5)
 
-    # SE annotations
-    for se, color in [(se_naive, RED), (se_adj, BLUE)]:
-        h = norm.pdf(tau + se * 0.8, tau, se)
+    # SE annotations — arrows from outside pointing inward, touching the curve
+    for se, color, side in [(se_naive, RED, 1), (se_adj, BLUE, -1)]:
+        curve_x = tau + side * se
+        h = norm.pdf(curve_x, tau, se)
+        start_x = curve_x + side * se  # one SE further out
         ax.annotate(
-            "", xy=(tau + se, h), xytext=(tau, h),
-            arrowprops=dict(arrowstyle="<->", color=color, lw=1.3),
+            "", xy=(curve_x, h), xytext=(start_x, h),
+            arrowprops=dict(arrowstyle="->", color=color, lw=1.3),
         )
-        ax.text(tau + se + 0.02, h,
+        ax.text(start_x + side * 0.01, h,
                 f"SE = {se:.2f}",
-                ha="left", va="center", fontsize=9, color=color,
-                fontweight="semibold")
+                ha="left" if side == 1 else "right", va="center",
+                fontsize=9, color=color, fontweight="semibold")
 
     ax.set_xlabel("Treatment effect (percentage points)")
     ax.set_ylabel("Density")
