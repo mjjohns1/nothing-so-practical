@@ -55,13 +55,13 @@ Instead of first adjusting each user's outcome and then comparing group means, A
 
 $$y_i = \mu + \tau T_i + \beta (X_i - \bar{X}) + \epsilon_i$$
 
-The treatment effect estimate is $\tau$. The coefficient $\beta$ plays the same role as $\theta$ in CUPED. It accounts for the fact that users with higher pre-experiment search rates tend to have higher in-experiment rates. By explaining that variation, the model reduces residual error and produces a more precise treatment estimate.
+The treatment effect estimate is $\tau$. The coefficient $\beta$ plays the same role as $\theta$ in CUPED. It accounts for the fact that users with higher (lower) pre-experiment search rates will tend to search more (less) during the experiment. By explaining that variation, the model reduces residual error and produces a more precise treatment estimate.
 
-Here's what the two methods look like side-by-side using data from our hypothetical experiment. Both methods arrive at the same answer but through different mechanics.
+Here's what the two methods look like side-by-side using data from our hypothetical experiment.
 
 {{< figure src="/img/posts/cuped/cuped_vs_ancova.svg" caption="<strong>Left:</strong> ANCOVA fits parallel regression lines. The treatment effect is the constant vertical gap, estimated at the grand mean. <strong>Right:</strong> CUPED removes the pre-experiment relationship, tightening the scatter and leaving two flat group means. Both arrive at the same treatment effect of 3.0." class="img-center" >}}
 
-The treatment effect estimates are functionally equivalent.[^2] Our ANCOVA model produces $\hat{\tau}$ = 3.03 with $\hat{\beta}$ = 0.61. CUPED produces $\hat{\tau}$ = 3.03 with $\hat{\theta}$ = 0.60.
+The treatment effect estimates are functionally equivalent.[^2] The ANCOVA model produces $\hat{\tau}$ = 3.03 with $\hat{\beta}$ = 0.61. CUPED produces $\hat{\tau}$ = 3.03 with $\hat{\theta}$ = 0.60.
 
 The primary difference between methods appears to be mechanical. CUPED multiplies $\theta$ by the mean-centered pre-experiment outcome, which zeros out the slopes and collapses the parallel lines into flat group means. The methodological distinction is that ANCOVA estimates $\beta$ simultaneously with $\tau$, while CUPED estimates $\theta$ in a prior step, treating it as a known constant during inference.[^3]
 
@@ -95,7 +95,7 @@ Note, however, that CUPED treats $\theta$ as a known constant during inference. 
 
 ### What to Make of CUPED
 
-Recognizing the overlap between CUPED and ANCOVA creates flexibility when you need to go beyond CUPED. If the relationship between the covariate and outcome is non-linear, add polynomial or spline terms. If you suspect the treatment works differently for different types of users, add an interaction term. If multiple covariates are correlated with the outcome (prior click rate, session length, user tenure), include them all. Regression can handle it. With CUPED, incorporating multiple covariates requires constructing a composite score, which amounts to fitting a regression anyway.
+Recognizing the overlap between CUPED and ANCOVA creates flexibility when you need to go beyond a simple adjustment formula. If the relationship between the covariate and outcome is non-linear, add polynomial or spline terms. If you suspect the treatment works differently for different types of users, add an interaction term. If multiple covariates are correlated with the outcome (prior click rate, session length, user tenure), include them all. Regression can handle it. With CUPED, incorporating multiple covariates requires constructing a composite score, which amounts to fitting a regression anyway.
 
 CUPED works well in the environment it was designed for: large-scale online experiments with a single strong covariate and straightforward metrics. That describes a lot of AB tests but it doesn't describe them all. Regression has been doing this work for decades. It's more flexible, its assumptions are well understood, and it extends naturally when the simple case isn't simple enough. Knowing when the advantage of each method kicks in is useful. Defaulting to CUPED without recognizing that you really needed regression is not.
 
