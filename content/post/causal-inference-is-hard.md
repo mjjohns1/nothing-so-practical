@@ -12,13 +12,16 @@ draft:       FALSE
 
 ## Causal Inference is Hard
 
-Is causal inference really just a matter of ruling out alternative hypotheses? That sounds fairly straightforward. Why is it so difficult in practice? Why did observational studies on hormone replacement therapy (HRT) get it so wrong? Why do causal claims from observational data often fail to replicate?
+The first post argued that casual inference is just a matter of ruling out rival hypotheses. That sounds fairly straightforward. Why, then, is it often so difficult in practice? Why did observational studies on hormone replacement therapy (HRT) get it so wrong? Why do causal claims from observational data often fail to replicate?
 
 Consider the hormone replacement therapy (HRT) example more closely. We specified health consciousness as a confounder that affects both treatment choice and the outcome. Both the potential outcomes framework and the DAG framework tell us we need to measure and control for confounders. Both give us clear instructions on how to proceed.
 
-This is all well and good if we know health consciousness is something to worry about and have measured it. But figuring out which variables matter requires understanding how the data were generated (i.e., what causes the outcome and the treatment variable). The ability to measure those variables requires solving a completely different set of problems. Get either one wrong and causal inference fails, regardless of how sophisticated your statistical methods are.
+[preview the argument - identifying potential confounds and measuring them adequately for control is very difficult in practice. Identifying the confounds requires domain expertise. Using study design principles is a better approach to handling confounds that are difficult to measure]
 
-Understanding causal inference as the process of eliminating alternative explanations means we need to identify sources of confounding that could undermine the validity of our study. The validity threats framework (Shadish, Cook, & Campbell, 2002\) provides a useful taxonomy to structure how we think about what can go wrong.
+This is all well and good if we know health consciousness is something to worry about and have measured it. But figuring out which variables matter requires understanding all the factors that cause the outcome and the treatment variable. The ability to measure those variables requires solving a completely different set of problems. Get either one wrong and causal inference fails, regardless of how sophisticated your statistical methods are.
+
+Understanding causal inference as the process of eliminating alternative explanations means we need to identify sources of confounding that could undermine the validity of our study. The validity threats framework provides a useful taxonomy to guide how we think about what can go wrong (Shadish, Cook, & Campbell, 2002). [transition sentence here]
+
 
 ## Threats to Validity
 
