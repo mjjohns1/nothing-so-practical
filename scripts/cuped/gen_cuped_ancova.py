@@ -142,7 +142,7 @@ def compute_stats(data):
     cuped_est = adjusted[treat == 1].mean() - adjusted[treat == 0].mean()
 
     # ANCOVA
-    X = np.column_stack([np.ones(n), treat, pre - pre.mean()])
+    X = np.column_stack([np.ones(n), treat, pre])
     ancova_beta, resid, r2 = ols(X, post)
     sigma2 = (resid @ resid) / (n - 3)
     var_beta = sigma2 * np.linalg.inv(X.T @ X)
