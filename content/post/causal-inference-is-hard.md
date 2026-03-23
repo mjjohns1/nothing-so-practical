@@ -65,11 +65,11 @@ The method answered the question it was given just fine. The data just weren't s
 
 ## Still Easy, Still Hard
 
-The Mozart study was a randomized experiment. The synthetic control analysis used a powerful statistical method. Both produced clear, defensible results. Both got the wrong answer. The treatment contrast didn't isolate what the researchers thought it did. Experiments don't solve the problem automatically. Neither do sophisticated statistical models. The hard part is upstream of the technique.
+The Mozart study was a randomized experiment. The synthetic control analysis used a sophisticated statistical method. Both produced clear, defensible results. Both got the wrong answer. In neither case was the problem downstream in the analysis. It was upstream, in what the researchers thought they were comparing.
 
-The model will estimate the treatment effect on demand. Nothing in the output distinguishes a valid causal estimate from one that's been quietly undermined. The math alway works. The question is whether it's working on the right problem.
+None of this means the methods are useless. Potential outcomes and DAGs give you the tools to reason about confounding rigorously Design-based approaches let you sidestep what you can't measure. These are genuine advances. But they work on the problem you give them. They can't tell you whether you've given them the right one.
 
-Don't mistake this reality for methodological nihilism. It’s a reason to think harder before running the model. The alternative explanations, the measurement gaps, the treatment definition itself all need scrutiny before the first line of code. The Potential Outcomes and DAGs give you the tools to do that rigorously. But you have to know enough about the problem to know where to look.
+A confounder that slipped by won't appear in the DAG. A disposition you can't measure won't be absorbed by the covariates. A treatment that's misidentified will produce a precise estimate of the wrong thing. In each case, the output looks fine and the math always works. That's what makes it hard.
 
 ##### References
 
