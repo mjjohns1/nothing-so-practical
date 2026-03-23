@@ -11,11 +11,9 @@ draft:       FALSE
 ---
 
 
-## Causal Inference is Hard
-
 The [first post](/post/causal-inference-is-easy/) argued that causal inference is just a matter of ruling out rival explanations. That sounds straightforward. Why is it often so difficult in practice? Why did observational studies on hormone replacement therapy (HRT) get it so wrong? Why do causal claims from observational data so often fail to replicate? It's not for lack of skill or effort.
 
-The difficulty is that rival explanations can be hard to identify, hard to measure, and hard to design around. Overlook a confound, measure it poorly, or choose an inadequate study design and causal inference fails, no matter how sophisticated the DAG or statistical notation. The model will estimate the treatment effect you ask for and produce a clean-looking result. The thing is, when causal inference fails, it fails silently.
+The difficulty is that rival explanations can be hard to identify, hard to measure, and hard to design around. Overlook a confound, measure it poorly, or choose an inadequate study design and causal inference fails, no matter how sophisticated the DAG or statistical notation. The model will estimate the treatment effect you ask for and produce a clean-looking result. When causal inference fails, it fails silently.
 
 ### Rock Me Amadeus
 
@@ -23,7 +21,7 @@ In 1993, researchers at UC Irvine had college students listen to Mozart, a relax
 
 Sitting in silence is boring and slightly fatiguing. Listening to engaging music is stimulating and pleasant. The conditions in the original study didn't just differ in the presence of Mozart. They also differed in arousal and mood. Follow-up studies found that other enjoyable stimuli (e.g., Schubert, a Stephen King story) produced similar boosts, and that the effect disappeared when researchers controlled for arousal and mood.[^2] The active ingredient seemed to be a stimulating experience, not Mozart.
 
-The confound here wasn't statistical, it was conceptual. Comparing Mozart to silence or relaxation instructions doesn't isolate Mozart. It confounds music with the psychological experience of music: engagement, pleasure, stimulation. No statistical adjustment could have fixed it. The confound was baked into the treatment contrast. The researchers wanted to test the effect of music on spatial reasoning when the comparison actually tested whether an engaging experience outperformed a boring one.
+The confound here wasn't statistical, it was conceptual. Comparing Mozart to silence or relaxation instructions doesn't isolate Mozart. It confounds music with the psychological experience of music itself. Engagement, pleasure, stimulation. No statistical adjustment could have fixed it. The confound was baked into the treatment contrast. The researchers wanted to test the effect of music on spatial reasoning when the comparison actually tested whether an engaging experience outperformed a boring one.
 
 This was a controlled experiment. Participants were randomly assigned to conditions. The researchers did everything right by the standards of experimental design. And they still got the wrong answer. If a confound can hide inside a controlled experiment despite correct execution, what happens when you can't control treatment assignment at all?
 
@@ -31,31 +29,29 @@ This was a controlled experiment. Participants were randomly assigned to conditi
 
 The HRT example from the [first post](/post/causal-inference-is-easy/) made selection bias look manageable. Health consciousness affects both treatment choice and heart disease risk. Measure it, control it, move on. But selection is just the most obvious threat. Confounding can enter through the back door in ways that are hard to anticipate.
 
-Many HRT studies took place over years. External events might have affected the two groups differently over that time. Imagine the American Medical Association updated dietary guidelines midway through the study, promoting vegetarian diets specifically for women on HRT. If that policy ends up reducing cardiovascular risk among women already taking HRT, then accounting for baseline selection wouldn't be enough. The groups differed not because of HRT, but because of an outside event that affected them differently.
+Many HRT studies took place over years. External events might have affected the groups differently. Imagine the American Medical Association updated dietary guidelines midway through the study, promoting vegetarian diets specifically for women on HRT. If that policy ends up reducing cardiovascular risk among women already taking HRT, then accounting for baseline selection wouldn't be enough. The groups differed not because of HRT, but because of an outside event that affected them differently.
 
 Or consider a tutoring program assigned to struggling students. It might appear effective simply because students selected at the extreme of any measure tend to drift back toward the average. Regression to the mean looks exactly like a treatment effect. Similarly, if a hospital upgrades its cardiac screening procedure partway through a study, catching more events in one group than the other, what looks like a treatment effect might just be a measurement artifact.
 
 These threats don't announce themselves. They hide inside the data-generating process and mimic the pattern you'd expect if the treatment worked. Not every difference between groups is a problem. If treatment and control groups have different hair color distributions, that's irrelevant. Hair color doesn't cause heart disease. But if the groups differ in ways that could *plausibly* produce the pattern of results you observe, you have a rival explanation that no amount of statistical rigor will fix. The question isn't whether the groups are different. They almost always are. The question is whether they are different in ways that could generate the observed result.
 
-Frameworks can't answer that question. They formalize threats you've already identified, but they can't surface threats you haven't thought of. "Does my assumption hold?" is the wrong question. The right one is, "What could generate this pattern of results besides my treatment?" That's a question about the world, not about the math.
+Even when the treatment contrast is right and you know what the threats are, you still have to measure them well enough to actually neutralize them.
 
 ### Measuring the Weight of Smoke
 
-Identifying the most plausible confounds is only the start. You also have to measure them well enough to actually control for them.
-
 What is "health consciousness" exactly? You could ask people to rate how important their health is. But how many people would endorse the idea that they don't care about their health? You could use behavioral proxies, like gym memberships, vitamin purchases, or preventive care visits. But gym memberships and vitamin purchases are confounded with income, and preventive care visits depend on insurance coverage and access to healthcare.
 
-Maybe you build a composite index combining multiple indicators. But which indicators? How do you weight them? Each choice makes assumptions about what the construct really is. If your measure doesn't capture what matters for both HRT use and cardiovascular disease, controlling for it doesn't eliminate the confounding. It just leaves residual error in your estimate.
+Maybe you build a composite index combining multiple indicators. But which indicators? How do you weight them? Each choice makes assumptions about what the construct really is. If your measure doesn't capture what matters for both HRT use and heart disease, controlling for it doesn't eliminate the confounding. It just leaves residual error in your estimate.
 
-This is a general problem, not an HRT-specific one. Many of the variables that matter most for causal inference are abstract constructs: motivation, risk tolerance, management quality, organizational culture. We give them names and put them on a scale, but translating them into numbers that can capture what actually drives selection is a different challenge entirely.
+This is a general problem, not an HRT-specific one. Many of the variables that matter most for causal inference are abstract constructs like motivation, risk tolerance, management quality, organizational culture. We give them names and put them on a scale, but translating them into numbers that can capture what actually drives selection is a different challenge entirely.
 
 Causal inference frameworks require that you've measured all the confounders, not just some of them. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still confounds your result. The carefully weighted samples are not comparable in the ways that matter.
 
-This is the bind. The variables that matter most for causal inference are often the hardest to measure. If we can't measure them well, we need a strategy that doesn't rely solely on measurement.
+This is the bind. The variables that matter most for causal inference can be the hardest to measure. If we can't measure them well, we need a strategy that doesn't rely solely on measurement.
 
 ### Design Around What You Can't Measure
 
-Design offers one approach to valid causal claims when confounders are hard to quantify. Study design is about setting up comparisons that make specific rival explanations implausible. Instead of assuming all confounds have been measured and controlled for, designs are selected so that plausible confounds *can't* explain the pattern of results. The threats aren't assumed away. They're ruled out by principled comparisons.
+Design offers one approach to valid causal claims when confounders are hard to quantify. Instead of assuming all confounds have been measured and controlled for, you select a design so that plausible confounds *can't* explain the pattern of results. The threats aren't assumed away. They're ruled out by principled comparisons.
 
 Difference-in-differences illustrates the logic. Instead of comparing HRT users to non-users at a single point in time, we compare *changes* over time. If health-conscious women are consistently more likely to use HRT, that baseline difference is present in every period. By looking at whether the *trend* in cardiovascular outcomes shifted after HRT adoption, you neutralize any confounder that remains stable over time. Even unmeasured ones. The design handles what your measurement can't.
 
@@ -79,12 +75,11 @@ The method answered the question it was given just fine. The question just wasn'
 
 Causal inference is easy to understand. Eliminate alternative explanations. The frameworks, whether DAGs or potential outcomes, formalize this task. But doing it well requires knowing what the alternatives are, measuring the variables behind them, and designing comparisons that make specific threats implausible when measurement falls short.
 
-The methods are genuinely powerful, and that's part of the problem. A well-executed synthetic control or difference-in-differences analysis produces clean output, tight confidence intervals, and publication-ready charts. Nothing in the output distinguishes a valid result from one that's been undermined by a subtle threat. The math will always work. The question is whether it's working on the right problem.
+The Mozart study was a controlled experiment with random assignment. The synthetic control analysis of Musk's tweet used a cutting-edge method with a reasonable comparison set and strong pre-treatment fit. Both produced clear, defensible-looking results. Both got the wrong answer, and for essentially the same reason: the treatment contrast didn't isolate what the researchers thought it did. Mozart wasn't compared to "no music." It was compared to boredom. Musk's tweet wasn't an isolated event. It was one moment in a weeks-long news cycle. In neither case did the output raise a flag.
+
+That's the core difficulty. The model will always estimate the treatment effect you ask for and produce a clean-looking result. Nothing in the output distinguishes a valid causal estimate from one that's been quietly undermined. The math works. The question is whether it's working on the right problem.
 
 [^1]: Rauscher, Shaw & Ky (1993). Music and spatial task performance. *Nature*, 365, 611.
 
 [^2]: Nantais & Schellenberg (1999). The Mozart effect: An artifact of preference. *Psychological Science*, 10(4), 370-373; Thompson, Schellenberg & Husain (2001). Arousal, mood, and the Mozart effect. *Psychological Science*, 12(3), 248-251.
 
-[^3]: Finkelstein A, Taubman S, Wright B, et al. The Oregon Health Insurance Experiment: Evidence from the first year. *Quarterly Journal of Economics*, 2012; 127(3): 1057-1106.
-
-[^4]: Campbell DT & Stanley JC (1963). *Experimental and Quasi-Experimental Designs for Research*. Houghton Mifflin. The regression to the mean threat is discussed extensively in Chapter 1.
