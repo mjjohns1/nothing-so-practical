@@ -1,7 +1,7 @@
 ---
 title:       "Causal Inference Is Hard"
 subtitle:    "Part two of a two-part series"
-description: "How I learned to stop worry and love assumptions"
+description: "How I learned to stop worrying and love assumptions"
 date:        2026-03-15
 author:      "MJ"
 image:       ""
@@ -11,7 +11,7 @@ draft:       FALSE
 ---
 
 
-The [first post](/post/causal-inference-is-easy/) argued that causal inference is just a matter of ruling out rival explanations. That sounds straightforward. But rival explanations can be hard to identify, hard to measure, and hard to design around. Overlook a confound, measure it poorly, or choose an inadequate study design and causal inference fails, no matter how sophisticated the method. The model will estimate the treatment effect you ask for and produce a clean-looking result. When causal inference fails, it fails silently.
+The [first post](/post/causal-inference-is-easy/) argued that causal inference is just a matter of ruling out rival explanations. That sounds straightforward. But rival explanations can be hard to identify, hard to measure, and hard to design around. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails, no matter how sophisticated the method. The model will estimate the treatment effect you ask for and produce a number. When causal inference fails, it fails silently.
 
 ### Rock Me Amadeus
 
@@ -19,22 +19,24 @@ In 1993, researchers at UC Irvine had college students listen to Mozart, a relax
 
 Sitting in silence is boring. Listening to engaging music is stimulating and pleasant. The conditions in the original study didn't just differ in the presence of Mozart. They also differed in arousal and mood. Follow-up studies found that other enjoyable stimuli (e.g., Schubert, a Stephen King story) produced similar boosts, and that the effect disappeared when researchers controlled for arousal and mood.[^2] The active ingredient seemed to be a stimulating experience, not Mozart.
 
-The confound here wasn't statistical, it was conceptual. Comparing Mozart to silence or relaxation instructions doesn't isolate Mozart. It confounds music with the psychological experience of music. Engagement, pleasure, stimulation. The confound was baked into the treatment contrast. The researchers wanted to test the effect of music on spatial reasoning when the comparison actually tested whether an engaging experience outperformed a boring one.
+The confound here wasn't statistical, it was conceptual. Comparing Mozart to silence or relaxation instructions doesn't isolate Mozart. It confounds music with the psychological experience of music. Engagement, pleasure, stimulation. The confound was baked into the treatment contrast. The researchers wanted to test the effect of music on spatial reasoning, but the comparison actually tested whether an engaging experience outperformed a boring one.
 
 ### Knowing What to Worry About
 
-The Mozart study was a controlled experiment with random assignment and a confound still slipped through. In observational studies, where you can't control assignment, the threats only multiply. Being able to anticipate all the ways the causal pattern could appear in the data is key to preventing a biased result.
+The Mozart study was a controlled experiment with random assignment and a confound still slipped through. In observational studies, where you can't control assignment, the threats only multiply. Anticipating all the ways the causal pattern could appear in the data is the only defense against a biased result.
 
-Consider the debate over smartphones and teen mental health. Starting around 2012, rates of anxiety, depression, and self-harm among adolescents increased across multiple surveys. Smartphone adoption also increased over the same period. The timing lines up. The mechanism is plausible. The causal story practically tells itself. But "feels obviously true" is where observational research goes to die.
+Consider the debate over smartphones and teen mental health. Starting around 2012, rates of anxiety, depression, and self-harm among adolescents increased across multiple surveys. Smartphone adoption also increased over the same period. The timing lines up. The mechanism is plausible. The causal story practically tells itself. But "seems obvious" is where observational research goes to die.
 There were lots of other changes during that time, many of which could generate the same pattern.
 
 The Great Recession's aftermath left families under sustained economic stress into the 2010s. Academic pressure intensified as college admissions grew more competitive. School shootings became a recurring feature of adolescent life. The opioid crisis destabilized households across the country. These are history effects, events external to the treatment that coincide with it and could independently produce the observed outcome. A developmental psychologist or social worker would flag economic insecurity and academic pressure. A data scientist might not.
 
 Then there are the instrumentation effects, changes in how the outcome itself gets measured. In 2009, the U.S. Preventive Services Task Force recommended routine depression screening for adolescents. Two years later, the Affordable Care Act required insurers to cover it, making screening far more widespread in practice. More screening mechanically produces more diagnoses, even if the underlying rate hasn't changed. In 2016, revised ICD-10 coding instructions directed clinicians for the first time to record suicidal ideation as a secondary diagnosis alongside mental health conditions. Much of the apparent surge in teen suicidal behavior in hospital data was driven by these screening and coding changes, not by increases in actual self-harm or suicide.[^3] Add the destigmatization of mental health making teens more willing to report symptoms on surveys, and you have an outcome variable that shifted for reasons entirely unrelated to smartphones.
 
-This is not to say that smartphones harmless. Anyone who has ever been a teenager and ever owned a smartphone can appreciate the plausibility of this theory. It means observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen remaining. And even if you identified every one of them, you'd still have to measure each well enough to neutralize its confounding influence.
+This is not to say that smartphones are harmless. It means observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen remaining. And even if you identified every one of them, you'd still have to measure each well enough to neutralize its confounding influence.
 
 ### Measuring the Weight of Smoke
+
+The smartphone debate illustrates the problem of identifying confounders. But even when you know what the confounders are, measuring them is its own challenge.
 
 What is "health consciousness" exactly? You could ask people to rate how important their health is. But how many people would endorse the idea that they don't care about their health? You could use behavioral proxies, like gym memberships, vitamin purchases, or preventive care visits. But gym memberships and vitamin purchases are confounded with income, and preventive care visits depend on insurance coverage and access to healthcare.
 
@@ -64,17 +66,17 @@ Even sophisticated methods can't save you from a misidentified treatment. Hours 
 
 This was a clean application of a contemporary method. The comparison set was reasonable. The pre-treatment fit was good. The model produced a robust estimate with a clear divergence at the treatment date. But as the author correctly notes, the outcome "might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet went out. People were already searching for "Twitter" because of the takeover itself, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
 
-There is no diagnostic that would have caught this. Placebo tests, in-space or in-time, would pass. The pre-treatment fit is fine because the problem isn't in the pre-treatment period. The search trends used to construct the counterfactual are reasonable for normal search behavior. The threat is upstream of every check the method provides. Synthetic control answers the question "what would searches for Twitter have looked like without this event?" The problem is that "this event" isn't one tweet, it's a major news item that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
+There is no diagnostic that would have caught this. The pre-treatment fit is fine because the problem isn't in the pre-treatment period. The search trends used to construct the counterfactual are reasonable. The threat is upstream of every check the method provides. Synthetic control answers the question "what would searches for Twitter have looked like without this event?" The problem is that "this event" isn't one tweet, it's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
 The method answered the question it was given just fine. The data just weren't suited to that question. Nothing in the output would say that. The only way to catch this is by knowing the timeline, following the news, considering what else was happening when the "treatment" occurred. That's not a statistical skill. It's the kind of contextual judgment that no framework can formalize and no robustness check can replace.
 
 ## Still Easy, Still Hard
 
-Causal inference is easy to understand. Just eliminate alternative explanations. The frameworks, whether DAGs or potential outcomes, formalize this task. But doing it well requires knowing what the alternatives are, measuring the variables behind them, and designing comparisons that make specific threats implausible when measurement falls short.
+Causal inference is easy to understand. Just eliminate alternative explanations. The frameworks, whether DAGs or potential outcomes, formalize this task. But doing it well requires identifying the threats, measuring the variables behind them, and designing comparisons that make specific alternatives implausible when measurement falls short.
 
-The Mozart study was a controlled experiment with random assignment. The synthetic control analysis of Google trends used a powerful method with a reasonable comparison set and model fit. Both produced clear results. Both got the wrong answer, and for essentially the same reason: the treatment contrast didn't isolate what the researchers thought it did. Mozart wasn't compared to "no music", it was compared to boredom. Musk's tweet wasn't an isolated event, it was one moment in a weeks-long news cycle. In neither case did the output raise a flag.
+The Mozart study was a controlled experiment with random assignment. The synthetic control analysis used a powerful method with a reasonable comparison set and good model fit. Both produced clear results. Both got the wrong answer, for essentially the same reason: the treatment contrast didn't isolate what the researchers thought it did.
 
-That's the essense of the challenge. The model will always estimate the treatment effect you ask for and produce a result. Nothing in the output distinguishes a valid causal estimate from one that's been quietly undermined. The math will always work. The question is whether it's working on the right problem.
+The model will always estimate the treatment effect you ask for. Nothing in the output distinguishes a valid causal estimate from one that's been quietly undermined. The math will always work. The question is whether it's working on the right problem.
 
 [^1]: Rauscher, Shaw & Ky (1993). Music and spatial task performance. *Nature*, 365, 611.
 
