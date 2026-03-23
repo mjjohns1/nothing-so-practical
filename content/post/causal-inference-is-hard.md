@@ -23,10 +23,10 @@ The confound here wasn't statistical, it was conceptual. Comparing Mozart to sil
 
 ### Knowing What to Worry About
 
-The Mozart study was a tightly controlled experiment and a confound still slipped through. In observational studies, where you have little control, the threats only multiply. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
+The Mozart study was a tightly controlled experiment and a confound still slipped through. In observational studies with little control, the threats only multiply. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
 
 The relationship between smartphones and teen mental health is a case in point. Starting around 2012, rates of anxiety, depression, and self-harm among adolescents increased across multiple surveys. Smartphone adoption also increased around this time. The timing lines up and the causal story practically writes itself. But "seems obvious" is where observational research goes to die.
-There were various other events around that time, many of which could generate similar patterns.
+There were various other events at that time that could also generate similar patterns.
 
 The Great Recession's aftermath left families under sustained economic stress into the 2010s. Academic pressure intensified as college admissions grew more competitive. School shootings became a recurring feature of adolescent life. These are history effects, events external to the treatment that coincide with it and could independently produce the observed outcome. These are the kind of threats that require domain expertise to identify. They don't show up in the dataset.
 
@@ -38,7 +38,7 @@ This is not to say that smartphones are harmless. It means observational evidenc
 
 The smartphone debate illustrates the challenges of identifying confounders. But even when you know what the confounders are, measuring them is not always straightforward.
 
-In the HRT example, we specified health consciousness as the main confound. How do you measure that? The Nurses' Health Study tried. Researchers collected data on diet, exercise, smoking status, alcohol use, preventive care visits, and vitamin supplementation. They controlled for all of it. The treated and untreated groups still weren't comparable, because health consciousness isn't just a checklist of behaviors. It's the disposition behind those behaviors, the kind of person who asks her doctor about hormone therapy in the first place. The observational studies captured the visible markers of health consciousness but missed the underlying trait that drove both HRT use and cardiovascular health. Controlling for the markers didn't eliminate the confounding. It just left residual bias in the estimate.
+In the HRT example, we specified health consciousness as the main confound. How do you measure that? The Nurses’ Health Study tried. Researchers collected data on diet, exercise, smoking status, alcohol use, preventive care visits, and vitamin consumption. The treated and untreated groups still weren’t comparable. Health consciousness isn’t just a checklist of behaviors. It’s the disposition behind those behaviors, the kind of person who asks her doctor about hormone therapy in the first place. The observational studies captured the visible markers of health consciousness but missed the underlying trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the confounding. It just left residual bias in the estimate.
 
 Many variables that matter for causal inference are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. We give them names and put them on a scale, but translating them into numbers that capture what actually drives selection is a different challenge entirely.
 
@@ -54,7 +54,7 @@ Difference-in-differences illustrates this logic. Instead of comparing HRT users
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent actual HRT study results." class="img-center" >}}
 
-Design-based approaches trade one assumption for another. Instead of assuming we measured everything, we assume that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is untestable in the post-treatment period. An event that coincides with treatment and differentially affects the groups will bias the estimate, and nothing in the data will tell you it happened. The design shifts the burden from measurement to plausibility but it doesn't eliminate it.
+Design-based approaches trade one assumption for another. Instead of assuming we measured everything, we assume that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is untestable in the post-treatment period. An event that coincides with treatment and differentially affects the groups will bias the estimate. Nothing in the data will tell you that. The design shifts the burden from measurement to plausibility but it doesn't eliminate it.
 
 ### Free Bird
 
@@ -70,7 +70,7 @@ The method answered the question it was given just fine. The data just weren't s
 
 ## Still Easy, Still Hard
 
-The Mozart study was a randomized experiment. The synthetic control analysis used a powerful contemporary method. Both produced clear, defensible results. Both got the wrong answer, for the same reason: the treatment contrast didn't isolate what the researchers thought it did. Experiments don't solve the problem automatically. Neither do sophisticated statistical methods. The hard part is always upstream of the technique.
+The Mozart study was a randomized experiment. The synthetic control analysis used a powerful contemporary method. Both produced clear, defensible results. Both got the wrong answer, for the same reason: the treatment contrast didn't isolate what the researchers thought it did. Experiments don't solve the problem automatically. Neither do sophisticated statistical methods. The hard part is upstream of the technique.
 
 The model will always estimate the treatment effect you ask for. Nothing in the output distinguishes a valid causal estimate from one that's been quietly undermined. The math works. The question is whether it's working on the right problem.
 
