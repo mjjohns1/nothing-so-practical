@@ -15,7 +15,7 @@ The [first post](/post/causal-inference-is-easy/) argued that causal inference i
 
 ### Rock Me Amadeus
 
-In 1993, researchers had college students listen to Mozart, a relaxation tape, and silence for 10 minutes then take a spatial reasoning test. Participants scored highest after listening to Mozart.[^1] Despite the study being designed to test the effects of music on cognition, headlines announced that Mozart makes you smarter. Mozart for babies CDs appeared and some states passed legislation encouraging music in schools.
+In 1993, researchers had college students listen to Mozart, a relaxation tape, and silence for 10 minutes then take a spatial reasoning test. Participants scored highest after listening to Mozart.[^1] Despite the study being designed to test the effects of music on cognition, headlines announced that Mozart makes you smarter. Mozart for babies CDs appeared and some states passed legislation encouraging classical music for children.
 
 The conditions in the original study didn't just differ in the presence of Mozart. They also differed in arousal and mood. Follow-up studies found that other enjoyable stimuli (e.g., Schubert, a Stephen King story) produced similar boosts, and that the effect disappeared when researchers controlled for arousal and mood.[^2] The active ingredient seemed to be a stimulating experience, not Mozart.
 
