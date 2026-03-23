@@ -23,14 +23,14 @@ The confound here wasn't statistical, it was conceptual. Comparing Mozart to sil
 
 ### Knowing What to Worry About
 
-The Mozart study was a tightly controlled experiment and a confound still slipped through. In observational studies, where you have little, the threats only multiply.
+The Mozart study was a tightly controlled experiment and a confound still slipped through. In observational studies, where you have little control, the threats only multiply.
 
-Consider the debate over smartphones and teen mental health. Starting around 2012, rates of anxiety, depression, and self-harm among adolescents increased across multiple surveys. Smartphone adoption also increased over the same period. The timing lines up. The mechanism seems plausible. The causal story practically tells itself. But "seems obvious" is where observational research goes to die.
+Consider the questions about smartphones and teen mental health. Starting around 2012, rates of anxiety, depression, and self-harm among adolescents increased across multiple surveys. Smartphone adoption also increased over the same period. The timing lines up. The mechanism seems plausible. The causal story practically tells itself. But "seems obvious" is where observational research goes to die.
 There were lots of other changes during that time, many of which could generate the same pattern.
 
 The Great Recession's aftermath left families under sustained economic stress into the 2010s. Academic pressure intensified as college admissions grew more competitive. School shootings became a recurring feature of adolescent life. The opioid crisis destabilized households across the country. These are history effects, events external to the treatment that coincide with it and could independently produce the observed outcome. A developmental psychologist or social worker would flag economic insecurity and academic pressure. A data scientist might not.
 
-Then there are the instrumentation effects, changes in how the outcome itself gets measured. In 2009, the U.S. Preventive Services Task Force recommended routine depression screening for adolescents. The following year, the Affordable Care Act required insurers to cover it, making screening far more common. More screening mechanically produces more diagnoses, even if the underlying rate hasn't changed. In 2016, revised ICD-10 coding instructions directed clinicians to record suicidal ideation as a secondary diagnosis alongside mental health conditions. Much of the apparent surge in teen suicidal behavior captured in hospital data was driven by these screening and coding changes.[^3] Add the destigmatization of mental health making teens more willing to report symptoms, and you have an outcome variable that can shift for reasons entirely unrelated to smartphones.
+Then there are the changes in how the outcome itself is measured. In 2009, the U.S. Preventive Services Task Force recommended routine depression screening for adolescents. The following year, the Affordable Care Act required insurers to cover it, making screening far more common. More screening mechanically produces more diagnoses, even if the underlying rate hasn't changed. In 2016, revised ICD-10 coding instructions directed clinicians to record suicidal ideation as a secondary diagnosis alongside mental health conditions. Much of the apparent surge in teen suicidal behavior captured in hospital data was driven by these coding changes.[^3] Add the destigmatization of mental health making teens more willing to report symptoms, and you have an outcome variable that can shift for reasons entirely unrelated to smartphones.
 
 This is not to say that smartphones are harmless. It means observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen others. And even if you identified every one of them, you'd still have to measure each well enough to neutralize its confounding influence.
 
@@ -56,7 +56,7 @@ Difference-in-differences illustrates the logic. Instead of comparing HRT users 
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent actual HRT study results." class="img-center" >}}
 
-This trades one assumption for another. Instead of assuming we measured everything we assume that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, and it's the kind of claim where domain expertise becomes relevant. But it can still be wrong in ways that are hard to detect. The parallel trends assumption is untestable in the post-treatment period. You can check for parallel trends before the treatment, but that doesn't guarantee they would have stayed parallel afterward. An event that coincides with treatment and differentially affects the groups will bias the estimate. The design shifts the burden from measurement to plausibility but it doesn't eliminate it.
+This trades one assumption for another. Instead of assuming we measured everything we assume that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, and it's the kind of claim where domain expertise becomes relevant. But it can still be wrong in ways that are hard to detect. The parallel trends assumption is untestable in the post-treatment period. An event that coincides with treatment and differentially affects the groups will bias the estimate. The design shifts the burden from measurement to plausibility but it doesn't eliminate it.
 
 ### Free Bird
 
@@ -74,7 +74,7 @@ The method answered the question it was given just fine. The data just weren't s
 
 Causal inference is easy to understand. Just eliminate alternative explanations. The frameworks, whether DAGs or potential outcomes, formalize this task. But doing it well requires identifying the threats, measuring the variables behind them, and designing comparisons that make specific alternatives implausible when measurement falls short.
 
-The Mozart study was a controlled experiment. The synthetic control analysis used a powerful statistical method with solid controls and good model fit. Both produced clear results. Both got the wrong answer, for essentially the same reason: the treatment contrast didn't isolate what the researchers thought it did.
+The Mozart study was a controlled experiment. The synthetic control analysis used a powerful statistical method. Both produced clear results. Both got the wrong answer, for essentially the same reason: the treatment contrast didn't isolate what the researchers thought it did.
 
 The model will always estimate the treatment effect you ask for. Nothing in the output distinguishes a valid causal estimate from one that's been quietly undermined. The math will work. The question is whether it's working on the right problem.
 
