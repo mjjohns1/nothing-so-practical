@@ -26,9 +26,9 @@ It took several follow-up studies to catch this. The confound was invisible to t
 
 ### A Half-dozen Rival Explanations
 
-The Mozart study was a controlled experiment and a confound still slipped through. In observational studies with little control, the threats only multiply. Confounds don't announce themselves. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
+The Mozart study was a controlled experiment, and a confound still slipped through. In observational studies with little control, the threats only multiply. Confounds don't announce themselves. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
 
-The relationship between smartphones and teen mental health is a case in point. Starting around 2012, surveys showed rates of anxiety, depression, and self-harm increasing among adolescents. Smartphone adoption was also increasing, with 50% of Americans owning a smartphone by 2012. The timing lines up and the causal story practically writes itself. But "seems obvious" is where observational research goes to die. There were numerous events around that time that could also generate similar patterns.
+The relationship between smartphones and teen mental health is a case in point. Starting around 2012, surveys showed rates of anxiety, depression, and self-harm increasing among adolescents. Smartphone adoption was also accelerating in that period. The timing lines up, and the causal story practically writes itself. But "seems obvious" is where observational research goes to die. There were numerous events around that time that could also generate similar patterns.
 
 The Great Recession's aftermath left families under sustained economic stress into the 2010s. Academic pressure intensified as college admissions grew more competitive. School shootings became a recurring feature of adolescent life. These are history effects, events external to the treatment that coincide with it and could independently produce the observed outcome. They aren't visible in the dataset.
 
@@ -42,7 +42,7 @@ This is not to say that smartphones are harmless.[^1] It means observational evi
 
 In the HRT example from the first post, we identified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
 
-Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides where the data can't see.
+Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides in what the data can't see.
 
 ### Design Around What You Can’t Measure
 
@@ -52,9 +52,9 @@ Instead of trying to measure every confounder, you can use a study design that n
 
 Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable. Finding equivalent slopes before treatment is reassuring, but it isn't proof.
 
-Suppose that around the same time HRT prescribing was increasing, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show improving heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
+Suppose that around the same time HRT became accepted, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show improving heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
-The design shifts the burden from measurement to plausibility, but doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
+The design shifts the burden from measurement to plausibility, but it doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
 
 ## Free Bird
 
@@ -74,7 +74,7 @@ The Mozart study was a controlled experiment. The synthetic control analysis use
 
 Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A misspecified treatment won't tell you it's wrong.
 
-This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Skipping these steps is easy. Figuring out all the ways you could be wrong is the hard part.
+This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Setting up the model and generating results is easy. Figuring out all the ways you could be wrong is the hard part.
 
 ##### References
 
@@ -90,4 +90,4 @@ Thompson, W. F., Schellenberg, E. G., & Husain, G. (2001). Arousal, mood, and th
 
 Twenge, J. M. (2020). Increases in depression, self-harm, and suicide among U.S. adolescents after 2012 and links to technology use: Possible mechanisms. *Psychiatric Research and Clinical Practice*, *2*(1), 19–25.
 
-[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm or any other markers of adolescent mental health are just a measurement artifact (or other factors unrelated to smartphone use). This example is for *purely* pedagogical purposes. It just happens to be that one of the most hotly debated policy questions in adolescent development is built around observational data.
+[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm, or any other markers of adolescent mental health are just a measurement artifact, or artifact of other factors unrelated to smartphone use. This example is for *purely* pedagogical purposes. It just happens to be a hotly debated policy questions informed by observational data.
