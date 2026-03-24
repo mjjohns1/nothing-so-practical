@@ -7,7 +7,7 @@ author:      "MJ"
 image:       ""
 tags:        ["causal inference"]
 categories:  []
-draft:       FALSE
+draft:       false
 ---
 
 ## Causal Inference is Hard
@@ -16,11 +16,11 @@ The [first post](/post/causal-inference-is-easy/) argued that causal inference i
 
 ### Rock Me Amadeus
 
-In 1993, researchers reported that listening to Mozart for 10 minutes improved spatial reasoning, compared to a relaxation tape or silence (Rauscher et al., 1993). Headlines announced that Mozart makes you smarter. Mozart for babies CDs appeared and some states even passed legislation encouraging classical music for children.
+In 1993, researchers reported that listening to Mozart for 10 minutes improved spatial reasoning, compared to a relaxation tape or silence (Rauscher et al., 1993). Headlines announced that Mozart makes you smarter. Baby Mozart CDs appeared and some states even passed legislation encouraging classical music for children.
 
 The conditions in the original study didn't just differ in the presence of Mozart. They also differed in arousal and mood. Subsequent studies found that other enjoyable stimuli (e.g., Schubert, a Stephen King story) produced similar boosts, and that the effect disappeared when researchers controlled for positive affect. The active ingredient seemed to be a stimulating experience, not Mozart.
 
-The confound wasn't statistical, it was conceptual. Comparing Mozart to silence doesn't isolate Mozart. It confounds music with the psychological experience of music. Engagement, pleasure, stimulation. The researchers wanted to test the effect of music on spatial reasoning, but the comparison tested whether an engaging experience outperformed a boring one.
+The confound wasn't statistical, it was conceptual. Comparing Mozart to silence doesn't isolate the effect of Mozart. It confounds music with the psychological experience of music. Engagement, pleasure, stimulation. The researchers wanted to test the effect of music on spatial reasoning, but the comparison tested whether an engaging experience outperformed a boring one.
 
 It took several follow-up studies to catch this. The confound was invisible to the p-values. It could only be seen by thinking carefully about what the comparison actually tested.
 
@@ -40,31 +40,31 @@ This is not to say that smartphones are harmless.[^1] It means observational evi
 
 ### Measuring the Weight of Smoke
 
-In the HRT example from the first post, we specified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
+In the HRT example from the first post, we identified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
 
-Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides where the data can't see.
+Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides where the data can't see.
 
 ### Design Around What You Can’t Measure
 
-Instead of trying to measure every confounder, you can use a study design that neutralizes them structurally. Difference-in-differences illustrates this logic. Instead of comparing HRT users to non-users at a single point in time, we compare changes over time. If health-conscious women are consistently more likely to use HRT, the baseline difference captures that. Looking at whether the trend in cardiovascular outcomes shifted after HRT adoption controls for any stable baseline difference between groups, including unmeasured differences.
+Instead of trying to measure every confounder, you can use a study design that neutralizes them structurally. Difference-in-differences (DiD) illustrates this logic. Rather than comparing HRT users to non-users at a single point in time, we compare how each group's outcomes changed. If health-conscious women consistently have better cardiovascular outcomes, that difference appears in both periods and cancels out. This eliminates any stable baseline difference between groups, including unmeasured ones.
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent actual HRT study results." class="img-center" >}}
 
-Design-based approaches trade one assumption for another. Instead of assuming we measured everything, we assume that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is untestable in the post-treatment period.
+Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounders" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable. Finding equivalent slopes before treatment is reassuring, but it isn't proof.
 
-Suppose that around the same time HRT became widely prescribed, public health agencies launched cardiovascular screening campaigns targeting women seeking preventive care. Women on HRT would show improving heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
+Suppose that around the same time HRT prescribing was increasing, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show improving heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
-The design shifts the burden from measurement to plausibility, but it doesn't eliminate it. And all of this assumes you've correctly identified what the treatment actually is.
+The design shifts the burden from measurement to plausibility, but doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
 
-#### Free Bird
+## Free Bird
 
-Even sophisticated methods can trip over an ambiguous treatment. Hours after Elon Musk closed his acquisition of Twitter, he tweeted "the bird is freed." Molak [used this event](https://medium.com/data-science/causal-python-elon-musks-tweet-our-googling-habits-bayesian-synthetic-control-187114fc4aa8) to demonstrate synthetic control, a method that constructs a counterfactual by weighting comparison time series to match the pre-treatment trajectory of the treated unit. Any post-treatment divergence is attributed to the treatment. The analysis found a large effect of Musk's tweet on Google searches for "Twitter."
+Even sophisticated methods can trip over an ambiguous treatment. Hours after Elon Musk closed his acquisition of Twitter, he tweeted "the bird is freed." Molak [used this event](https://medium.com/data-science/causal-python-elon-musks-tweet-our-googling-habits-bayesian-synthetic-control-187114fc4aa8) to demonstrate synthetic control, a method that constructs a counterfactual by weighting comparison time series to match the pre-treatment trajectory of the treated unit. Any post-treatment divergence is attributed to the treatment. The analysis estimated a large effect of Musk's tweet on Google searches for "Twitter."
 
 ![Google search interest for "Twitter" was already surging days before the tweet, driven by acquisition news coverage](/img/posts/causal-inference/freebird-trends.svg)
 
 This was a clean application of a contemporary method. The model produced a robust estimate with a clear divergence at the treatment date. But as the author correctly notes, "the outcome might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet. People were already searching for "Twitter" because of news about the takeover, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
 
-No diagnostic test would have caught this. The pre-treatment fit looks good and the quantitative checks all pass. The problem isn't in the baseline trends. The threat is upstream. The model is answering "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
+A degraded fit in the period before the tweet might signal that the baseline was already contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
 The method answered the question it was given; the data just weren't suited to that question. Nothing in the output would show this. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
 
@@ -72,7 +72,7 @@ The method answered the question it was given; the data just weren't suited to t
 
 The Mozart study was a controlled experiment. The synthetic control analysis used a sophisticated statistical method. Both produced clear, defensible results. Both got the wrong answer. In neither case was the problem downstream in the analysis. It was upstream, in what the researchers thought they were comparing.
 
-Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A mis-specified treatment won't tell you it's wrong.
+Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A misspecified treatment won't tell you it's wrong.
 
 This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Skipping these steps is easy. Figuring out all the ways you could be wrong is the hard part.
 
