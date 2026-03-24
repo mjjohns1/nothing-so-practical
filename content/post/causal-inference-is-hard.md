@@ -22,7 +22,7 @@ The conditions in the original study didn't just differ in the presence of Mozar
 
 The confound wasn't statistical, it was conceptual. Comparing Mozart to silence doesn't isolate Mozart. It confounds music with the psychological experience of music. Engagement, pleasure, stimulation. The researchers wanted to test the effect of music on spatial reasoning, but the comparison tested whether an engaging experience outperformed a boring one.
 
-It took several follow-up studies to catch this. The oringal study was well executed and the results were clean. The confound was invisible to the p-values. It could only be seen by thinking carefully about what the comparison actually tested.
+It took several follow-up studies to catch this. The original study was well executed and the results were clean. The confound was invisible to the p-values. It could only be seen by thinking carefully about what the comparison actually tested.
 
 ### 99 Rivals But This Ain't One
 
@@ -32,19 +32,19 @@ The relationship between smartphones and teen mental health is a case in point. 
 
 The Great Recession's aftermath left families under sustained economic stress into the 2010s. Academic pressure intensified as college admissions grew more competitive. School shootings became a recurring feature of adolescent life. These are history effects, events external to the treatment that coincide with it and could independently produce the observed outcome. They aren't visible in the dataset.
 
-Then there are the changes in how the outcome itself is measured. In 2009, routine depression screening was recommended for adolescents, and the following year the Affordable Care Act required insurers to cover it. More screening produces more diagnoses, even if the underlying rate hasn't changed. Coding changes in how hospitals recorded suicidal ideation had a similar effect (Corredor-Waldron & Currie, 2024). Add destigmatization making teens more willing to report mental health stuggles, and you have an outcome variable that can shift for reasons entirely unrelated to smartphone use.
+Then there are the changes in how the outcome itself is measured. In 2009, routine depression screening was recommended for adolescents, and the following year the Affordable Care Act required insurers to cover it. More screening produces more diagnoses, even if the underlying rate hasn't changed. Coding changes in how hospitals recorded suicidal ideation had a similar effect (see Corredor-Waldron & Currie, 2024). Add destigmatization making teens more willing to report mental health struggles, and you have an outcome variable that can shift for reasons entirely unrelated to smartphone use.
 
-![Trends in depression and self-harm amonng girls and boys](/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png)
+{{< figure src="/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png" caption="Plot created by Craig Sewall. Original is available at Craig's Substack: https://craigsewall.substack.com/p/an-alternative-explanation-to-the" class="img-center" >}}
 
 This is not to say that smartphones are harmless.[^1] It means observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen others. And even if you could identify every last one, you'd still need to measure them well enough to neutralize the confounding. That turns out to be its own problem.
 
 ### Measuring the Weight of Smoke
 
-In the HRT example from the first post, we specified health consciousness as the main confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the the alternative explanation.
+In the HRT example from the first post, we specified health consciousness as the main confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
 
 Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result.
 
-Even if you identify all the confounders you stil have to measure them adequately. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks fine. The confounding hides in whatever the data didn’t capture.
+Even if you identify all the confounders you still have to measure them adequately. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks fine. The confounding hides in whatever the data didn’t capture.
 
 ### Design Around What You Can’t Measure
 
@@ -52,7 +52,11 @@ Instead of trying to measure every confounder, you can choose a study design tha
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent actual HRT study results." class="img-center" >}}
 
-Design-based approaches trade one assumption for another. Instead of assuming we measured everything, we assume that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is untestable in the post-treatment period. An event that coincides with treatment and differentially affects the groups will bias the estimate. The design shifts the burden from measurement to plausibility, but it doesn't eliminate it. And all of this assumes you've correctly identified what the treatment actually is.
+Design-based approaches trade one assumption for another. Instead of assuming we measured everything, we assume that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is untestable in the post-treatment period.
+
+Suppose that around the same time HRT became widely prescribed, public health agencies launched cardiovascular screening campaigns targeting women seeking preventive care. Women on HRT would show improving heart disease trends not because of the hormone therapy, but because they were the same women getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
+
+The design shifts the burden from measurement to plausibility, but it doesn't eliminate it. And all of this assumes you've correctly identified what the treatment actually is.
 
 #### Free Bird
 
@@ -70,9 +74,10 @@ The method answered the question it was given just fine. The data just weren't s
 
 The Mozart study was a controlled experiment. The synthetic control analysis used a sophisticated statistical method. Both produced clear, defensible results. Both got the wrong answer. In neither case was the problem downstream in the analysis. It was upstream, in what the researchers thought they were comparing.
 
-None of this means the methods are useless. Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. These are genuine advances. But they work on the problem you give them. They can't tell you whether you've given them the right one.
+Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But a confounder that slipped by won't appear in the DAG. A disposition that goes unmeasured won't be absorbed by the covariates. A mis-specified treatment will produce a precise estimate of the wrong thing. In each case, the output looks fine and the math always works.
 
-A confounder that slipped by won't appear in the DAG. A disposition you can't measure won't be absorbed by the covariates. A treatment that's misidentified will produce a precise estimate of the wrong thing. In each case, the output looks fine and the math always works. That's what makes it hard.
+This is not methodological nihilism. It’s a reason to think harder before running the model. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code hits the compiler. What matters most is the part that can't be automated: knowing enough about the world to see how you could be wrong.
+
 
 ##### References
 
@@ -84,4 +89,4 @@ Rauscher, Shaw & Ky (1993). Music and spatial task performance. *Nature*, 365, 6
 
 Thompson, Schellenberg & Husain (2001). Arousal, mood, and the Mozart effect. *Psychological Science*, 12(3), 248-251.
 
-[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm or any other markers of adolescent mental health are just a measurement artifact (or the product of factors unrelated to smartphone use). We use this example for purely pedagological purposes. It just happens to be that one of the most hotly debated policy questions in adolescent development is built around observational data.
+[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm or any other markers of adolescent mental health are just a measurement artifact (or other factors unrelated to smartphone use). This example is for *purely* pedagogical purposes. It just happens to be that one of the most hotly debated policy questions in adolescent development is built around observational data.
