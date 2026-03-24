@@ -74,10 +74,9 @@ The method answered the question it was given just fine. The data just weren't s
 
 The Mozart study was a controlled experiment. The synthetic control analysis used a sophisticated statistical method. Both produced clear, defensible results. Both got the wrong answer. In neither case was the problem downstream in the analysis. It was upstream, in what the researchers thought they were comparing.
 
-Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But a confounder that slipped by won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A mis-specified treatment will produce a precise estimate of the wrong thing. In each case, the output looks fine and the math works.
+Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But a confounder that slipped by won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A mis-specified treatment will produce a precise estimate of the wrong thing.
 
-This is not methodological nihilism. It’s a reason to think harder before running the model. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. The hard part of causal inference isn't ruling out alternative explanations. It's seeing them in the first place.
-
+This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Skipping these steps is easy. Figuring out all the ways you could be wrong? That's the hard part.
 
 ##### References
 
