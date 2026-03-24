@@ -66,15 +66,15 @@ Even sophisticated methods can trip over a misidentified treatment. Hours after 
 
 This was a clean application of a contemporary method. The model produced a robust estimate with a clear divergence at the treatment date. But as the author correctly notes, the outcome "might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet. People were already searching for "Twitter" because of the takeover itself, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
 
-No diagnostic test would have caught this. The pre-treatment fit looks good. Every quantitative check gives a green light because the problem isn't in the pre-treatment period. The threat is upstream. The model is answering "what would searches have looked like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
+No diagnostic test would have caught this. The pre-treatment fit looks good. Every quantitative check gives a green light because the problem isn't in the pre-treatment period. The threat is upstream. The model is answering "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
-The method answered the question it was given just fine. The data just weren't suited to that question. Nothing in the output would state this. The only way to catch it is by knowing the timeline and considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
+The method answered the question it was given just fine. The data just weren't suited to that question. Nothing in the output would show this. The only way to catch it is by knowing the timeline and considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
 
 ## Still Easy, Still Hard
 
 The Mozart study was a controlled experiment. The synthetic control analysis used a sophisticated statistical method. Both produced clear, defensible results. Both got the wrong answer. In neither case was the problem downstream in the analysis. It was upstream, in what the researchers thought they were comparing.
 
-Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But a confounder that slipped by won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A mis-specified treatment will produce a precise estimate of the wrong thing.
+Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A mis-specified treatment won't tell you it's wrong.
 
 This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Skipping these steps is easy. Figuring out all the ways you could be wrong? That's the hard part.
 
