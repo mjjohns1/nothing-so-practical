@@ -66,7 +66,7 @@ This was a clean application of a contemporary method. The model estimated a str
 
 A degraded fit in the period before the tweet might suggest that the baseline was contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering, "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
-The method answered the question it was given; the data just weren't suited to that question. Nothing in the output would show this. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
+The model answered the question it was given; the data just weren't suited to that question. Nothing in the output would show this. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
 
 ### Still Easy, Still Hard
 
