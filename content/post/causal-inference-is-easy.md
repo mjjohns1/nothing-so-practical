@@ -11,7 +11,7 @@ draft:       FALSE
 ---
 
 
-## Causal Inference is Easy
+## Causal Inference Is Easy
 
 Causal inference seems to be having a moment. Why the sudden interest? The tech industry's belated realization that correlation really doesn't equal causation, no matter how big the data, could have something to do with it. It might also be that we've collectively worked through all the easy prediction problems and now need to answer harder questions about why things happen. Certainly, some of it is just methodological fashion.
 

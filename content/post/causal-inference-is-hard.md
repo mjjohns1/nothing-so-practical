@@ -10,13 +10,13 @@ categories:  []
 draft:       false
 ---
 
-## Causal Inference is Hard
+## Causal Inference Is Hard
 
 The [first post](/post/causal-inference-is-easy/) argued that causal inference is simply a matter of ruling out rival explanations. That sounds pretty straightforward. It's not. Rival explanations can be hard to identify, hard to measure, and hard to isolate. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails. No matter how sophisticated the method, the model will estimate the treatment effect you ask for. When causal inference fails, it fails silently.
 
 ### Rock Me Amadeus
 
-In 1993, researchers reported that listening to Mozart for 10 minutes improved spatial reasoning, compared to a relaxation tape or silence (Rauscher et al., 1993). Headlines announced that Mozart makes you smarter. Baby Mozart CDs appeared and some states even passed legislation encouraging classical music for children.
+In 1993, researchers reported that listening to Mozart for 10 minutes improved spatial reasoning, compared to a relaxation tape or silence. Headlines announced that Mozart makes you smarter. Baby Mozart CDs appeared and some states even passed legislation encouraging classical music for children.
 
 The conditions in the original study didn't just differ in the presence of Mozart. They also differed in arousal and mood. Subsequent studies found that other enjoyable stimuli (e.g., Schubert, a Stephen King story) produced similar boosts, and that the effect disappeared when researchers controlled for positive affect. The active ingredient seemed to be a stimulating experience, not Mozart.
 
@@ -24,7 +24,7 @@ The confound wasn't statistical, it was conceptual. Comparing Mozart to silence 
 
 It took several follow-up studies to catch this. The confound was invisible to the p-values. It could only be seen by thinking carefully about what the comparison actually tested.
 
-### A Half-dozen Rival Explanations
+### A Half-Dozen Rival Explanations
 
 The Mozart study was a controlled experiment, and a confound still slipped through. In observational studies with little control, the threats only multiply. Confounds don't announce themselves. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
 
@@ -32,11 +32,11 @@ The relationship between smartphones and teen mental health is a case in point. 
 
 The Great Recession's aftermath left families under sustained economic stress into the 2010s. Academic pressure intensified as college admissions grew more competitive. School shootings became a recurring feature of adolescent life. These are history effects, events external to the treatment that coincide with it and could independently produce the observed outcome. They aren't visible in the dataset.
 
-Then there are the changes in how the outcome itself is measured. In 2009, routine depression screening was recommended for adolescents, and the following year the Affordable Care Act required insurers to cover it. More screening produces more diagnoses, even if the underlying rate hasn't changed. Coding changes in how hospitals recorded suicidal ideation had a similar effect (see Corredor-Waldron & Currie, 2024). Add destigmatization that makes teens more willing to report mental health struggles, and you have an outcome variable that can shift for reasons entirely unrelated to smartphone use.
+Then there are the changes in how the outcome itself is measured. In 2009, routine depression screening was recommended for adolescents, and the following year the Affordable Care Act required insurers to cover it. More screening produces more diagnoses, even if the underlying rate hasn't changed. Coding changes in how hospitals recorded suicidal ideation had a similar effect. Add destigmatization that makes teens more willing to report mental health struggles, and you have an outcome variable that can shift for reasons entirely unrelated to smartphone use.
 
 {{< figure src="/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png" caption="Credit: Craig Sewall. Original is available at Craig's Substack: https://craigsewall.substack.com/p/an-alternative-explanation-to-the" class="img-center" >}}
 
-This is not to say that smartphones are harmless.[^1] It means observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen others. And even if you could identify every last one, you'd still need to measure them well enough to neutralize confounding. That turns out to be its own problem.
+This is not to say that smartphones are harmless.[^1] The point is, observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen others. And even if you could identify every last one, you'd still need to measure them well enough to neutralize confounding. That turns out to be its own problem.
 
 ### Measuring the Weight of Smoke
 
@@ -48,27 +48,27 @@ Many confounders that matter are abstract constructs. Motivation, risk tolerance
 
 Instead of trying to measure every confounder, you can use a study design that neutralizes them structurally. Difference-in-differences (DiD) illustrates this logic. Rather than comparing HRT users to non-users at a single point in time, we compare how each group's outcomes changed. If health-conscious women consistently have better cardiovascular outcomes, that difference appears in both periods and cancels out. This eliminates any stable baseline difference between groups, including unmeasured ones.
 
-{{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent actual HRT study results." class="img-center" >}}
+{{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent any actual HRT study or study results." class="img-center" >}}
 
 Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable. Finding equivalent slopes before treatment is reassuring, but it isn't proof.
 
-Suppose that around the same time HRT became accepted, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show improving heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
+Suppose that around the same time HRT became accepted, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
 The design shifts the burden from measurement to plausibility, but it doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
 
-## Free Bird
+### Free Bird
 
 Even sophisticated methods can trip over an ambiguous treatment. Hours after Elon Musk closed his acquisition of Twitter, he tweeted "the bird is freed." Molak [used this event](https://medium.com/data-science/causal-python-elon-musks-tweet-our-googling-habits-bayesian-synthetic-control-187114fc4aa8) to demonstrate synthetic control, a method that constructs a counterfactual by weighting comparison time series to match the pre-treatment trajectory of the treated unit. Any post-treatment divergence is attributed to the treatment. The analysis estimated a large effect of Musk's tweet on Google searches for "Twitter."
 
 ![Google search interest for "Twitter" was already surging days before the tweet, driven by acquisition news coverage](/img/posts/causal-inference/freebird-trends.svg)
 
-This was a clean application of a contemporary method. The model produced a robust estimate with a clear divergence at the treatment date. But as the author correctly notes, "the outcome might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet. People were already searching for "Twitter" because of news about the takeover, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
+This was a clean application of a contemporary method. The model estimated a strong effect with a clear divergence at the treatment. But as the author correctly notes, "the outcome might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet. People were already searching for "Twitter" because of news about the takeover, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
 
-A degraded fit in the period before the tweet might signal that the baseline was already contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
+A degraded fit in the period before the tweet might suggest that the baseline was contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering, "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
 The method answered the question it was given; the data just weren't suited to that question. Nothing in the output would show this. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
 
-## Still Easy, Still Hard
+### Still Easy, Still Hard
 
 The Mozart study was a controlled experiment. The synthetic control analysis used a sophisticated statistical method. Both produced clear, defensible results. Both got the wrong answer. In neither case was the problem downstream in the analysis. It was upstream, in what the researchers thought they were comparing.
 
