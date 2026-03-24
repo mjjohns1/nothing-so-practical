@@ -76,6 +76,7 @@ Potential outcomes and DAGs give you the tools to reason about confounding rigor
 
 This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Setting up the model and getting results is easy. Identifying all the competing explanations for those results is the hard part.
 
+----
 ##### References
 
 Corredor-Waldron, A., & Currie, J. (2024). To what extent are trends in teen mental health driven by changes in reporting? The example of suicide-related hospital visits. *Journal of Human Resources*, *59*(S), S14–S40.
@@ -90,4 +91,4 @@ Thompson, W. F., Schellenberg, E. G., & Husain, G. (2001). Arousal, mood, and th
 
 Twenge, J. M. (2020). Increases in depression, self-harm, and suicide among U.S. adolescents after 2012 and links to technology use: Possible mechanisms. *Psychiatric Research and Clinical Practice*, *2*(1), 19–25.
 
-[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm, or any other markers of adolescent mental health are just a measurement artifact, or artifact of other factors unrelated to smartphone use. This example is for *purely* pedagogical purposes. It just happens to be a hotly debated policy questions informed by observational data.
+[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm, or any other markers of adolescent mental health are just a measurement artifact, or artifact of other factors unrelated to smartphone use. This example is for *purely* pedagogical purposes. It just happens to be a hotly debated policy question informed by observational data.
