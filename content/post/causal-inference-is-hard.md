@@ -34,7 +34,7 @@ The Great Recession's aftermath left families under sustained economic stress in
 
 Then there are the changes in how the outcome itself is measured. In 2009, routine depression screening was recommended for adolescents, and the following year the Affordable Care Act required insurers to cover it. More screening produces more diagnoses, even if the underlying rate hasn't changed. Coding changes in how hospitals recorded suicidal ideation had a similar effect. Add destigmatization that makes teens more willing to report mental health struggles, and you have an outcome variable that can shift for reasons entirely unrelated to smartphone use.
 
-{{< figure src="/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png" caption="Credit: Craig Sewall. Original is available at Craig's Substack: https://craigsewall.substack.com/p/an-alternative-explanation-to-the" class="img-center" >}}
+{{< figure src="/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png" caption="© 2026 Craig Sewall. Reproduced from Craig's Substack. Available at: https://craigsewall.substack.com/p/an-alternative-explanation-to-the" class="img-center" >}}
 
 This is not to say that smartphones are harmless.[^1] The point is, observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen others. And even if you could identify every last one, you'd still need to measure them well enough to neutralize confounding. That turns out to be its own problem.
 
@@ -42,7 +42,7 @@ This is not to say that smartphones are harmless.[^1] The point is, observationa
 
 In the HRT example from the first post, we identified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
 
-Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides in what the data can't see.
+Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides beyond the view of the data.
 
 ### Design Around What You Can’t Measure
 
@@ -52,7 +52,7 @@ Instead of trying to measure every confounder, you can use a study design that n
 
 Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable. Finding equivalent slopes before treatment is reassuring, but it isn't proof.
 
-Suppose that around the same time HRT became accepted, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
+Suppose that around the same time HRT became common, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
 The design shifts the burden from measurement to plausibility, but it doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
 
@@ -74,7 +74,7 @@ The Mozart study was a controlled experiment. The synthetic control analysis use
 
 Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A misspecified treatment won't tell you it's wrong.
 
-This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Setting up the model and generating results is easy. Figuring out all the ways you could be wrong is the hard part.
+This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Setting up the model and getting results is easy. Figuring out all the competing explanations is the hard part.
 
 ##### References
 

@@ -21,84 +21,73 @@ plt.rcParams.update({
 })
 
 
-def ols_line(x, y):
-    """Fit a degree-1 OLS line; return (fitted_y, coefficients)."""
-    coeffs = np.polyfit(x, y, 1)
-    return np.polyval(coeffs, x), coeffs
-
-
 def main():
     # Stylized diff-in-diff illustration for HRT example.
-    # Noisy observations are shown as scatter; OLS lines are fit
-    # separately for each group × period.  The HRT pre-treatment fit
-    # is extended into the post period as the counterfactual.
+    # Clean 2×2 diagram: four group × period means connected by lines,
+    # with a dotted counterfactual and an effect arrow at the post-period
+    # center.  No scatter — the focus is the estimation logic.
     rng = np.random.default_rng(42)
     years = np.arange(1985, 1999)
     treatment_year = 1992
     pre = years < treatment_year
     post = ~pre
 
-    # Control group: steady decline with small noise
+    # Simulate underlying data (used only to derive the means)
     ctrl = 60 - 1.2 * (years - 1985) + rng.normal(0, 0.8, len(years))
-
-    # HRT group: lower baseline (health-conscious), parallel pre-trend,
-    # then a visible post-treatment drop
     hrt_base = 50 - 1.2 * (years - 1985) + rng.normal(0, 0.8, len(years))
     treatment_effect = np.where(post, -2.5 * (years - treatment_year + 1), 0)
     hrt = hrt_base + treatment_effect
 
-    # OLS fits: one line per group per period
-    ctrl_pre_fit, _ = ols_line(years[pre], ctrl[pre])
-    ctrl_post_fit, _ = ols_line(years[post], ctrl[post])
-    hrt_pre_fit, hrt_pre_coeffs = ols_line(years[pre], hrt[pre])
-    hrt_post_fit, _ = ols_line(years[post], hrt[post])
+    # Group × period means
+    ctrl_pre_mean  = ctrl[pre].mean()
+    ctrl_post_mean = ctrl[post].mean()
+    hrt_pre_mean   = hrt[pre].mean()
+    hrt_post_mean  = hrt[post].mean()
+    hrt_cf_mean    = hrt_pre_mean + (ctrl_post_mean - ctrl_pre_mean)
 
-    # Counterfactual: extend HRT pre-trend into the post period
-    hrt_cf = np.polyval(hrt_pre_coeffs, years[post])
+    # Symmetric x-positions: pre=1, post=2, boundary at 1.5
+    x_pre, x_post, x_mid = 1, 2, 1.5
 
     fig, ax = plt.subplots(figsize=(9, 4.5))
 
-    # Shading for treatment period
-    ax.axvspan(treatment_year - 0.5, years[-1] + 0.5,
-               color="#E3F2FD", alpha=0.5, zorder=0)
-    ax.axvline(treatment_year - 0.5, color=GRAY, ls="--", lw=1, alpha=0.6)
-    ax.text(treatment_year + 0.1, max(ctrl) + 1.5, "HRT adoption",
+    # Treatment period shading
+    ax.axvspan(x_mid, x_post + 0.5, color="#E3F2FD", alpha=0.5, zorder=0)
+    ax.axvline(x_mid, color=GRAY, ls="--", lw=1, alpha=0.6)
+    ax.text(x_mid + 0.04, ctrl_pre_mean + 1.5, "HRT adoption",
             fontsize=9.5, color="#555555", style="italic", va="bottom")
 
-    # Scatter: observed data points (both groups, both periods)
-    ax.scatter(years[pre], ctrl[pre], color=RED, s=18, alpha=0.45, zorder=3)
-    ax.scatter(years[post], ctrl[post], color=RED, s=18, alpha=0.45, zorder=3)
-    ax.scatter(years[pre], hrt[pre], color=BLUE, s=18, alpha=0.45, zorder=3)
-    ax.scatter(years[post], hrt[post], color=BLUE, s=18, alpha=0.45, zorder=3)
-
-    # Fitted lines — control group (label only on one segment for legend)
-    ax.plot(years[pre], ctrl_pre_fit, color=RED, lw=2.2, alpha=0.9, zorder=4)
-    ax.plot(years[post], ctrl_post_fit, color=RED, lw=2.2, alpha=0.9,
+    # Control group: pre-mean → post-mean
+    ax.plot([x_pre, x_post], [ctrl_pre_mean, ctrl_post_mean],
+            color=RED, lw=2.2, marker="o", markersize=7,
             label="Non-HRT users", zorder=4)
 
-    # Fitted lines — HRT observed
-    ax.plot(years[pre], hrt_pre_fit, color=BLUE, lw=2.2, alpha=0.9, zorder=4)
-    ax.plot(years[post], hrt_post_fit, color=BLUE, lw=2.2, alpha=0.9,
+    # HRT observed: pre-mean → post-mean
+    ax.plot([x_pre, x_post], [hrt_pre_mean, hrt_post_mean],
+            color=BLUE, lw=2.2, marker="o", markersize=7,
             label="HRT users (observed)", zorder=4)
 
-    # Counterfactual (parallel trend extended from pre-period fit)
-    ax.plot(years[post], hrt_cf, color=BLUE, lw=1.8, ls=":", alpha=0.6,
-            label="HRT users (counterfactual)", zorder=2)
+    # Counterfactual: pre-mean → cf post-mean
+    ax.plot([x_pre, x_post], [hrt_pre_mean, hrt_cf_mean],
+            color=BLUE, lw=1.8, ls=":", alpha=0.7,
+            label="HRT users (counterfactual)", zorder=3)
+    # Distinct marker at the counterfactual endpoint only
+    ax.scatter([x_post], [hrt_cf_mean],
+               color=BLUE, s=55, marker="D", alpha=0.7, zorder=5)
 
-    # Annotate the treatment effect at the last observed year
-    y_obs = hrt_post_fit[-1]
-    y_cf = hrt_cf[-1]
+    # Effect arrow
     ax.annotate(
-        "", xy=(years[-1] + 0.3, y_obs),
-        xytext=(years[-1] + 0.3, y_cf),
+        "", xy=(x_post + 0.07, hrt_post_mean),
+        xytext=(x_post + 0.07, hrt_cf_mean),
         arrowprops=dict(arrowstyle="<->", color="#444444", lw=1.5),
     )
-    ax.text(years[-1] + 0.55, (y_obs + y_cf) / 2,
+    ax.text(x_post + 0.12, (hrt_post_mean + hrt_cf_mean) / 2,
             "Estimated\neffect",
             ha="left", va="center", fontsize=9.5,
             color="#444444", style="italic", fontweight="semibold")
 
-    ax.set_xlabel("Year", labelpad=8)
+    ax.set_xticks([x_pre, x_post])
+    ax.set_xticklabels(["Pre-treatment", "Post-treatment"], fontsize=11)
+    ax.set_xlim(x_pre - 0.5, x_post + 0.5)
     ax.set_ylabel("CV events per 1,000 women", labelpad=8)
     ax.set_title("Difference-in-Differences Design",
                  fontsize=13, fontweight="semibold", pad=12,
