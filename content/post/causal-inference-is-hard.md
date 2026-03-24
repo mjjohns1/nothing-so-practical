@@ -12,7 +12,7 @@ draft:       FALSE
 
 ## Causal Inference is Hard
 
-The [first post](/post/causal-inference-is-easy/) argued that causal inference is simply a matter of ruling out rival explanations. That sounds straightforward, but it's not. Rival explanations can be hard to identify, hard to measure, and hard to isolate. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails. No matter how sophisticated the method, the model will estimate the treatment effect you ask for. When causal inference fails, it fails silently.
+The [first post](/post/causal-inference-is-easy/) argued that causal inference is simply a matter of ruling out rival explanations. That sounds pretty straightforward. It's not. Rival explanations can be hard to identify, hard to measure, and hard to isolate. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails. No matter how sophisticated the method, the model will estimate the treatment effect you ask for. When causal inference fails, it fails silently.
 
 ### Rock Me Amadeus
 
@@ -22,11 +22,11 @@ The conditions in the original study didn't just differ in the presence of Mozar
 
 The confound wasn't statistical, it was conceptual. Comparing Mozart to silence doesn't isolate Mozart. It confounds music with the psychological experience of music. Engagement, pleasure, stimulation. The researchers wanted to test the effect of music on spatial reasoning, but the comparison tested whether an engaging experience outperformed a boring one.
 
-It took several follow-up studies to catch this. The original study was well executed and the results were clean. The confound was invisible to the p-values. It could only be seen by thinking carefully about what the comparison actually tested.
+It took several follow-up studies to catch this. The confound was invisible to the p-values. It could only be seen by thinking carefully about what the comparison actually tested.
 
 ### A Half-dozen Rival Explanations
 
-The Mozart study was a controlled experiment and a confound still slipped through. In observational studies with little control, the threats only multiply. The confounds don't announce themselves. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
+The Mozart study was a controlled experiment and a confound still slipped through. In observational studies with little control, the threats only multiply. Confounds don't announce themselves. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
 
 The relationship between smartphones and teen mental health is a case in point. Starting around 2012, surveys showed rates of anxiety, depression, and self-harm increasing among adolescents. Smartphone adoption was also increasing, with 50% of Americans owning a smartphone by 2012. The timing lines up and the causal story practically writes itself. But "seems obvious" is where observational research goes to die. There were numerous events around that time that could also generate similar patterns.
 
@@ -34,7 +34,7 @@ The Great Recession's aftermath left families under sustained economic stress in
 
 Then there are the changes in how the outcome itself is measured. In 2009, routine depression screening was recommended for adolescents, and the following year the Affordable Care Act required insurers to cover it. More screening produces more diagnoses, even if the underlying rate hasn't changed. Coding changes in how hospitals recorded suicidal ideation had a similar effect (see Corredor-Waldron & Currie, 2024). Add destigmatization that makes teens more willing to report mental health struggles, and you have an outcome variable that can shift for reasons entirely unrelated to smartphone use.
 
-{{< figure src="/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png" caption="Plot created by Craig Sewall. Original is available at Craig's Substack: https://craigsewall.substack.com/p/an-alternative-explanation-to-the" class="img-center" >}}
+{{< figure src="/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png" caption="Credit: Craig Sewall. Original is available at Craig's Substack: https://craigsewall.substack.com/p/an-alternative-explanation-to-the" class="img-center" >}}
 
 This is not to say that smartphones are harmless.[^1] It means observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen others. And even if you could identify every last one, you'd still need to measure them well enough to neutralize confounding. That turns out to be its own problem.
 
@@ -74,7 +74,7 @@ The Mozart study was a controlled experiment. The synthetic control analysis use
 
 Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A mis-specified treatment won't tell you it's wrong.
 
-This is not a call for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Skipping these steps is easy. Figuring out all the ways you could be wrong? That's the hard part.
+This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Skipping these steps is easy. Figuring out all the ways you could be wrong is the hard part.
 
 ##### References
 
