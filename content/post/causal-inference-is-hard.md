@@ -50,7 +50,7 @@ Instead of trying to measure every confounder, you can use a study design that n
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent actual HRT study results." class="img-center" >}}
 
-Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounders" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable. Finding equivalent slopes before treatment is reassuring, but it isn't proof.
+Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable. Finding equivalent slopes before treatment is reassuring, but it isn't proof.
 
 Suppose that around the same time HRT prescribing was increasing, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show improving heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
