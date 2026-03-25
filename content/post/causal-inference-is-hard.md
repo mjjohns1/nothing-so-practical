@@ -70,11 +70,9 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-Every example followed the same pattern. A credible method produced a reasonable result that looked clean but wasn't. Mozart didn't make anyone smarter. The cardiovascular benefits of HRT depended on who was taking it. The tweet couldn't be separated from the news cycle. In each case, the threat wasn't technical, it was an alternative explanation.
+Every example followed the same pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
 
-These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
-
-Causal inference can't be reduced to writing notation, picking a method, and running a model. Knowing what drives selection into treatment, whether measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to successful causal inference isn't the doing, it's the thinking. That means sitting with a problem long enough to anticipate how you could be wrong. It's the one part that can't be coded up, and the only part that really matters.
+Causal inference can't be reduced to writing notation, picking a method, and running a model. Knowing what drives selection into treatment, whether measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to causal inference isn't the doing, it's the thinking. That means sitting with a problem long enough to anticipate how you could be wrong. It's the one part that can't be coded up, and the one part that really matters.
 
 ----
 ##### References
