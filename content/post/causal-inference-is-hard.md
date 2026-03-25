@@ -28,7 +28,7 @@ It took several follow-up studies to catch this. The confound was invisible to t
 
 The Mozart study was a controlled experiment, and a confound still slipped through. In observational studies with little control, the threats only multiply. Identifying them requires knowing the subject matter well enough to see what else could be driving the result.
 
-The relationship between smartphones and teen mental health is a case in point. Starting around 2012, surveys showed rates of anxiety, depression, and self-harm increasing among adolescents. Smartphone adoption was also accelerating in that period. The timing lines up, and the causal story practically writes itself. But "seems obvious" is where observational research goes to die. There were numerous events around that time that could also generate similar patterns.
+The relationship between smartphones and teen mental health is a case in point. Starting around 2012, surveys showed rates of anxiety, depression, and self-harm increasing among adolescents. Smartphone adoption was also accelerating in that period. The timing lines up, and the causal story practically writes itself. But "seems obvious" is where observational research goes to die. There were numerous events around that time that could generate similar patterns.
 
 The Great Recession's aftermath left families under sustained economic stress into the 2010s. Academic pressure intensified as college admissions grew more competitive. School shootings became a recurring feature of adolescent life. These are history effects, events external to the treatment that coincide with it and could independently produce the observed outcome. They aren't visible in the dataset.
 
@@ -54,15 +54,15 @@ Design-based approaches trade one assumption for another. For DiD, we trade "no 
 
 Suppose that around the same time HRT became a popular treatment, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
-The design shifts the burden from measurement to plausibility, but it doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
+Using design shifts the burden from measurement to plausibility, but it doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
 
 ### Free Bird
 
-Even sophisticated methods can trip over an ambiguous treatment. Hours after Elon Musk closed his acquisition of Twitter, he tweeted "the bird is freed." Molak [used this event](https://medium.com/data-science/causal-python-elon-musks-tweet-our-googling-habits-bayesian-synthetic-control-187114fc4aa8) to demonstrate synthetic control, a method that constructs a counterfactual by weighting comparison time series to match the pre-treatment trajectory of the treated unit. Any post-treatment divergence is attributed to the treatment. The analysis estimated a large effect of Musk's tweet on Google searches for "Twitter."
+Even sophisticated methods can trip over an ambiguous treatment. Hours after Elon Musk closed his acquisition of Twitter, he tweeted "the bird is freed." Molak [used this event](https://medium.com/data-science/causal-python-elon-musks-tweet-our-googling-habits-bayesian-synthetic-control-187114fc4aa8) to demonstrate synthetic control, a method that constructs a counterfactual by weighting comparison time series to match the pre-treatment trajectory of the treated unit. Any post-treatment divergence is attributed to the treatment. The model estimated a large effect of Musk's tweet on Google searches for "Twitter."
 
 ![Google search interest for "Twitter" was already surging days before the tweet, driven by acquisition news coverage](/img/posts/causal-inference/freebird-trends.svg)
 
-This was a sound application of a contemporary method. The model estimated a strong effect with a clear divergence at the treatment. But as the author correctly notes, "the outcome might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet. People were already searching for "Twitter" because of news about the takeover, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
+This was a sound application of a contemporary method. The effect was large with a clear divergence at the treatment. But as the author correctly notes, "the outcome might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before. People were already searching for "Twitter" because of news about the takeover. Information about Musk's acquisition of Twitter and his tweet weren't independent.
 
 A degraded fit in the period before the tweet might suggest that the baseline was contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering the question, "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
@@ -70,9 +70,9 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-Every example followed the same pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
+The examples above all follow a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
 
-Causal inference can't be reduced to writing notation, picking a method, and running a model. Knowing what drives selection into treatment, whether measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to causal inference isn't the doing, it's the thinking. That means sitting with a problem long enough to anticipate how you could be wrong. It's the one part that can't be coded up, and the one part that really matters.
+Causal inference can't be reduced to writing notation, picking a method, and running a model. Knowing what drives selection into treatment, whether measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to causal inference isn't the doing, it's the thinking. That means sitting with a question long enough to anticipate how you could be wrong. It's the one step that can't be coded up, and the one step that really matters.
 
 ----
 ##### References
@@ -89,4 +89,4 @@ Thompson, W. F., Schellenberg, E. G., & Husain, G. (2001). Arousal, mood, and th
 
 Twenge, J. M. (2020). Increases in depression, self-harm, and suicide among U.S. adolescents after 2012 and links to technology use: Possible mechanisms. *Psychiatric Research and Clinical Practice*, *2*(1), 19–25.
 
-[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm, or any other markers of adolescent mental health are just a measurement artifact, or artifact of other factors unrelated to smartphone use. This example is for *purely* pedagogical purposes. It just happens to be a hotly debated policy question informed by observational data.
+[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm, or any other markers of adolescent mental health are just a measurement artifact, or artifact of other factors unrelated to smartphone use. This example is *purely* for pedagogical purposes. It just happens to be a hotly debated policy question informed by observational data.
