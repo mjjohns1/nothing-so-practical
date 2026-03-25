@@ -12,7 +12,7 @@ draft:       false
 
 ## Causal Inference Is Hard
 
-The [first post](/post/causal-inference-is-easy/) argued that causal inference is simply a matter of ruling out rival explanations. That sounds pretty straightforward. It's not. Rival explanations can be hard to identify, hard to measure, and hard to isolate. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails. No matter how sophisticated the method, the model will estimate the treatment effect you ask for. When causal inference fails, it fails silently.
+The [first post](/post/causal-inference-is-easy/) argued that causal inference is simply a matter of ruling out rival explanations. That sounds pretty straightforward, but it's not. Rival explanations can be hard to identify, hard to measure, and hard to eliminate. Potential outcomes and DAGs establish the requirements for causal claims and the methods to estimate valid treatment effects. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails. No matter how sophisticated the method, the model will estimate the treatment effect you ask for. When causal inference fails, it fails silently.
 
 ### Rock Me Amadeus
 
@@ -70,9 +70,11 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-Potential outcomes and DAGs give you the tools to deal with confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A misspecified treatment won't tell you it's wrong.
+Every example followed the same pattern. A credible method produced a clean result that didn't quite mean what it appeared to. Mozart didn't make anyone smarter. The cardiovascular benefits of HRT depended on who was taking it. The tweet couldn't be separated from the news cycle. In each case, the threat wasn't technical, it was an alternative explanation that wasn't accounted for.
 
-This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Setting up the model and getting results is easy. Doing the work to figure out all the competing explanations for those results is the hard part.
+These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
+
+Causal inference can't be reduced to writing notation, picking a method, and running some code. Knowing what drives selection into treatment, whether the measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to causal inference isn't the doing, it's the thinking. That means sitting with the problem to anticipate how you could be wrong. It's the one part that can't be coded up, and the only part that really matters.
 
 ----
 ##### References
