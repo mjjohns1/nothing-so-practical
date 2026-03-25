@@ -62,19 +62,19 @@ Even sophisticated methods can trip over an ambiguous treatment. Hours after Elo
 
 ![Google search interest for "Twitter" was already surging days before the tweet, driven by acquisition news coverage](/img/posts/causal-inference/freebird-trends.svg)
 
-This was a clean application of a contemporary method. The model estimated a strong effect with a clear divergence at the treatment. But as the author correctly notes, "the outcome might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet. People were already searching for "Twitter" because of news about the takeover, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
+This was a sound application of a contemporary method. The model estimated a strong effect with a clear divergence at the treatment. But as the author correctly notes, "the outcome might be influenced not only by Musk's tweet but also by other factors (e.g. media publications on Twitter acquisition)." The acquisition dominated the news cycle for days before the tweet. People were already searching for "Twitter" because of news about the takeover, not because of one tweet. Musk's acquisition of Twitter and the tweet weren't independent.
 
-A degraded fit in the period before the tweet might suggest that the baseline was contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering, "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
+A degraded fit in the period before the tweet might suggest that the baseline was contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering the question, "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
 The model answered the question it was given; the data just weren't suited to that question. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
 
 ### Still Easy, Still Hard
 
-Every example followed the same pattern. A credible method produced a reasonable result that didn't quite mean what it appeared to. Mozart didn't make anyone smarter. The cardiovascular benefits of HRT depended on who was taking it. The tweet couldn't be separated from the news cycle. In each case, the threat wasn't technical, it was an alternative explanation.
+Every example followed the same pattern. A credible method produced a reasonable result that looked clean but wasn't. Mozart didn't make anyone smarter. The cardiovascular benefits of HRT depended on who was taking it. The tweet couldn't be separated from the news cycle. In each case, the threat wasn't technical, it was an alternative explanation.
 
 These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
 
-Causal inference can't be reduced to writing notation, picking a method, and running some code. Knowing what drives selection into treatment, whether the measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to causal inference isn't the doing, it's the thinking. That means sitting with the problem to anticipate how you could be wrong. It's the one part that can't be coded up, and the only part that really matters.
+Causal inference can't be reduced to writing notation, picking a method, and running a model. Knowing what drives selection into treatment, whether measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to successful causal inference isn't the doing, it's the thinking. That means sitting with a problem long enough to anticipate how you could be wrong. It's the one part that can't be coded up, and the only part that really matters.
 
 ----
 ##### References
