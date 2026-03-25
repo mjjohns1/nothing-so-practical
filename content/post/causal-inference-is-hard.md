@@ -70,7 +70,7 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-Every example followed the same pattern. A credible method produced a reasonable result that didn't quite mean what it appeared to. Mozart didn't make anyone smarter. The cardiovascular benefits of HRT depended on who was taking it. The tweet couldn't be separated from the news cycle. In each case, the threat wasn't technical, it was an alternative explanation that wasn't accounted for.
+Every example followed the same pattern. A credible method produced a reasonable result that didn't quite mean what it appeared to. Mozart didn't make anyone smarter. The cardiovascular benefits of HRT depended on who was taking it. The tweet couldn't be separated from the news cycle. In each case, the threat wasn't technical, it was an alternative explanation.
 
 These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
 
