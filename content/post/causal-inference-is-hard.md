@@ -42,7 +42,7 @@ This is not to say that smartphones are harmless.[^1] The point is, observationa
 
 In the HRT example from the first post, we identified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
 
-Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides beyond the view of the data.
+Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides beyond the view.
 
 ### Design Around What You Can’t Measure
 
@@ -50,9 +50,9 @@ Instead of trying to measure every confounder, you can use a study design that n
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent any actual HRT study or study results." class="img-center" >}}
 
-Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable. Finding equivalent slopes before treatment is reassuring, but it isn't sufficient.
+Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable.
 
-Suppose that around the same time HRT became common, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of the hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
+Suppose that around the same time HRT became a popular treatment, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
 The design shifts the burden from measurement to plausibility, but it doesn't eliminate the burden. And all of this assumes you've correctly identified what the treatment actually is.
 
@@ -70,11 +70,9 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-The Mozart study was a controlled experiment. The synthetic control analysis used a sophisticated statistical method. Both produced clear, defensible results. Both got the wrong answer. In neither case was the problem downstream in the analysis. It was upstream, in what the researchers thought they were comparing.
+Potential outcomes and DAGs give you the tools to deal with confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A misspecified treatment won't tell you it's wrong.
 
-Potential outcomes and DAGs give you the tools to reason about confounding rigorously. Design-based approaches help you sidestep what you can't measure. But an overlooked confound won't appear in the DAG. A trait that goes unmeasured won't be absorbed by the covariates. A misspecified treatment won't tell you it's wrong.
-
-This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Setting up the model and getting results is easy. Identifying all the competing explanations for those results is the hard part.
+This is not a reason for methodological nihilism. It’s a reason to think harder. The larger context, the measurement gaps, the treatment definition all need scrutiny before the first line of code even runs. Setting up the model and getting results is easy. Doing the work to figure out all the competing explanations for those results is the hard part.
 
 ----
 ##### References
