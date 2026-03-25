@@ -12,7 +12,7 @@ draft:       false
 
 ## Causal Inference Is Hard
 
-The [first post](/post/causal-inference-is-easy/) argued that causal inference is simply a matter of ruling out rival explanations. That sounds pretty straightforward, but it's not. Rival explanations can be hard to identify, hard to measure, and hard to eliminate. Potential outcomes and DAGs establish the requirements for causal claims and the methods to estimate valid treatment effects. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails. No matter how sophisticated the method, the model will estimate the treatment effect you ask for. When causal inference fails, it fails silently.
+The [first post](/post/causal-inference-is-easy/) argued that causal inference is simply a matter of ruling out rival explanations. That sounds pretty straightforward, but it's not. Rival explanations can be hard to identify, hard to measure, and hard to eliminate. Overlook a confound, measure it poorly, or choose an inadequate study design, and causal inference fails. No matter how sophisticated the method, the model will estimate the treatment effect you ask for. When causal inference fails, it fails silently.
 
 ### Rock Me Amadeus
 
@@ -36,13 +36,13 @@ Then there are the changes in how the outcome itself is measured. In 2009, routi
 
 {{< figure src="/img/posts/causal-inference/Sewall_depression_self_harm_USPTF_plot.png" caption="© 2026 Craig Sewall. Reproduced from Craig's Substack. Available at: https://craigsewall.substack.com/p/an-alternative-explanation-to-the" class="img-center" >}}
 
-This is not to say that smartphones are harmless.[^1] The point is, observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. Ruling out one rival explanation leaves a half-dozen others. And even if you could identify every last one, you'd still need to measure them well enough to neutralize confounding. That turns out to be its own problem.
+This is not to say that smartphones are harmless.[^1] The point is, observational evidence can't cleanly separate the smartphone signal from the noise of everything else that changed. And even if you could identify every last one, you'd still need to measure them well enough to neutralize confounding. That turns out to be its own problem.
 
 ### Measuring the Weight of Smoke
 
 In the HRT example from the first post, we identified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
 
-Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The researcher controls for what’s available, the model runs without complaint, and the estimate looks reasonable. The confounding hides beyond the view.
+Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The model runs without complaint, and the confounding hides beyond the view.
 
 ### Design Around What You Can’t Measure
 
@@ -50,7 +50,7 @@ Instead of trying to measure every confounder, you can use a study design that n
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent any actual HRT study or study results." class="img-center" >}}
 
-Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but it can still fail silently. The parallel trends assumption is fundamentally untestable.
+Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but the parallel trends assumption is fundamentally untestable.
 
 Suppose that around the same time HRT became a popular treatment, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
@@ -66,7 +66,7 @@ This was a clean application of a contemporary method. The model estimated a str
 
 A degraded fit in the period before the tweet might suggest that the baseline was contaminated by acquisition news. But the treatment definition problem is invisible to any diagnostic. The model is answering, "what would searches look like without this event?" but "this event" isn't one tweet. It's major news that generated weeks of coverage. The model can't distinguish the tweet from the acquisition because they're the same story.
 
-The model answered the question it was given; the data just weren't suited to that question. Nothing in the output would show this. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
+The model answered the question it was given; the data just weren't suited to that question. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
 
 ### Still Easy, Still Hard
 
