@@ -20,7 +20,7 @@ In 1993, researchers reported that listening to Mozart for 10 minutes improved s
 
 The conditions in the original study didn't just differ in the presence of Mozart. They also differed in arousal and mood. Subsequent studies found that other enjoyable stimuli (e.g., Schubert, a Stephen King story) produced similar boosts, and that the effect disappeared when researchers controlled for positive affect. The active ingredient seemed to be a stimulating experience, not Mozart.
 
-The confound wasn't statistical, it was conceptual. Comparing Mozart to silence doesn't isolate the effect of Mozart. It confounds music with the psychological experience of music. Engagement, pleasure, stimulation. The researchers wanted to test the effect of music on spatial reasoning, but the comparison tested whether an engaging experience outperformed a boring one.
+The confound wasn't statistical, it was conceptual. Comparing Mozart to silence doesn't isolate the effect of Mozart. It confounds music with the psychological experience of music: engagement, pleasure, stimulation. The researchers wanted to test the effect of music on spatial reasoning, but the comparison tested whether an engaging experience outperformed a boring one.
 
 It took several follow-up studies to catch this. The confound was invisible to the p-values. It could only be seen by thinking carefully about what the comparison actually tested.
 
@@ -40,9 +40,9 @@ This is not to say that smartphones are harmless.[^1] The point is, observationa
 
 ### Measuring the Weight of Smoke
 
-In the HRT example from the first post, we identified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors, it’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
+In the HRT example from the first post, we identified health consciousness as the key confound. Measuring it is harder than it sounds. The Nurses’ Health Study collected data on diet, exercise, smoking, alcohol use, preventive care visits, and vitamin consumption. The groups still weren’t comparable. Health consciousness isn’t a checklist of behaviors. It’s a disposition that leads someone to ask their doctor about hormone therapy. The studies captured visible markers but missed the trait that drove both HRT use and cardiovascular health. Controlling for the markers didn’t eliminate the alternative explanation.
 
-Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The model runs without complaint, and the confounding hides beyond the view.
+Many confounders that matter are abstract constructs. Motivation, risk tolerance, management quality, organizational culture. Even if you identify them all, you still have to measure them well. If health consciousness has three dimensions and you only capture two, the unmeasured dimension still pollutes your result. This is where many studies quietly unravel. The model runs without complaint, and the confounding goes undetected.
 
 ### Design Around What You Can’t Measure
 
@@ -70,13 +70,13 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-Each example above follows a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. The methods do what you ask. Difference-in-differences eliminates stable confounders. Synthetic control constructs credible counterfactuals. Propensity scores balance observed covariates. But every method operates under assumptions, and assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
+Each example above follows a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. The methods do what you ask. But every method operates under assumptions, and assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
 
 The hard work of causal inference isn’t technical, it’s substantive. It requires thinking carefully about mechanisms and processes, not just running regressions and checking p-values. Studying cognitive performance requires understanding the influence of arousal and mood. Understanding the impact of smartphones on teen mental health requires knowing about changes in screening policy, insurance coverage, and diagnostic coding. Estimating the impact of a tweet on search behavior requires awareness of media coverage and news cycles.
 
 Technical frameworks are valuable precisely because they make reasoning about causal questions explicit and systematic. Researchers are forced to articulate their assumptions about the data generating process. They provide formal rules for translating those assumptions into valid causal estimates. They provide a check on whether your logic is internally consistent. But they really only work if you understand the domain you’re studying. No amount of technical sophistication can substitute for that knowledge.
 
-Causal inference ultimately comes down to knowing the subject matter well enough to identify the ways you could be wrong, then using experiments or statistical methods to rule them out. DAGs and potential outcomes help ensure rigor in the latter. But identifying how you could be wrong requires expertise that no equation or code can provide. Causal inference is easy once you understand this. Actually doing it well? That’s the hard part.
+Causal inference ultimately comes down to knowing the subject matter well enough to identify the ways you could be wrong, then using study design or statistical methods to rule them out. DAGs and potential outcomes help ensure rigor in the latter. But identifying how you could be wrong requires expertise that no equation or code can provide. Causal inference is easy once you understand this. Actually doing it well? That’s the hard part.
 
 
 ----
@@ -94,4 +94,4 @@ Thompson, W. F., Schellenberg, E. G., & Husain, G. (2001). Arousal, mood, and th
 
 Twenge, J. M. (2020). Increases in depression, self-harm, and suicide among U.S. adolescents after 2012 and links to technology use: Possible mechanisms. *Psychiatric Research and Clinical Practice*, *2*(1), 19–25.
 
-[^1]: To be crystal clear: This discussion is **NOT** an attempt to promote the theory that increases in depression, self-harm, or any other markers of adolescent mental health are just a measurement artifact, or artifact of other factors unrelated to smartphone use. This example is *purely* for pedagogical purposes. It just happens to be a hotly debated policy question informed by observational data.
+[^1]: To be clear, this discussion is not an attempt to argue that increases in adolescent depression, self-harm, or other mental health markers are just a measurement artifact. The example is purely pedagogical. It just happens to be a hotly debated policy question informed by observational data.
