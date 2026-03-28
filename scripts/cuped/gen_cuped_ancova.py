@@ -143,8 +143,8 @@ def compute_stats(data):
 
     # ANCOVA
     X = np.column_stack([np.ones(n), treat, pre])
-    ancova_beta, resid, r2 = ols(X, post)
-    sigma2 = (resid @ resid) / (n - 3)
+    ancova_beta, ss_res, r2 = ols(X, post)
+    sigma2 = ss_res / (n - 3)
     var_beta = sigma2 * np.linalg.inv(X.T @ X)
     se_tau = np.sqrt(var_beta[1, 1])
 
