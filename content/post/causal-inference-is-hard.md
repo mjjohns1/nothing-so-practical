@@ -72,7 +72,8 @@ The model answered the question it was given; the data just weren't suited to th
 
 The examples above all follow a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
 
-Causal inference can't be reduced to writing notation, picking a method, and running a model. Knowing what drives selection into treatment, whether measurements capture the constructs that matter, and what else was happening when the treatment occurred all require scrutiny before the first line of code is written. The key to causal inference isn't the doing, it's the thinking. That means sitting with a question long enough to anticipate how you could be wrong. It's the one step that can't be coded up, and the one step that really matters.
+Causal inference simplifies to eliminating alternative explanations, but it can't be reduced to writing notation, picking a method, and running a model. Avoiding the silent failures means sitting with a question long enough to anticipate how you could be wrong. The key to causal inference isn't the doing, it's the thinking. It's the one step that can't be coded up, and the one step that really matters.
+
 
 ----
 ##### References
