@@ -46,11 +46,11 @@ Many confounders that matter are abstract constructs. Motivation, risk tolerance
 
 ### Design Around What You Can’t Measure
 
-Instead of trying to measure every confounder, you can use a study design that neutralizes them structurally. Difference-in-differences (DiD) illustrates this logic. Rather than comparing HRT users to non-users at a single point in time, we compare how each group's outcomes changed. If health-conscious women consistently have better cardiovascular outcomes, that difference appears in both periods and cancels out. This eliminates any stable baseline difference between groups, including unmeasured ones.
+Instead of trying to measure every confounder, you can use a study design that neutralizes them structurally. Difference-in-differences (DiD) illustrates this logic. Rather than comparing HRT users to non-users at a single point in time, we compare how each group's outcomes changed. If health-conscious women consistently have better cardiovascular outcomes, that gap is the same in both periods and gets differenced out. This eliminates any stable baseline difference between groups, including unmeasured ones.
 
 {{< figure src="/img/posts/causal-inference/did-hrt.svg" caption="Stylized illustration of a difference-in-differences design. Data are simulated for explanatory purposes and do not represent any actual HRT study or study results." class="img-center" >}}
 
-Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but the parallel trends assumption is fundamentally untestable.
+Design-based approaches trade one assumption for another. For DiD, we trade "no unmeasured confounding" for the assumption that treated and untreated groups would have followed the same trend without the treatment. That's less demanding, but the parallel trends assumption can't be verified where it matters most: in the post-treatment period you never get to observe. You can check whether trends ran parallel before treatment, but that doesn't guarantee they would have stayed that way.
 
 Suppose that around the same time HRT became a popular treatment, public health agencies launched cardiovascular screening campaigns targeting women. Women on HRT might show decreasing heart disease trends not because of hormone therapy, but because they were getting screened and treated earlier. The design would attribute the improvement to HRT when it belonged to the screening campaign.
 
@@ -70,7 +70,7 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-Each example above follows a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. The methods do what you ask. But every method operates under assumptions, and assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
+Each example above follows a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. The methods do what you ask. But every method operates under assumptions, and assumptions are claims about the world, not properties of the estimator. When they don't hold, the estimate is confounded and regardless of what the output says.
 
 The hard work of causal inference isn’t technical, it’s substantive. It requires thinking carefully about mechanisms and processes, not just running regressions and checking p-values. Studying cognitive performance requires understanding the influence of arousal and mood. Understanding the impact of smartphones on teen mental health requires knowing about changes in screening policy, insurance coverage, and diagnostic coding. Estimating the impact of a tweet on search behavior requires awareness of media coverage and news cycles.
 

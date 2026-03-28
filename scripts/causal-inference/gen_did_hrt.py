@@ -39,11 +39,11 @@ def main():
     hrt = hrt_base + treatment_effect
 
     # Group × period means
-    ctrl_pre_mean  = ctrl[pre].mean()
+    ctrl_pre_mean = ctrl[pre].mean()
     ctrl_post_mean = ctrl[post].mean()
-    hrt_pre_mean   = hrt[pre].mean()
-    hrt_post_mean  = hrt[post].mean()
-    hrt_cf_mean    = hrt_pre_mean + (ctrl_post_mean - ctrl_pre_mean)
+    hrt_pre_mean = hrt[pre].mean()
+    hrt_post_mean = hrt[post].mean()
+    hrt_cf_mean = hrt_pre_mean + (ctrl_post_mean - ctrl_pre_mean)
 
     # Symmetric x-positions: pre=1, post=2, boundary at 1.5
     x_pre, x_post, x_mid = 1, 2, 1.5
@@ -88,6 +88,7 @@ def main():
     ax.set_xticks([x_pre, x_post])
     ax.set_xticklabels(["Pre-treatment", "Post-treatment"], fontsize=11)
     ax.set_xlim(x_pre - 0.5, x_post + 0.5)
+    ax.set_ylim(bottom=hrt_post_mean - 5)
     ax.set_ylabel("CV events per 1,000 women", labelpad=8)
     ax.set_title("Difference-in-Differences Design",
                  fontsize=13, fontweight="semibold", pad=12,
