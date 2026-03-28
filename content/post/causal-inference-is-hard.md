@@ -70,9 +70,13 @@ The model answered the question it was given; the data just weren't suited to th
 
 ### Still Easy, Still Hard
 
-The examples above all follow a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. Every method operates under assumptions. Assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
+Each example above follows a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. The methods do what you ask. Difference-in-differences eliminates stable confounders. Synthetic control constructs credible counterfactuals. Propensity scores balance observed covariates. But every method operates under assumptions, and assumptions are claims about the world, not properties of the estimator. When the assumptions don't hold, the estimate is confounded and nothing in the output will say that.
 
-Causal inference simplifies to eliminating alternative explanations, but it can't be reduced to writing notation, picking a method, and running a model. Avoiding the silent failures means sitting with a question long enough to anticipate how you could be wrong. The key to causal inference isn't the doing, it's the thinking. It's the one step that can't be coded up, and the one step that really matters.
+The hard work of causal inference isn’t technical, it’s substantive. It requires thinking carefully about mechanisms and processes, not just running regressions and checking p-values. Studying cognitive performance requires understanding the influence of arousal and mood. Understanding the impact of smartphones on teen mental health requires knowing about changes in screening policy, insurance coverage, and diagnostic coding. Estimating the impact of a tweet on search behavior requires awareness of media coverage and news cycles.
+
+Technical frameworks are valuable precisely because they make reasoning about causal questions explicit and systematic. Researchers are forced to articulate their assumptions about the data generating process. They provide formal rules for translating those assumptions into valid causal estimates. They provide a check on whether your logic is internally consistent. But they really only work if you understand the domain you’re studying. No amount of technical sophistication can substitute for that knowledge.
+
+Causal inference ultimately comes down to knowing the subject matter well enough to identify the ways you could be wrong, then using experiments or statistical methods to rule them out. DAGs and potential outcomes help ensure rigor in the latter. But identifying how you could be wrong requires expertise that no equation or code can provide. Causal inference is easy once you understand this. Actually doing it well? That’s the hard part.
 
 
 ----

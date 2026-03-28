@@ -156,15 +156,11 @@ However, if you don't know about the income variable, you'll draw the wrong grap
 
 The assumptions encoded in a DAG are just formal statements about alternative explanations and how they operate. Each arrow (or absence of an arrow) represents a claim about the data generating process. Backdoor paths are literally the alternative explanations. The backdoor criterion is a systematic procedure for identifying which variables you need to condition on to block those alternatives. D-separation is a mathematical statement that you've successfully eliminated the spurious associations. The causal graph formalizes your understanding of confounding, but drawing the correct graph requires you to actually know what the confounders are and how they relate to each other.
 
-### The Real Work of Causal Inference
+### In Comes the Hard Part
 
-Both frameworks can be seen as formalizing the process of ruling out competing explanations for an observed association. Potential outcomes does this through assumptions about conditional independence. The DAG approach does it through graphical heuristics for blocking non-causal paths. But neither framework can identify those competing alternatives in the first place.
+Both frameworks formalize the process of ruling out competing explanations. Potential outcomes does this through assumptions about conditional independence. The DAG approach does it through graphical rules for blocking non-causal paths. The math tells you what to control for, what estimator to use, and what assumptions you need.
 
-The real work of causal inference isn’t technical, it's substantive. It requires talking to people who understand the topic. It requires thinking carefully about mechanisms and processes, not just running regressions or drawing graphs. The epidemiologist studying HRT needs to understand women's healthcare decisions, medical practice patterns, socioeconomic determinants of health, and cardiovascular disease mechanisms. The economist studying labor market interventions needs to understand how companies make hiring decisions, how people search for jobs, and what micro-economic factors constrain choices. The data scientist optimizing a digital product needs to understand product mechanics, the business model, user behavior and selection into usage.
-
-Technical frameworks are valuable precisely because they make reasoning explicit and systematic. Researchers are forced to articulate their assumptions about the data generating process. They provide formal rules for translating those assumptions into valid causal estimates. They provide a check on whether your logic is internally consistent. But they really only work if you understand the domain you're studying. No amount of technical sophistication can substitute for that knowledge.
-
-Causal inference ultimately comes down to knowing the subject matter well enough to identify the ways you could be wrong, then using experiments or statistical methods to rule them out. DAGs and potential outcomes help ensure rigor in the latter. But identifying how you could be wrong requires expertise that no equation or code can provide. Causal inference is easy once you understand this. Actually doing it well? That’s the [hard part](/post/causal-inference-is-hard/).
+But neither framework can identify those competing alternatives in the first place. No backdoor criterion would tell you to look for health consciousness as a confound. You have to know enough about women's healthcare decisions to see that path. Such knowledge doesn't come from the notation, it comes from understanding the domain. More often than not, that turns out to be the [hard part](/post/causal-inference-is-hard/).
 
 
 ----
