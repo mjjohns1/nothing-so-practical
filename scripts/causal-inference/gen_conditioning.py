@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 import numpy as np
 from pathlib import Path
 
@@ -129,7 +130,6 @@ def main():
     ax2.spines["left"].set_color(GRAY)
 
     # Legend (shared)
-    from matplotlib.patches import Patch
     legend_handles = [
         Patch(facecolor=LIGHT_RED, edgecolor=RED, label="Control (X=0)"),
         Patch(facecolor=LIGHT_BLUE, edgecolor=BLUE, label="Treated (X=1)"),

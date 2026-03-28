@@ -2,7 +2,7 @@
 title:       "Causal Inference Is Hard"
 subtitle:    "Part two of a two-part series"
 description: "How I learned to stop worrying and love assumptions"
-date:        2026-03-23
+date:        2026-03-28
 author:      "MJ"
 image:       ""
 tags:        ["causal inference"]

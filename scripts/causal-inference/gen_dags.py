@@ -175,8 +175,6 @@ WH_TALL: WH = (NODE_W, NODE_H_TALL)
 
 
 def dag_simple() -> None:
-    fig: Figure
-    ax: Axes
     fig, ax = plt.subplots(figsize=(5.8, 3.0))
     ax.set_xlim(0, 1)
     ax.set_ylim(-0.12, 0.82)
@@ -202,8 +200,6 @@ def dag_simple() -> None:
 
 
 def dag_income() -> None:
-    fig: Figure
-    ax: Axes
     fig, ax = plt.subplots(figsize=(5.8, 4.4))
     ax.set_xlim(0, 1)
     ax.set_ylim(-0.12, 1)
