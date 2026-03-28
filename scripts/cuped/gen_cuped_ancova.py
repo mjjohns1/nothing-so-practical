@@ -43,12 +43,17 @@ def _downsample(arrays, n_plot=750, seed=99):
     return tuple(a[idx] for a in arrays)
 
 
+_SCATTER_KW = dict(s=16, alpha=0.4, edgecolors="none")
+_LEGEND_KW = dict(fontsize=9, framealpha=0.85, edgecolor="#BDBDBD", loc="upper left")
+
+
 def _style_spines(*axes):
     """Apply consistent spine colors to axes."""
 
     for ax in axes:
-        ax.spines["bottom"].set_color(GRAY)
-        ax.spines["left"].set_color(GRAY)
+        for spine in ("bottom", "left"):
+            if ax.spines[spine].get_visible():
+                ax.spines[spine].set_color(GRAY)
 
 
 def _save_figure(fig, path):
@@ -98,7 +103,7 @@ def simulate(n=5000, tau=3.0, seed=42):
 
 # OLS via normal equations
 def ols(X, y):
-    """Return (coefficients, residuals, R²) from OLS."""
+    """Return (coefficients, ss_res, R²) from OLS."""
 
     beta = np.linalg.lstsq(X, y, rcond=None)[0]
     resid = y - X @ beta
@@ -106,7 +111,7 @@ def ols(X, y):
     ss_tot = np.sum((y - y.mean()) ** 2)
     r2 = 1 - ss_res / ss_tot
 
-    return beta, resid, r2
+    return beta, ss_res, r2
 
 
 # CUPED adjustment
@@ -138,17 +143,17 @@ def compute_stats(data):
 
     # ANCOVA
     X = np.column_stack([np.ones(n), treat, pre])
-    ancova_beta, resid, r2 = ols(X, post)
-    sigma2 = (resid @ resid) / (n - 3)
+    ancova_beta, ss_res, r2 = ols(X, post)
+    sigma2 = ss_res / (n - 3)
     var_beta = sigma2 * np.linalg.inv(X.T @ X)
     se_tau = np.sqrt(var_beta[1, 1])
 
     # Simple t-test (no covariate)
     X_simple = np.column_stack([np.ones(n), treat])
-    beta_s, resid_s, _ = ols(X_simple, post)
-    sigma2_s = (resid_s @ resid_s) / (n - 2)
-    var_beta_s = sigma2_s * np.linalg.inv(X_simple.T @ X_simple)
-    se_simple = np.sqrt(var_beta_s[1, 1])
+    beta_s, ss_res_s, _ = ols(X_simple, post)
+    sigma2_s = ss_res_s / (n - 2)
+    XtX_inv_diag1_s = np.linalg.solve(X_simple.T @ X_simple, np.eye(2))[:, 1]
+    se_simple = np.sqrt(sigma2_s * XtX_inv_diag1_s[1])
 
     return {
         "rho": rho,
@@ -163,7 +168,6 @@ def compute_stats(data):
     }
 
 
-# Print summary
 def print_stats(data, stats):
     """Print a formatted summary of simulation results."""
 
@@ -215,7 +219,7 @@ def print_stats(data, stats):
     print("=" * 60)
 
 
-# Figure
+# Figures
 def make_figure(data, stats, n_plot=750):
     pre, post, treat = data["pre"], data["post"], data["treatment"]
     adjusted = stats["adjusted"]
@@ -236,10 +240,10 @@ def make_figure(data, stats, n_plot=750):
     )
 
     # Left panel: ANCOVA
-    ax1.scatter(pre_p[ctrl_p], post_p[ctrl_p], s=16, alpha=0.4,
-                color=PT_RED, edgecolors="none", label="Control")
-    ax1.scatter(pre_p[tx_p], post_p[tx_p], s=16, alpha=0.4,
-                color=PT_BLUE, edgecolors="none", label="Treatment")
+    ax1.scatter(pre_p[ctrl_p], post_p[ctrl_p], color=PT_RED,
+                label="Control", **_SCATTER_KW)
+    ax1.scatter(pre_p[tx_p], post_p[tx_p], color=PT_BLUE,
+                label="Treatment", **_SCATTER_KW)
 
     # Grand mean vertical line
     xbar = pre.mean()
@@ -269,14 +273,13 @@ def make_figure(data, stats, n_plot=750):
     ax1.set_xlabel("Pre-experiment SR (%)")
     ax1.set_ylabel("Adjusted Search Rate (%)")
     ax1.set_title("ANCOVA", fontsize=13, fontweight="semibold", pad=10)
-    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#BDBDBD",
-               loc="upper left")
+    ax1.legend(**_LEGEND_KW)
 
     # Right panel: CUPED
-    ax2.scatter(pre_p[ctrl_p], adj_p[ctrl_p], s=16, alpha=0.4,
-                color=PT_RED, edgecolors="none", label="Control")
-    ax2.scatter(pre_p[tx_p], adj_p[tx_p], s=16, alpha=0.4,
-                color=PT_BLUE, edgecolors="none", label="Treatment")
+    ax2.scatter(pre_p[ctrl_p], adj_p[ctrl_p], color=PT_RED,
+                label="Control", **_SCATTER_KW)
+    ax2.scatter(pre_p[tx_p], adj_p[tx_p], color=PT_BLUE,
+                label="Treatment", **_SCATTER_KW)
 
     # Flat group means
     mean_adj_ctrl = adjusted[ctrl].mean()
@@ -297,8 +300,7 @@ def make_figure(data, stats, n_plot=750):
 
     ax2.set_xlabel("Pre-experiment SR (%)")
     ax2.set_title("CUPED", fontsize=13, fontweight="semibold", pad=10)
-    ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#BDBDBD",
-               loc="upper left")
+    ax2.legend(**_LEGEND_KW)
 
     _style_spines(ax1, ax2)
     _save_figure(fig, FIG_PATH)
@@ -315,8 +317,7 @@ def make_covariation_figure(data, stats, n_plot=750):
 
     fig, ax = plt.subplots(figsize=(5.5, 4.5))
 
-    ax.scatter(pre_p, post_p, s=16, alpha=0.4,
-               color=PT_INDIGO, edgecolors="none")
+    ax.scatter(pre_p, post_p, color=PT_INDIGO, **_SCATTER_KW)
 
     x_range = np.array([0, pre.max() + 1])
     ax.plot(x_range, intercept + slope * x_range,
@@ -416,14 +417,12 @@ def make_tx_distribution_figure(stats):
     ax.set_xlabel("Treatment effect (percentage points)")
     ax.set_ylabel("Density")
     ax.set_yticks([])
-    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#BDBDBD",
-              loc="upper left")
-    ax.spines["bottom"].set_color(GRAY)
+    ax.legend(**_LEGEND_KW)
     ax.spines["left"].set_visible(False)
+    _style_spines(ax)
     _save_figure(fig, FIG_DIST_PATH)
 
 
-# Main
 def main():
     data = simulate()
     stats = compute_stats(data)

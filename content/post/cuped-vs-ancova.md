@@ -99,7 +99,7 @@ Recognizing the overlap between CUPED and ANCOVA creates flexibility when you ne
 
 CUPED works well in the environment it was designed for: large-scale online experiments with a single strong covariate and straightforward metrics. That describes a lot of AB tests but it doesn't describe them all. Regression has been doing this work for decades. It's more flexible, its assumptions are well understood, and it extends naturally when the simple case isn't simple enough. Knowing when the advantage of each method kicks in is useful. Defaulting to CUPED without recognizing that you really needed regression is not.
 
-
+----
 ##### References
 
 Deng, A., Xu, Y., Kohavi, R., & Walker, T. (2013). Improving the Sensitivity of Online Controlled Experiments by Utilizing Pre-Experiment Data. *Proceedings of the Sixth ACM International Conference on Web Search and Data Mining*, 123–132.

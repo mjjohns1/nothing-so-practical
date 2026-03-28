@@ -1,0 +1,13 @@
+[project]
+name = "ds-blog"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.9.4",
+    "notebook>=7.5.5",
+    "numpy>=2.0.2",
+    "pandas>=2.3.3",
+    "scipy>=1.13.1",
+    "statsmodels>=0.14.6",
+]
