@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-from gen_sat_data import simulate_sat
+from gen_sat_data import simulate_sat, FRONTDOOR_SEED
 
 OUT = (
     Path(__file__).parent.parent.parent
@@ -51,7 +51,7 @@ def _downsample(arrays, n_plot=400, seed=99):
 
 
 def main():
-    data = simulate_sat()
+    data = simulate_sat(frontdoor=True, seed=FRONTDOOR_SEED)
     prep = data["prep_course"]
     hours = data["hours_studied"]
     sat = data["sat_score"]
@@ -59,7 +59,7 @@ def main():
     treated = prep == 1
     control = prep == 0
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(13, 3.8))
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 4.5))
 
     # --- Panel 1: Prep -> Hours (no confounding on this link) ---
     h_ctrl, h_treat = hours[control], hours[treated]
