@@ -218,9 +218,9 @@ The most valuable thing do-calculus provides is the negative case. Knowing that 
 
 ### The Graph Carries the Knowledge
 
-The do-operator is the mathematical notation that makes graph surgery precise. It translates "delete the arrows" into a probability statement, $P(Y \mid \text{do}(X))$, that you can manipulate with algebra. The do-calculus is the set of rules for that manipulation. If a causal effect can be identified from your DAG and your data, the rules will find the formula. If they can't, nothing can. Earlier methods could identify some causal effects, but they couldn't tell you when identification was impossible. The do-calculus settles the question.
+The do-operator is the mathematical notation that makes graph surgery precise. It translates "delete the paths" into a probability statement, $P(Y \mid \text{do}(X))$, that you can manipulate with algebra. Do-calculus is the set of rules for that manipulation. If a causal effect can be identified from your DAG and your data, the rules will find the formula. If they can't, nothing can. Earlier methods could identify some causal effects, but they couldn't tell you when identification was impossible. Do-calculus can.
 
-But the calculus is only as good as the graph you give it. Draw the wrong DAG, miss a confounder, get an arrow backwards, and the derived formula will be wrong. The rules guarantee logical consistency given your assumptions. They can't tell you whether your assumptions are right. Many of them probably aren't. That still requires understanding the domain. The do-calculus carries the logic. The graph carries the knowledge. Neither works without the other.
+But the calculus is only as good as the graph you give it. Draw the wrong DAG, miss a confounder, miss a path, and the derived formula will be wrong. The rules guarantee logical consistency given your assumptions. They can't tell you whether your assumptions are right. That still requires an understanding of the domain. Do-calculus carries the logic but the knowledge in the graph determines if we can answer our causal question.
 
 
 ----
