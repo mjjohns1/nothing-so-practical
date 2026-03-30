@@ -11,14 +11,13 @@ draft:       true
 ---
 
 
-## Do-calculus for Humans
-The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon that disguises something fairly easy to understand. You draw a DAG, find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
+The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon that disguises something fairly easy to understand. You draw a DAG (a directed acyclic graph), find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
 
 Sort of. For simple problems, the do-operator is just shorthand for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
 
 ### Seeing Is Not Doing
 
-Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've assembled a dataset on about 10,000 students to try to answer this question. Here is what the (fake) sample looks like.
+Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've assembled a dataset on about 10,000 students to try to answer this question. Here is what the data looks like. (The data is simulated, which means the true causal effect of prep is known: 55 SAT points. The goal is to see how close different estimation strategies can get.)
 
 | | No Prep | Prep | Overall |
 |:---|---:|---:|---:|
@@ -31,7 +30,7 @@ Suppose a university wants to know whether taking a prep course improves scores 
 
 Students who took a prep course scored 138 points higher on average. But students who take a prep course are different from those who don't. They come from wealthier families, are more academically motivated, and have stronger academic records. The 138-point gap reflects the prep course plus all the other ways prep-takers were going to outscore non-takers anyway.
 
-A DAG makes the contamination visible.
+A DAG makes the confounding visible.
 
 {{< figure src="/img/posts/do-calculus/sat-dag.svg" caption="A directed acyclic graph for the SAT prep example. Each arrow represents a direct causal relationship. Red arrows trace confounding paths. The dashed blue arrow is the causal effect we want to estimate." class="img-center" width="90%" >}}
 
@@ -73,7 +72,7 @@ The weighting by $P(Z=z)$ is what separates this from a simple subgroup analysis
 
 {{% /notation-box %}}
 
-Here's what the adjustment looks like when we stratify by income group.
+Here's what the adjustment looks like when we stratify by income alone — an incomplete adjustment, to show why one confounder isn't enough.
 
 | Income Group | Share of Population | Prep Tx Effect | Weighted |
 |:---|---:|---:|---:|
@@ -126,11 +125,11 @@ But remember we have data on how many hours each student studied per week. Prep 
 
 {{< figure src="/img/posts/do-calculus/frontdoor-dag.svg" caption="The front-door setup. Motivation confounds Prep Course and SAT Score (dashed arrows), but the causal effect flows entirely through Hours Studied." class="img-center" width="90%" >}}
 
-The front-door criterion exploits the fact that Hours Studied sits between Prep and SAT. That position lets us attack the problem from both sides.
+The front-door criterion exploits the fact that Hours Studied sits between Prep and SAT. That position lets us estimate the effect of prep on hours and the effect of hours on SAT separately, then chain them together.
 
 **Piece one: the effect of Prep on Hours Studied.** Motivation makes some students more likely to take prep, and motivation also makes them study more. But in this DAG, motivation only reaches hours studied through the Prep Course node. So the observed relationship between prep and hours is unconfounded. Students who take the course study about 11 more hours on average. No adjustment needed.
 
-**Piece two: the effect of Hours Studied on SAT Score.** This one is trickier. Motivation affects SAT scores directly, and it reaches hours studied indirectly through Prep. That creates a backdoor path: Hours ← Prep ← Motivation → SAT. But Prep is on that path, so adjusting for it blocks the confounding. Among students who all took prep (or all didn't), the variation in hours studied is no longer driven by the choice to take prep. Within those groups, the relationship between hours and SAT scores reflects the causal effect of studying.
+**Piece two: the effect of Hours Studied on SAT Score.** This one is trickier. Motivation affects SAT scores directly, and it reaches hours studied indirectly through Prep. That creates a backdoor path: Hours ← Prep ← Motivation → SAT. But Prep is on that path, so adjusting for it blocks the confounding. Among students who all took prep (or all didn't), the variation in hours studied is no longer driven by the choice to take prep. Controlling for Prep holds the selection process constant, so within each group the relationship between hours and SAT scores reflects studying time, not differences in who chose to enroll.
 
 Chain the two pieces together. Prep adds about 11 hours of study. Each additional hour adds about 5 SAT points (estimated from piece two). Multiply them and you get roughly 54 points. Far below the naive 138-point gap, and right near the true effect of 55. All without ever measuring motivation.[^1]
 
@@ -174,7 +173,23 @@ This front-door analysis relies on the strong assumption that motivation affects
 
 ### Where the Rules Come In
 
-The front-door formula was derived from three rules that together make up the do-calculus. Each rule answers one question: when can you remove $\text{do}()$ from a probability statement. Every $\text{do}()$ represents an intervention we didn't actually perform. We can't calculate $P(Y \mid \text{do}(X))$ from the data the way we can with $P(Y \mid X)$. To get an answer from observational data, every $\text{do}()$ has to go. Here's how the rules derive the front-door result.
+The front-door formula was derived from three rules that together make up the do-calculus. Every $\text{do}()$ represents an intervention we didn't actually perform. We can't calculate $P(Y \mid \text{do}(X))$ from the data the way we can with $P(Y \mid X)$. To get an answer from observational data, every $\text{do}()$ has to go — and the three rules tell you when that's legal.
+
+{{% notation-box %}}
+
+**The Three Rules of Do-Calculus**
+
+Each rule states a condition under which a $\text{do}()$ can be added, removed, or swapped for ordinary conditioning. Applicability is checked by inspecting a modified version of the graph.
+
+- **Rule 1 (Observation equivalence):** You can ignore an observed variable when it has no active path to the outcome in the current modified graph. If observing it doesn't change what you'd expect for $Y$, it can be dropped.
+- **Rule 2 (Action/observation exchange):** You can replace $\text{do}(X)$ with an ordinary observation of $X$ — or vice versa — when there is no active backdoor path from $X$ to $Y$ in the appropriate modified graph. This is the rule that converts interventions into regression adjustments.
+- **Rule 3 (Action removal):** You can drop $\text{do}(X)$ entirely when $X$ has no unblocked causal path to $Y$ given the other interventions in play. This eliminates redundant interventions.
+
+The derivation below uses Rules 2 and 3. Rule 1 doesn't appear in this particular identification path, but it's essential for other strategies where observing a variable is provably irrelevant.
+
+{{% /notation-box %}}
+
+Here's how the rules derive the front-door result.
 
 We start with what we want: $P(\text{SAT} \mid \text{do}(\text{Prep}))$. We can't compute this directly because of unmeasured motivation. The do-calculus gives us a way to rewrite it in terms of things we *can* compute.
 
@@ -220,7 +235,7 @@ The most valuable thing do-calculus provides is the negative case. Knowing that 
 
 The do-operator is the mathematical notation that makes graph surgery precise. It translates "delete the paths" into a probability statement, $P(Y \mid \text{do}(X))$, that you can manipulate with algebra. Do-calculus is the set of rules for that manipulation. If a causal effect can be identified from your DAG and your data, the rules will find the formula. If they can't, nothing can. Earlier methods could identify some causal effects, but they couldn't tell you when identification was impossible. Do-calculus can.
 
-But the calculus is only as good as the graph you give it. Draw the wrong DAG, miss a confounder, miss a path, and the derived formula will be wrong. The rules guarantee logical consistency given your assumptions. They can't tell you whether your assumptions are right. That still requires an understanding of the domain. Do-calculus carries the logic but the knowledge in the graph determines if we can answer our causal question.
+But the calculus is only as good as the graph you give it. Draw the wrong DAG, miss a confounder, miss a path, and the derived formula will be wrong. The rules guarantee logical consistency given your assumptions. They can't tell you whether your assumptions are right. That still requires an understanding of the domain. Do-calculus carries the logic, but the knowledge encoded in the graph determines whether we can answer our causal question.
 
 
 ----
