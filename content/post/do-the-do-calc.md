@@ -49,7 +49,7 @@ $E[\text{SAT} \mid \text{do}(\text{Prep} = 1)] - E[\text{SAT} \mid \text{do}(\te
 
 The $\text{do}$ means we're not looking at who chose prep. We're asking what would happen if we *assigned* students to prep (or not), the way a randomized experiment would. Forcing prep to take the value of 1 or 0 neutralizes all the reasons students select into the course. This counterfactual situation doesn't exist in the data. The do-operator just lets us pretend that it does.
 
-To apply the $\text{do}$ operator we perform graph surgery by deleting every arrow pointing into the Prep Course node. In a randomized experiment, nothing about a student's background determines whether they get prep. The incoming arrows represent those background causes, and deleting them is the graphical way of saying "these causes no longer operate."
+To apply the $\text{do}$ operator we perform graph surgery by deleting every arrow pointing into the Prep Course node. In a randomized experiment, nothing about a student's background determines whether they take prep. The incoming arrows represent those background causes, and deleting them is the graphical way of saying these variables are irrelevant.
 
 {{< figure src="/img/posts/do-calculus/sat-dag-do.svg" caption="The graph under do(Prep), known in the literature as the 'mutilated graph.' Arrows into Prep Course have been severed (gray dashed), breaking every backdoor path. The highlighted node is now set externally rather than determined by confounders." class="img-center" width="90%" >}}
 
@@ -57,9 +57,9 @@ In the updated graph, Prep Course sits alone with no parents. The confounders ha
 
 ### The Adjustment Formula
 
-We can't delete the paths in the real world. We didn't run an experiment. But under the right conditions, we can use the data to compute what an experiment would have shown.
+We can only delete the paths in theory. We didn't run an experiment. But under the right conditions, we can use the data to compute what an experiment would have shown.
 
-The most common approach is backdoor adjustment. Instead of comparing all prep-takers to all non-takers, compare them *within groups that share the same background*. Using income as an example, you compute effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
+The most common approach is backdoor adjustment. Instead of comparing all prep-takers to non-takers, compare them *within* groups that share the same background. Using income as an example, you compute effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
 
 {{% notation-box %}}
 
@@ -73,7 +73,7 @@ The weighting by $P(Z=z)$ is what separates this from a simple subgroup analysis
 
 {{% /notation-box %}}
 
-Here's what the adjustment looks like when we stratify by income tercile.
+Here's what the adjustment looks like when we stratify by income group.
 
 | Income Group | Share of Population | Prep Tx Effect | Weighted |
 |:---|---:|---:|---:|
@@ -114,9 +114,9 @@ As we add controls, the coefficient for SAT prep approaches the true effect of 5
 
 <mark>The adjustment formula, graph surgery, and regression are all doing the same thing.</mark> The graph surgery tells you *what* confounding to remove. The formula tells you *which* variables accomplish that removal. Regression does the removing.
 
-The $\text{do}$-operator is the notation that connects all three, and its core insight is that $P(Y \mid \text{do}(X))$ is NOT the same as $P(Y \mid X)$. To see why, look at what $P(Y \mid X)$ actually computes. When we calculate $P(\text{SAT} \mid \text{Prep} = 1)$, the people contributing to that average are disproportionately wealthy, motivated, and high-GPA, because those are the people who chose prep. The average is tilted toward students who would have scored well regardless. That's why the naive estimate is 138 points.
+The $\text{do}$-operator is the notation that connects all three. The critical observation is that $P(Y \mid \text{do}(X))$ is NOT the same as $P(Y \mid X)$. To see why, look at what $P(Y \mid X)$ actually computes. When we calculate $P(\text{SAT} \mid \text{Prep} = 1)$, the people contributing to that value are disproportionately wealthy, motivated, and high-GPA, because those are the people who chose to do prep. The average is tilted toward students who would have scored well regardless. That's why the naive estimate is 138 points.
 
-$P(\text{SAT} \mid \text{do}(\text{Prep} = 1))$ asks a different question: what if *everyone* were assigned to prep, regardless of background? The adjustment formula accomplishes this by reweighting. Instead of letting the confounder distribution of prep-takers drive the average, it weights each confounder stratum by its share of the overall population. That's what the $P(Z=z)$ term does. If you could adjust for every confounder, the estimate would drop from 138 to something close to the true effect of 55.
+$P(\text{SAT} \mid \text{do}(\text{Prep} = 1))$ asks a different question: what if *everyone* were assigned to prep, regardless of background? The adjustment formula accomplishes this by reweighting. Instead of letting the confounder distribution of prep-takers drive the average, it weights each confounder stratum by its share of the overall population. That's what the $P(Z=z)$ term does. If you adjust for every confounder, the estimate will drop from 138 to something close to the true effect of 55.
 
 ### When the Backdoor Fails
 
