@@ -68,7 +68,7 @@ A degraded fit in the period before the tweet might suggest that the baseline wa
 
 The model answered the question it was given; the data just weren't suited to that question. The only way to catch it is by considering what else was happening when the "treatment" occurred. That's domain knowledge, not statistics.
 
-### Still Easy, Still Hard
+### The Real Work of Causal Inference
 
 Each example above follows a similar pattern. A credible method produced a reasonable result that looked clean but wasn't. These aren't cautionary tales about unskilled researchers. They illustrate how causal inference actually works. The methods do what you ask. But every method operates under assumptions, and assumptions are claims about the world, not properties of the estimator. When they don't hold, the estimate is confounded regardless of what the output says.
 
