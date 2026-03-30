@@ -7,7 +7,7 @@ author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
 categories:  []
-draft:       true
+draft:       false
 ---
 
 The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon for something easy to understand. You draw a DAG, find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
@@ -225,8 +225,6 @@ But the calculus is only as good as the graph you give it. Draw the wrong DAG, m
 ##### References
 
 Pearl, J. (1995). Causal diagrams for empirical research. *Biometrika*, *82*(4), 669-688.
-
-Pearl, J. (2009). *Causality: Models, Reasoning, and Inference* (2nd ed.). Cambridge University Press.
 
 Pearl, J. (2012). The do-calculus revisited. *Proceedings of the 28th Conference on Uncertainty in Artificial Intelligence (UAI)*, 3-11.
 
