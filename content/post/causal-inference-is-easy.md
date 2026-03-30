@@ -136,7 +136,7 @@ Formally, conditioning on $Z$ gives us:
 
 $$P(Y \mid \text{do}(X)) = \sum_z P(Y \mid X, Z=z) \, P(Z=z)$$
 
-where $\text{do}(X)$ represents an intervention that sets the value of HRT (1 = taking HRT; 0 = not taking HRT), making it independent of its causes. The right-hand side can be estimated using observational data if we've measured $Z$ and the backdoor criterion is satisfied.
+where $\text{do}(X)$ represents an intervention that sets the value of HRT (1 = taking HRT; 0 = not taking HRT), making it independent of its causes.[^3] The right-hand side can be estimated using observational data if we've measured $Z$ and the backdoor criterion is satisfied.
 However, the DAG only helps if you've specified it correctly. If there's a variable you haven't included in the graph, say genetic predisposition to both seeking preventive care and having good cardiovascular health, then you haven't actually blocked all the backdoor paths. You've just assumed they don't exist.
 
 Drawing the DAG requires a thorough understanding of the data generating process. You need to know what causes treatment selection, what causes the outcome, what variables cause both, what variables are caused by both. The graphical framework makes your assumptions explicit and provides rules for determining what you need to control for. But it doesn't tell you whether your graph is right. That requires understanding the domain.
@@ -181,3 +181,5 @@ Writing Group for the Women's Health Initiative. Risks and benefits of estrogen 
 [^1]: For more spurious correlations likely to disappear before your eyes, see [Tyler Vigen's wonderful site](https://www.tylervigen.com/spurious-correlations).
 
 [^2]: Our understanding of HRT has evolved since 2002. Subsequent analyses found that age and time since menopause matter. Women aged 50-59 at hormone therapy initiation showed similar results in observational studies and the WHI, with some analyses suggesting potential cardiovascular benefits in younger women close to menopause (Rossouw et al. 2007; Manson et al. 2017). A 2013 re-analysis and follow-up data showed that younger women (50-59 years) or those within 10 years of menopause who took HRT had a more favorable risk-benefit ratio, including potential cardiovascular benefits (Manson et al. 2013).
+
+'[^3]: See the post on the [do-operator](/post/do-the-do-calc/) for a more thorough discussion.

@@ -1,13 +1,13 @@
 ---
-title:       "Do the Do Calculus"
+title:       "Do Calculus for Humans"
 subtitle:    "Demystifying the do-operator"
 description: "Is this just a fancy way of saying control for all confounders?"
-date:        2026-03-22
+date:        2026-03-30
 author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
 categories:  []
-draft:       false
+draft:
 ---
 
 The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon for something easy to understand. You draw a DAG, find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
