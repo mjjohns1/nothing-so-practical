@@ -7,7 +7,7 @@ author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
 categories:  []
-draft:       true
+draft:       false
 ---
 
 
@@ -17,7 +17,7 @@ Sort of. For simple problems, the do-operator is just shorthand for eliminating 
 
 ### Seeing Is Not Doing
 
-Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've assembled a dataset on about 10,000 students to try to answer this question. Here is what the data looks like. (The data is simulated, which means the true causal effect of prep is known: 55 SAT points. The goal is to see how close different estimation strategies can get.)
+Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've assembled a dataset on about 10,000 students to try to answer this question. Here is what the simulated data looks like.
 
 | | No Prep | Prep | Overall |
 |:---|---:|---:|---:|
