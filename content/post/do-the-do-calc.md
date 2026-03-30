@@ -7,7 +7,7 @@ author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
 categories:  []
-draft:
+draft:       true
 ---
 
 The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon for something easy to understand. You draw a DAG, find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?

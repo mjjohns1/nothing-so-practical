@@ -182,4 +182,4 @@ Writing Group for the Women's Health Initiative. Risks and benefits of estrogen 
 
 [^2]: Our understanding of HRT has evolved since 2002. Subsequent analyses found that age and time since menopause matter. Women aged 50-59 at hormone therapy initiation showed similar results in observational studies and the WHI, with some analyses suggesting potential cardiovascular benefits in younger women close to menopause (Rossouw et al. 2007; Manson et al. 2017). A 2013 re-analysis and follow-up data showed that younger women (50-59 years) or those within 10 years of menopause who took HRT had a more favorable risk-benefit ratio, including potential cardiovascular benefits (Manson et al. 2013).
 
-'[^3]: See the post on the [do-operator](/post/do-the-do-calc/) for a more thorough discussion of this concept.
+[^3]: See the post on the [do-operator](/post/do-the-do-calc/) for a more thorough discussion of this concept.
