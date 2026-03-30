@@ -14,7 +14,7 @@ draft:       true
 ## Do-calculus for Humans
 The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon that disguises something fairly easy to understand. You draw a DAG, find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
 
-Sort of. For simple problems, the do-operator is just shorthad for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
+Sort of. For simple problems, the do-operator is just shorthand for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
 
 ### Seeing Is Not Doing
 
@@ -49,17 +49,17 @@ $E[\text{SAT} \mid \text{do}(\text{Prep} = 1)] - E[\text{SAT} \mid \text{do}(\te
 
 The $\text{do}$ means we're not looking at who chose prep. We're asking what would happen if we *assigned* students to prep (or not), the way a randomized experiment would. Forcing prep to take the value of 1 or 0 neutralizes all the reasons students select into the course. This counterfactual situation doesn't exist in the data. The do-operator just lets us pretend that it does.
 
-To apply the $\text{do}$ operator we perform graph surgery by deleting every arrow pointing into the Prep Course node. In a randomized experiment, nothing about a student's background determines whether they take prep. The incoming arrows represent those background causes, and deleting them is the graphical way of saying these variables are irrelevant.
+To apply the $\text{do}$ operator, we perform graph surgery by deleting every arrow pointing into the Prep Course node. In a randomized experiment, nothing about a student's background determines whether they take prep. The incoming arrows represent those background causes, and deleting them is the graphical way of saying these variables are irrelevant.
 
 {{< figure src="/img/posts/do-calculus/sat-dag-do.svg" caption="The graph under do(Prep), known in the literature as the 'mutilated graph.' Arrows into Prep Course have been severed (gray dashed), breaking every backdoor path. The highlighted node is now set externally rather than determined by confounders." class="img-center" width="90%" >}}
 
-In the updated graph, Prep Course sits alone with no parents. The confounders haven't disappeared, but they're influence on prep has. Any remaining association between Prep and SAT Score flows through the causal arrow. That's exactly the quantity $P(\text{SAT} \mid \text{do}(\text{Prep}))$ represents.
+In the updated graph, Prep Course sits alone with no parents. The confounders haven't disappeared, but their influence on prep has. Any remaining association between Prep and SAT Score flows through the causal arrow. That's exactly the quantity $P(\text{SAT} \mid \text{do}(\text{Prep}))$ represents.
 
 ### The Adjustment Formula
 
 We can only delete the paths in theory. We didn't run an experiment. But under the right conditions, we can use the data to compute what an experiment would have shown.
 
-The most common approach is backdoor adjustment. Instead of comparing all prep-takers to non-takers, compare them *within* groups that share the same background. Using income as an example, you compute effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
+The most common approach is backdoor adjustment. Instead of comparing all prep-takers to non-takers, compare them *within* groups that share the same background. Using income as an example, you compute the effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
 
 {{% notation-box %}}
 
@@ -146,7 +146,7 @@ where $M$ is the mediator (Hours Studied), $X$ is the treatment (Prep Course), a
 
 #### Front-Door in Practice
 
-The front-door formula also reduces to down to two regression models, run in sequence.
+The front-door formula also reduces to two regression models, run in sequence.
 
 **Step 1.** Regress Hours Studied on Prep Course. No controls needed, because the DAG tells us this relationship is unconfounded:
 
@@ -170,7 +170,7 @@ Each additional hour of studying adds 4.9 SAT points.
 
 Notice the coefficient on Prep in Step 2 is 84 points. That coefficient absorbs the association between Prep and SAT that runs through the backdoor (Prep ← Motivation → SAT) rather than through Hours. By soaking up that confounding, it frees the Hours coefficient to reflect only the causal effect of studying. This is the same logic the front-door formula encodes, expressed as two fitted models instead of nested summations.
 
-This front-door analysis relies on the strong assumption that motivation affects study hours *only* through the decision to take prep. This is unlikely true. Motivated students are going to study more regardless of whether they take a prep course. The point is to show the method, not to defend this particular DAG.
+This front-door analysis relies on the strong assumption that motivation affects study hours *only* through the decision to take prep. This is unlikely to be true. Motivated students are going to study more regardless of whether they take a prep course. The point is to show the method, not to defend this particular DAG.
 
 ### Where the Rules Come In
 
@@ -237,6 +237,6 @@ Huang, Y., & Valtorta, M. (2006). Pearl's calculus of intervention is complete. 
 Shpitser, I., & Pearl, J. (2006). Identification of joint interventional distributions in recursive semi-Markovian causal models. *Proceedings of the 21st National Conference on Artificial Intelligence (AAAI)*, 1219-1226.
 
 
-[^1]: Anyone familiar with mediation analysis will recognize the frontdoor adjustment as nothing more than the indirect effect, $\alpha\beta$, where $\alpha$ is the coefficient on the path from $X$ to the mediator, and $\beta$ is the coefficient on the path from the mediator to $Y$. The indirect effect equals the total effect only when the effect of $X$ on $Y$ is fully mediated. This is a very strong assumption that is almost never true.
+[^1]: Anyone familiar with mediation analysis will recognize the front-door adjustment as nothing more than the indirect effect, $\alpha\beta$, where $\alpha$ is the coefficient on the path from $X$ to the mediator, and $\beta$ is the coefficient on the path from the mediator to $Y$. The indirect effect equals the total effect only when the effect of $X$ on $Y$ is fully mediated. This is a very strong assumption that is almost never true.
 
 [^2]: The law of total probability says you can break any probability into a weighted sum over the values of another variable: $P(A) = \sum_b P(A \mid B = b) \, P(B = b)$. Here we're doing the same thing, but inside a world where Prep has been set by intervention. We split the effect of Prep on SAT into a sum over all possible values of Hours Studied, weighting each by how likely it is under the intervention.

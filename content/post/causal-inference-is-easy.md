@@ -117,7 +117,7 @@ The formal machinery – notation, estimators, asymptotic theory – can obscure
 
 The DAG framework makes the alternative explanations visually explicit by mapping out the causal structure. For the HRT example, a DAG encoding the confounding story might look like this:
 
-![A simple DAG showing confounding through health consciousness](/img/posts/causal-inference/dag-simple.svg)
+{{< figure src="/img/posts/causal-inference/dag-simple.svg" caption="A simple DAG showing confounding through health consciousness" class="img-center" width="90%" >}}
 
 This graph says that health consciousness ($Z$) causes both HRT ($X$) uptake and heart disease risk ($Y$). There may or may not be a causal arrow from HRT to heart disease. That’s what we're trying to figure out.
 
