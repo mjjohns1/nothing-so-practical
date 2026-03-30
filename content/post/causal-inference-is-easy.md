@@ -156,7 +156,7 @@ However, if you don't know about the income variable, you'll draw the wrong grap
 
 The assumptions encoded in a DAG are just formal statements about alternative explanations and how they operate. Each arrow (or absence of an arrow) represents a claim about the data generating process. Backdoor paths are literally the alternative explanations. The backdoor criterion is a systematic procedure for identifying which variables you need to condition on to block those alternatives. D-separation is a mathematical statement that you've successfully eliminated the spurious associations. The causal graph formalizes your understanding of confounding, but drawing the correct graph requires you to actually know what the confounders are and how they relate to each other.
 
-### In Comes the Hard Part
+### Now for the Hard Part
 
 Both frameworks formalize the process of ruling out competing explanations. Potential outcomes does this through assumptions about conditional independence. The DAG approach does it through graphical rules for blocking non-causal paths. The math tells you what to control for, what estimator to use, and what assumptions you need.
 

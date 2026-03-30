@@ -102,8 +102,8 @@ def dag_income():
     g.node_attr.update(NODE_ATTRS)
 
     S = 2.0
-    g.node("Inc", "Income", pos=f"0,{1.2 * S}!")
-    g.node("Z", "Health\nConsciousness\n(Z)", pos=f"0,{0.5 * S}!")
+    g.node("Inc", "Income", pos=f"0,{0.9 * S}!")
+    g.node("Z", "Health\nConsciousness\n(Z)", pos=f"0,{0.45 * S}!")
     g.node("X", "HRT\n(X)", pos=f"{-0.7 * S},0!")
     g.node("Y", "Heart Disease\n(Y)", pos=f"{0.7 * S},0!")
 
