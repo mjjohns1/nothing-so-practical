@@ -174,7 +174,7 @@ This front-door analysis relies on the strong assumption that motivation affects
 
 ### Where the Rules Come In
 
-The front-door formula was derived from three rules that together make up the do-calculus. Each rule answers one question: when can you remove $\text{do}()$ from a probability statement. Every $\text{do}()$ represents an intervention we didn't actually perform. We can't look up $P(Y \mid \text{do}(X))$ in a dataset the way we can look up $P(Y \mid X)$. To get an answer from observational data, every $\text{do}()$ has to go. Here's how the rules derive the front-door result.
+The front-door formula was derived from three rules that together make up the do-calculus. Each rule answers one question: when can you remove $\text{do}()$ from a probability statement. Every $\text{do}()$ represents an intervention we didn't actually perform. We can't calculate $P(Y \mid \text{do}(X))$ from the data the way we can with $P(Y \mid X)$. To get an answer from observational data, every $\text{do}()$ has to go. Here's how the rules derive the front-door result.
 
 We start with what we want: $P(\text{SAT} \mid \text{do}(\text{Prep}))$. We can't compute this directly because of unmeasured motivation. The do-calculus gives us a way to rewrite it in terms of things we *can* compute.
 
@@ -184,7 +184,7 @@ $$P(\text{SAT} \mid \text{do}(\text{Prep})) = \sum_h P(\text{SAT} \mid \text{do}
 
 where $H$ is Hours Studied. This is the law of total probability applied inside the interventional world.[^2] We still have $\text{do}$ operators to eliminate.
 
-**Step 2. The effect of Prep on Hours (Rule 2).** Look at $P(H \mid \text{do}(\text{Prep}))$. In the surgically modified graph (arrows into Prep removed), Prep has no parents, so there can't be a common cause of Prep and Hours. Observing who took prep gives the same answer as intervening. **Rule 2** lets us replace the $\text{do}$ with ordinary conditioning:
+**Step 2. The effect of Prep on Hours (Rule 2).** Start with $P(H \mid \text{do}(\text{Prep}))$. In the surgically modified graph (arrows into Prep removed), Prep has no parents, so there can't be a common cause of Prep and Hours. We can use adjustment to get the same answer as intervening. **Rule 2** lets us replace the $\text{do}$ with ordinary conditioning:
 
 $$P(H \mid \text{do}(\text{Prep})) = P(H \mid \text{Prep})$$
 
