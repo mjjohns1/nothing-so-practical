@@ -7,14 +7,14 @@ author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
 categories:  []
-draft:       false
+draft:       true
 ---
 
 
 ## Do-calculus for Humans
 The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon for something easy to understand. You draw a DAG, find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
 
-Sort of. For simple problems, the do-operator is just notation for controlling for confounders. But it can be useful when confounders can't be measured, because the do-calculus can tell you whether a causal effect is still identifiable. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
+Sort of. For simple problems, the do-operator is just shorthad for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
 
 ### Seeing Is Not Doing
 
