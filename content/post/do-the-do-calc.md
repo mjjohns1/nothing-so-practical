@@ -6,14 +6,14 @@ date:        2026-03-30
 author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
-categories:  []
+categories:  ["explainer"]
 draft:       false
 ---
 
 
 The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon that disguises something fairly easy to understand. You draw a DAG (a directed acyclic graph), find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
 
-Sort of. For simple problems, the do-operator is just shorthand for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
+For simple problems, the do-operator is just shorthand for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable in the data. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
 
 ### Seeing Is Not Doing
 
@@ -131,6 +131,8 @@ The front-door criterion exploits the fact that Hours Studied sits between Prep 
 
 **Piece two: the effect of Hours Studied on SAT Score.** This one is trickier. Motivation affects SAT scores directly, and it reaches hours studied indirectly through Prep. That creates a backdoor path: Hours ← Prep ← Motivation → SAT. But Prep is on that path, so adjusting for it blocks the confounding. Among students who all took prep (or all didn't), the variation in hours studied is no longer driven by the choice to take prep. Controlling for Prep holds the selection process constant, so within each group the relationship between hours and SAT scores reflects studying time, not differences in who chose to enroll.
 
+{{< do-calculus-viz >}}
+
 Chain the two pieces together. Prep adds about 11 hours of study. Each additional hour adds about 5 SAT points (estimated from piece two). Multiply them and you get roughly 54 points. Far below the naive 138-point gap, and right near the true effect of 55. All without ever measuring motivation.[^1]
 
 {{% notation-box %}}
@@ -225,18 +227,13 @@ Three rules, applied mechanically, derived a formula we couldn't have gotten fro
 
 ### When Does It Matter
 
-If you can measure all the confounders, you don't need to think about do-calculus. The backdoor criterion handles it. Draw a DAG, identify the adjustment set, run your regression. Most applied causal inference lives here, and the do-operator is just a notation for what you're already doing.
+The do-operator is the mathematical notation that makes graph surgery precise. It translates "delete the paths" into a probability statement, $P(Y \mid \text{do}(X))$, that you can manipulate with algebra. Do-calculus is the set of rules for that manipulation. If a causal effect can be identified from your DAG and your data, the rules will find the formula.
 
-However, if you can't measure a key confounder, do-calculus tells you whether you're stuck. The front-door criterion is one example, but there are others. Instrumental variable setups, mediation-based strategies, and more exotic identification paths all fall out of the same three rules. Without do-calculus, you'd have to discover each strategy separately and hope you haven't missed one. With it, you have a systematic procedure. If the rules can eliminate all the $\text{do}$ operators, you have an identification strategy. If they can't, no amount of statistical sophistication will save you.
+If you can measure all the confounders, you really don't need to think about do-calculus. The backdoor criterion handles it. Draw a DAG, identify the adjustment set, run your regression. Most applied causal inference happens here, and the do-operator is just a notation for what you're already doing.
+
+However, if you can't measure a key confounder, do-calculus can tell you whether you're stuck. The front-door criterion is one example, but there are others. Instrumental variable setups, mediation-based strategies, and more exotic identification paths all fall out of the same three rules. Without do-calculus, you'd have to discover each strategy separately. With it, you have a systematic procedure.
 
 The most valuable thing do-calculus provides is the negative case. Knowing that a causal effect *cannot* be identified from your data, given your assumptions, is arguably more useful than any formula it derives. It stops you from running analyses that look rigorous but aren't. It tells you when you need better data, a different design, or stronger assumptions.
-
-### The Graph Carries the Knowledge
-
-The do-operator is the mathematical notation that makes graph surgery precise. It translates "delete the paths" into a probability statement, $P(Y \mid \text{do}(X))$, that you can manipulate with algebra. Do-calculus is the set of rules for that manipulation. If a causal effect can be identified from your DAG and your data, the rules will find the formula. If they can't, nothing can. Earlier methods could identify some causal effects, but they couldn't tell you when identification was impossible. Do-calculus can.
-
-But the calculus is only as good as the graph you give it. Draw the wrong DAG, miss a confounder, miss a path, and the derived formula will be wrong. The rules guarantee logical consistency given your assumptions. They can't tell you whether your assumptions are right. That still requires an understanding of the domain. Do-calculus carries the logic, but the knowledge encoded in the graph determines whether we can answer our causal question.
-
 
 ----
 ##### References
