@@ -1,0 +1,41 @@
+{{ if .IsPage -}}
+{{ $author := "Nothing So Practical" }}{{ with .Params.author }}{{ $author = . }}{{ end -}}
+{{ $desc := .Site.Params.description }}{{ with .Description }}{{ $desc = . }}{{ end -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ jsonify .Title | safeJS }},
+  "description": {{ jsonify $desc | safeJS }},
+  "url": {{ jsonify .Permalink | safeJS }},
+  "datePublished": {{ jsonify (.Date.Format "2006-01-02T15:04:05Z07:00") | safeJS }},
+  "dateModified": {{ jsonify (.Lastmod.Format "2006-01-02T15:04:05Z07:00") | safeJS }},
+  "author": {
+    "@type": "Person",
+    "name": {{ jsonify $author | safeJS }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nothing So Practical",
+    "url": {{ jsonify .Site.BaseURL | safeJS }}
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ jsonify .Permalink | safeJS }}
+  }
+  {{- with .Params.tags }},
+  "keywords": {{ jsonify . | safeJS }}
+  {{- end }}
+}
+</script>
+{{ else if .IsHome -}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": {{ jsonify .Site.Title | safeJS }},
+  "description": {{ jsonify .Site.Params.description | safeJS }},
+  "url": {{ jsonify .Site.BaseURL | safeJS }}
+}
+</script>
+{{ end -}}
