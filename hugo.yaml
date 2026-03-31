@@ -4,6 +4,10 @@ languageCode: "en-us"
 title: "Nothing So Practical"
 theme: "hugo-theme-cleanwhite"
 
+services:
+  googleAnalytics:
+    id: "G-XXXXXXXXXX"  # Replace with your GA4 measurement ID
+
 pagination:
   pagerSize: 5
 
