@@ -13,7 +13,7 @@ draft:       false
 
 The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon that disguises something fairly easy to understand. You draw a DAG (a directed acyclic graph), find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
 
-For simple problems, the do-operator is just shorthand for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable in the data. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
+For simple problems, the do-operator is just shorthand for eliminating all confounding. But it can be useful when confounders can't be measured, because do-calculus can tell you if a causal effect is still identifiable in the data. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
 
 ### Seeing Is Not Doing
 
@@ -119,7 +119,7 @@ $P(\text{SAT} \mid \text{do}(\text{Prep} = 1))$ asks a different question: what 
 
 ### When the Backdoor Fails
 
-Up to this point, the do-operator hasn't told us anything beyond the backdoor criterion alone. The do-calculus becomes useful when the backdoor criterion fails. To fully block the backdoor paths, we need to adjust for academic motivation. But motivation isn't in our dataset. Since it affects both whether a student takes prep and how well they score, there's a backdoor path we can't block.
+Up to this point, the do-operator hasn't told us anything beyond the backdoor criterion alone. Do-calculus becomes useful when the backdoor criterion fails. To fully block the backdoor paths, we need to adjust for academic motivation. But motivation isn't in our dataset. Since it affects both whether a student takes prep and how well they score, there's a backdoor path we can't block.
 
 But remember we have data on how many hours each student studied per week. Prep courses increase study time, and study time improves scores. If the entire causal effect of prep on SAT scores flows through hours studied, which is a *very* strong assumption, we have a front-door path.
 
@@ -175,55 +175,62 @@ This front-door analysis relies on the strong assumption that motivation affects
 
 ### Where the Rules Come In
 
-The front-door formula was derived from three rules that together make up the do-calculus. Every $\text{do}()$ represents an intervention we didn't actually perform. We can't calculate $P(Y \mid \text{do}(X))$ from the data the way we can with $P(Y \mid X)$. To get an answer from observational data, every $\text{do}()$ has to go — and the three rules tell you when that's legal.
+The front-door formula was derived from three rules that together make up do-calculus. Think of a DAG as a network of pipes. Association flows through them like water. Every arrow is a pipe, every node is a junction, and an intervention is a valve that shuts off all incoming pipes to a node. Graph surgery, which we used earlier to define the do-operator, is literally closing valves.
+
+The problem is that every $\text{do}()$ in a formula represents a valve we turned in theory but never actually touched in the real data. To get an answer from observational data, every $\text{do}()$ has to go. The three rules of do-calculus tell you when it's safe to remove one.
+
+Each rule answers a simple question about the plumbing:
+
+| | Heuristic | What it checks |
+|:---|:---|:---|
+| **Rule 1** | **Irrelevant gauge** | This variable isn't connected to the outcome in the current pipe network. Reading the gauge tells you nothing new. Ignore it. |
+| **Rule 2** | **Seeing = doing** | There's no backdoor plumbing between treatment and outcome. Water only flows forward, so reading the gauge gives the same answer as turning the valve yourself. Swap the intervention for an observation. |
+| **Rule 3** | **Dead valve** | This valve controls a pipe that no longer connects to the outcome. It's redundant. Remove it. |
+
+That's the entire do-calculus. Three ways to simplify, applied repeatedly until every $\text{do}()$ is gone. Each application follows the same procedure:
+
+> 1. Pick a $\text{do}()$ you want to eliminate
+> 2. Trim the pipe network (each rule specifies which pipes to cut)
+> 3. Check: is water still flowing between the two nodes?
+> 4. If not, simplify
+
+Here's how that procedure derives the front-door result. We start with what we want, the causal effect of Prep on SAT, but we can't compute it directly because of unmeasured motivation. Do-calculus gives us a way to rewrite it in terms of things we *can* compute.
+
+Since the effect of Prep on SAT flows entirely through Hours Studied, we can split the problem into two pieces: the effect of Prep on Hours, and the effect of Hours on SAT.[^2] Both still have $\text{do}()$ operators that need to go.
+
+**Move 1: Does prep affect hours studied? (Seeing = doing)**
+
+We want the effect of assigning prep on hours studied. Close the incoming pipes to Prep (that's what $\text{do}$ means). Now check the plumbing: is there any backdoor path between Prep and Hours? Motivation flows into Prep, but we just shut those pipes off. The only remaining connection runs forward, from Prep to Hours. Water flows one way. Reading the gauge (observing who took prep) gives the same answer as turning the valve (assigning prep). So we can replace the intervention with plain observation and estimate this piece directly from the data.
+
+**Move 2: Does hours studied affect SAT scores? (Seeing = doing, then dead valve)**
+
+This one is trickier, because there *is* a backdoor path: Hours ← Prep ← Motivation → SAT. We can't just observe hours studied and call it causal. We need to intervene on hours, but we don't have that experiment either. So we apply the rules in sequence.
+
+First, **seeing = doing in reverse.** If we close the incoming pipes to Prep and also close the outgoing pipes from Hours, then SAT and Hours are disconnected. That means we can swap our observation of Hours for an intervention on Hours without changing the answer.
+
+Now we have interventions on both Prep and Hours. But with Hours intervened on, does the valve on Prep still matter? Prep has no direct pipe to SAT. The only path from Prep to SAT ran through Hours, and we've already taken control of Hours. **Dead valve.** Drop the intervention on Prep.
+
+We're left with the effect of intervening on Hours. The backdoor from Hours to SAT runs through Prep (Hours ← Prep ← Motivation → SAT), but adjusting for Prep blocks it. **Seeing = doing** one more time, with Prep as the adjustment variable.
+
+Every valve is gone. The entire expression is now estimable from observational data.
 
 {{% notation-box %}}
 
-**The Three Rules of Do-Calculus**
+**The derivation in notation.** The intuitive walkthrough above corresponds to these algebraic steps. First, split through the mediator (law of total probability):
 
-Each rule states a condition under which a $\text{do}()$ can be added, removed, or swapped for ordinary conditioning. Applicability is checked by inspecting a modified version of the graph.
+$$P(\text{SAT} \mid \text{do}(\text{Prep})) = \sum_h P(\text{SAT} \mid \text{do}(\text{Prep}), H\!=\!h) \; P(H\!=\!h \mid \text{do}(\text{Prep}))$$
 
-- **Rule 1 (Observation equivalence):** You can ignore an observed variable when it has no active path to the outcome in the current modified graph. If observing it doesn't change what you'd expect for $Y$, it can be dropped.
-- **Rule 2 (Action/observation exchange):** You can replace $\text{do}(X)$ with an ordinary observation of $X$ — or vice versa — when there is no active backdoor path from $X$ to $Y$ in the appropriate modified graph. This is the rule that converts interventions into regression adjustments.
-- **Rule 3 (Action removal):** You can drop $\text{do}(X)$ entirely when $X$ has no unblocked causal path to $Y$ given the other interventions in play. This eliminates redundant interventions.
+Move 1 (Rule 2): $P(H \mid \text{do}(\text{Prep})) = P(H \mid \text{Prep})$
 
-The derivation below uses Rules 2 and 3. Rule 1 doesn't appear in this particular identification path, but it's essential for other strategies where observing a variable is provably irrelevant.
+Move 2 (Rules 2, 3, then 2 again):
+
+$P(\text{SAT} \mid \text{do}(\text{Prep}), H\!=\!h) = P(\text{SAT} \mid \text{do}(\text{Prep}), \text{do}(H\!=\!h)) = P(\text{SAT} \mid \text{do}(H\!=\!h))$
+
+$= \sum_x P(\text{SAT} \mid H\!=\!h, \text{Prep}\!=\!x)\, P(\text{Prep}\!=\!x)$
 
 {{% /notation-box %}}
 
-Here's how the rules derive the front-door result.
-
-We start with what we want: $P(\text{SAT} \mid \text{do}(\text{Prep}))$. We can't compute this directly because of unmeasured motivation. The do-calculus gives us a way to rewrite it in terms of things we *can* compute.
-
-**Step 1. Expand through the mediator.** Since the effect of Prep on SAT flows entirely through Hours Studied, we can write
-
-$$P(\text{SAT} \mid \text{do}(\text{Prep})) = \sum_h P(\text{SAT} \mid \text{do}(\text{Prep}), H = h) \, P(H = h \mid \text{do}(\text{Prep}))$$
-
-where $H$ is Hours Studied. This is the law of total probability applied inside the interventional world.[^2] We still have $\text{do}$ operators to eliminate.
-
-**Step 2. The effect of Prep on Hours (Rule 2).** Start with $P(H \mid \text{do}(\text{Prep}))$. In the surgically modified graph (arrows into Prep removed), Prep has no parents, so there can't be a common cause of Prep and Hours. We can use adjustment to get the same answer as intervening. **Rule 2** lets us replace the $\text{do}$ with ordinary conditioning:
-
-$$P(H \mid \text{do}(\text{Prep})) = P(H \mid \text{Prep})$$
-
-This is piece one. We can estimate it directly from the data.
-
-**Step 3. The effect of Hours on SAT (Rules 2 and 3).** The term $P(\text{SAT} \mid \text{do}(\text{Prep}), H = h)$ still has an intervention on Prep. We need to get rid of it, but we can't just drop $\text{do}(\text{Prep})$ and observe $H$. Without the intervention, the backdoor path Hours ← Prep ← Motivation → SAT is open, and observing $H$ would carry that confounding. We need $\text{do}(H)$, not just $H$.
-
-First, **Rule 2** converts the observation of $H$ into an intervention. In the graph with arrows into Prep removed and arrows out of $H$ removed, SAT is independent of $H$ given Prep (the only path from $H$ to SAT went through the arrow we just cut). So we can replace the observation with an intervention:
-
-$$P(\text{SAT} \mid \text{do}(\text{Prep}), H = h) = P(\text{SAT} \mid \text{do}(\text{Prep}), \text{do}(H = h))$$
-
-Now **Rule 3** lets us drop $\text{do}(\text{Prep})$. Once we've intervened on Hours, Prep has no other path to SAT (there's no direct edge), so the intervention on Prep is redundant:
-
-$$P(\text{SAT} \mid \text{do}(\text{Prep}), \text{do}(H = h)) = P(\text{SAT} \mid \text{do}(H = h))$$
-
-Finally, we need to convert $\text{do}(H)$ into something observable. The backdoor from Hours to SAT runs through Prep (Hours ← Prep ← Motivation → SAT), and adjusting for Prep blocks it. **Rule 2** again converts the intervention into conditioning, with Prep as the adjustment variable:
-
-$$P(\text{SAT} \mid \text{do}(H = h)) = \sum_x P(\text{SAT} \mid H = h, \text{Prep} = x)\, P(\text{Prep} = x)$$
-
-Every $\text{do}$ is gone. The entire expression is now estimable from observational data.
-
-Three rules, applied mechanically, derived a formula we couldn't have gotten from the backdoor criterion alone.
+Three rules, applied as "check the pipes," derived a formula we couldn't have gotten from the backdoor criterion alone.
 
 ### When Does It Matter
 
