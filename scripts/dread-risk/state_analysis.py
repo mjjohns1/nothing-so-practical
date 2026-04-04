@@ -27,31 +27,40 @@ HIGH_AIR_TRAVEL = {
 }
 
 
-def main():
-    df = pd.read_csv(DATA_PATH)
-    df["state_abbr"] = df["STATE"].map(FIPS_TO_STATE)
-    # Drop territories
-    df = df.dropna(subset=["state_abbr"])
+def prepare_state_df():
+    df = (
+        pd.read_csv(DATA_PATH)
+        .assign(state_abbr=lambda d: d["STATE"].map(FIPS_TO_STATE))
+        .dropna(subset=["state_abbr"])
+    )
 
-    # ── Compute baseline and excess by state ──
-    baseline = df[df.YEAR.between(1996, 2000) & df.MONTH.between(10, 12)]
     baseline_avg = (
-        baseline.groupby("state_abbr")["fatal_crashes"]
+        df.query("1996 <= YEAR <= 2000 and 10 <= MONTH <= 12")
+        .groupby("state_abbr")["fatal_crashes"]
         .mean()
         .rename("baseline_monthly_avg")
     )
 
-    post = df[(df.YEAR == 2001) & df.MONTH.between(10, 12)]
     post_avg = (
-        post.groupby("state_abbr")["fatal_crashes"]
+        df.query("YEAR == 2001 and 10 <= MONTH <= 12")
+        .groupby("state_abbr")["fatal_crashes"]
         .mean()
         .rename("post_monthly_avg")
     )
 
-    state_df = pd.concat([baseline_avg, post_avg], axis=1).dropna()
-    state_df["excess"] = state_df["post_monthly_avg"] - state_df["baseline_monthly_avg"]
-    state_df["pct_change"] = (state_df["excess"] / state_df["baseline_monthly_avg"]) * 100
-    state_df["high_air_travel"] = state_df.index.isin(HIGH_AIR_TRAVEL)
+    return (
+        pd.concat([baseline_avg, post_avg], axis=1)
+        .dropna()
+        .assign(
+            excess=lambda d: d["post_monthly_avg"] - d["baseline_monthly_avg"],
+            pct_change=lambda d: (d["excess"] / d["baseline_monthly_avg"]) * 100,
+            high_air_travel=lambda d: d.index.isin(HIGH_AIR_TRAVEL),
+        )
+    )
+
+
+def main():
+    state_df = prepare_state_df()
 
     # ── Summary by air travel group ──
     print("=" * 60)

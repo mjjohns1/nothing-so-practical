@@ -1,34 +1,34 @@
 import os
+os.environ["PYTENSOR_FLAGS"] = "device=cpu,floatX=float64,cxx="
 
 from pathlib import Path
 
 import causalpy as cp  # type: ignore[import]
 import pandas as pd
+from pymc_extras.prior import Prior
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "static" / "img" / "dread-risk"
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "fars" / "processed" / "monthly_national.csv"
-os.environ["PYTENSOR_FLAGS"] = "device=cpu,floatX=float64,cxx="
+
+
+def prepare_df(end_date="2001-12-01"):
+    return (
+        pd.read_csv(DATA_PATH)
+        .assign(date=lambda d: pd.to_datetime(d[["YEAR", "MONTH"]].assign(DAY=1)))
+        .set_index("date")
+        .sort_index()
+        .assign(
+            t=lambda d: range(len(d)),
+            month=lambda d: d.index.month,
+            y=lambda d: d["fatal_crashes"],
+        )
+        .loc[:end_date]
+        .pipe(lambda d: d.assign(t=(d.t - d.t.mean()) / d.t.std()))
+    )
 
 
 def main():
-    df = pd.read_csv(DATA_PATH)
-
-    # Build a proper date index (first of each month)
-    df["date"] = pd.to_datetime(df[["YEAR", "MONTH"]].assign(DAY=1))
-    df = df.set_index("date").sort_index()
-
-    # Add a linear trend variable (months since start)
-    df["t"] = range(len(df))
-
-    # Add month column for seasonality
-    df["month"] = df.index.month
-
-    # Outcome variable
-    df["y"] = df["fatal_crashes"]
-
-    # Truncate to end of 2001 to match paper's analysis window
-    df = df[:"2001-12-01"]
-
+    df = prepare_df()
     treatment_time = pd.Timestamp("2001-10-01")
 
     result = cp.InterruptedTimeSeries(
@@ -36,6 +36,14 @@ def main():
         treatment_time,
         formula="y ~ 1 + t + C(month)",
         model=cp.pymc_models.LinearRegression(
+            priors={
+                "beta": Prior("Normal", mu=0, sigma=500, dims=["treated_units", "coeffs"]),
+                "y_hat": Prior(
+                    "Normal",
+                    sigma=Prior("HalfNormal", sigma=200, dims=["treated_units"]),
+                    dims=["obs_ind", "treated_units"],
+                ),
+            },
             sample_kwargs={
                 "draws": 2000,
                 "tune": 2000,

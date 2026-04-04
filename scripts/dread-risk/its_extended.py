@@ -1,27 +1,49 @@
 import os
 from pathlib import Path
+os.environ["PYTENSOR_FLAGS"] = "device=cpu,floatX=float64,cxx="
 
 import causalpy as cp  # type: ignore[import]
 import pandas as pd
+from pymc_extras.prior import Prior
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "static" / "img" / "dread-risk"
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "fars" / "processed" / "monthly_national.csv"
 
-os.environ["PYTENSOR_FLAGS"] = "device=cpu,floatX=float64,cxx="
+
+def prepare_df():
+    return (
+        pd.read_csv(DATA_PATH)
+        .assign(date=lambda d: pd.to_datetime(d[["YEAR", "MONTH"]].assign(DAY=1)))
+        .set_index("date")
+        .sort_index()
+        .assign(
+            t=lambda d: range(len(d)),
+            month=lambda d: d.index.month,
+            y=lambda d: d["fatal_crashes"],
+        )
+        .pipe(lambda d: d.assign(t=(d.t - d.t.mean()) / d.t.std()))
+    )
+
+
+def quarterly_breakdown(result, treatment_time):
+    return (
+        result.get_plot_data()
+        .loc[lambda d: d.index >= treatment_time]
+        .assign(
+            effect=lambda d: d["y"] - d["prediction"],
+            quarter=lambda d: d.index.to_period("Q"),
+        )
+        .groupby("quarter")
+        .agg(
+            avg_monthly_effect=("effect", "mean"),
+            total_effect=("effect", "sum"),
+            months=("effect", "count"),
+        )
+    )
 
 
 def main():
-    df = pd.read_csv(DATA_PATH)
-
-    # Build a proper date index (first of each month)
-    df["date"] = pd.to_datetime(df[["YEAR", "MONTH"]].assign(DAY=1))
-    df = df.set_index("date").sort_index()
-
-    # Add a linear trend variable and month for seasonality
-    df["t"] = range(len(df))
-    df["month"] = df.index.month
-    df["y"] = df["fatal_crashes"]
-
+    df = prepare_df()
     treatment_time = pd.Timestamp("2001-10-01")
 
     result = cp.InterruptedTimeSeries(
@@ -29,6 +51,14 @@ def main():
         treatment_time,
         formula="y ~ 1 + t + C(month)",
         model=cp.pymc_models.LinearRegression(
+            priors={
+                "beta": Prior("Normal", mu=0, sigma=500, dims=["treated_units", "coeffs"]),
+                "y_hat": Prior(
+                    "Normal",
+                    sigma=Prior("HalfNormal", sigma=200, dims=["treated_units"]),
+                    dims=["obs_ind", "treated_units"],
+                ),
+            },
             sample_kwargs={
                 "draws": 2000,
                 "tune": 2000,
@@ -38,14 +68,11 @@ def main():
         ),
     )
 
-    # Print overall summary
     print("\n" + "=" * 60)
     print("FULL POST-PERIOD EFFECT (Oct 2001 – Dec 2004)")
     print("=" * 60)
-    summary = result.effect_summary(direction="increase", cumulative=True)
-    print(summary)
+    print(result.effect_summary(direction="increase", cumulative=True))
 
-    # Save the default CausalPy plot
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     fig, _axes = result.plot(show=False)
     fig.suptitle(
@@ -56,22 +83,7 @@ def main():
     fig.savefig(OUT_DIR / "its_extended.png", dpi=150, bbox_inches="tight")
     print(f"\nPlot saved to {OUT_DIR / 'its_extended.png'}")
 
-    # ── Rolling effect by quarter ──
-    plot_data = result.get_plot_data()
-    post = plot_data.loc[plot_data.index >= treatment_time].copy()
-    effect_df = pd.DataFrame({
-        "observed": post["y"].values,
-        "counterfactual": post["prediction"].values,
-    }, index=post.index)
-    effect_df["effect"] = effect_df["observed"] - effect_df["counterfactual"]
-
-    effect_df["quarter"] = effect_df.index.to_period("Q")
-    quarterly = effect_df.groupby("quarter").agg(
-        avg_monthly_effect=("effect", "mean"),
-        total_effect=("effect", "sum"),
-        months=("effect", "count"),
-    )
-
+    quarterly = quarterly_breakdown(result, treatment_time)
     print("\n" + "=" * 60)
     print("QUARTERLY BREAKDOWN OF EXCESS FATAL CRASHES")
     print("=" * 60)

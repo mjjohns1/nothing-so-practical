@@ -58,10 +58,9 @@ def build_monthly_by_state(df: pd.DataFrame) -> pd.DataFrame:
 
 def build_monthly_by_road_type(df: pd.DataFrame) -> pd.DataFrame:
     """Monthly fatal crashes and fatalities by road functional class."""
-    df = df.copy()
-    df["is_interstate"] = df["ROAD_FNC"].isin(INTERSTATE_CODES).astype(int)
     return (
-        df.groupby(["YEAR", "MONTH", "is_interstate"])
+        df.assign(is_interstate=lambda d: d["ROAD_FNC"].isin(INTERSTATE_CODES).astype(int))
+        .groupby(["YEAR", "MONTH", "is_interstate"])
         .agg(fatal_crashes=("FATALS", "size"), fatalities=("FATALS", "sum"))
         .reset_index()
         .sort_values(["YEAR", "MONTH", "is_interstate"])

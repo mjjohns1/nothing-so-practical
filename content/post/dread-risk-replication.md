@@ -12,46 +12,70 @@ draft:       false
 
 In 2004, a short paper in *Psychological Science* made a striking claim. After the September 11 attacks, Americans avoided flying and drove instead. The extra driving killed roughly 350 people in the three months following the attacks, more than the 266 passengers and crew who died on the four hijacked planes. Fear of a catastrophic but rare event (what psychologists call a *dread risk*) led people to substitute a more dangerous activity for a less dangerous one, and the substitution was fatal.
 
-The paper is a two-page commentary with a single figure. It compares monthly fatal traffic crashes in 2001 against the 1996-2000 average and finds a clear spike in October, November, and December. The analysis is elegant and persuasive, but by modern standards it's also quite simple. The counterfactual is a five-year average. The uncertainty is a chi-squared test. There's no trend adjustment, no geographic breakdown, no attempt to measure how long the effect lasted.
+It's a powerful finding. But the analysis behind it is remarkably thin. This post walks through the original paper's methods in detail, replicates the analysis with crash-level microdata, and then asks: can these data actually answer the causal question being posed?
 
-Twenty years of better data and better tools let us do more. We replicate the original finding using crash-level microdata from NHTSA's Fatality Analysis Reporting System, then extend it with a Bayesian interrupted time series model, state-level analysis, and data through 2004.
+## The Original Analysis
 
-## Replicating Figure 1
+The paper's argument has three parts. First, Americans reduced air travel after September 11. This is well documented. Revenue passenger miles dropped 20% in October 2001, 17% in November, and 12% in December compared with the same months in 2000. Second, some of those unflown miles were driven instead. This is harder to measure directly, but the paper cites indirect evidence: vehicle miles traveled in October through December 2001 were 2.9% higher than the same months in 2000, compared with a 0.9% average increase in the months before September. Third, the extra driving caused extra deaths.
 
-The original analysis compares the number of fatal traffic crashes per month in 2001 against the range and mean from 1996 through 2000. The logic is straightforward. If 2001 tracked the prior years before September and diverged after, the divergence is evidence of a behavioral shift.
+The third claim is where the analysis lives. The paper uses monthly fatal traffic crash counts from NHTSA's Traffic Safety Facts reports for 1996 through 2001. The approach is simple. Compute the monthly average for 1996-2000 as a baseline, then compare 2001 against it. Before September, 2001 tracks the baseline closely, with an average deviation of just 9 fatal crashes per month (0.3% of the monthly total). After September, the October through December counts jump above the baseline.
 
-FARS gives us individual crash records with date, location, road type, and fatality count. We aggregated these to monthly national totals for 1996-2004. Here's our replication of the original figure.
+To get the headline number, the paper assumes the last three months of 2001 should have continued the same small average increase of 9 crashes per month seen in January through August. The difference between this expected value and the observed value is the estimated excess: 67 + 163 + 87 = 317 excess fatal crashes across October, November, and December. Multiplying by the ratio of fatalities to crashes (42,116 / 37,795) gives roughly 353 excess fatalities. The statistical test is a chi-squared goodness-of-fit test on the expected and observed crash counts, yielding p = .008. The test treats monthly counts as independent, ignoring serial correlation in crash data, which makes the p-value anti-conservative.
+
+We can replicate this analysis using FARS microdata. FARS is NHTSA's crash-level database, with individual records for every fatal traffic crash in the United States going back to 1975. We pulled the ACCIDENT table for 1996 through 2004, giving us date, state, road type, and fatality count for each crash.
 
 {{< figure src="/img/dread-risk/fig1_replication.png" caption="Monthly fatal traffic crashes in 2001 (black squares) versus the 1996-2000 mean (gray line) and range (vertical bars). The dashed red line marks September 11." class="img-center" width="90%" >}}
 
-The pattern matches the original paper closely. January through September 2001, the monthly crash counts sit within or near the historical range. The average deviation from the five-year mean is small and mixed in direction. Then October, November, and December all land at or above the top of the range. November shows the largest jump, with 193 more fatal crashes than the baseline average.
+The pattern matches. January through September, 2001 sits within the historical range. October through December, all three months are at or above the top of the range. November shows the largest jump, with 193 more fatal crashes than the baseline average. Our FARS data produces slightly different totals than the original paper (37,862 fatal crashes in 2001 versus the paper's 37,795), reflecting minor data revisions over the past two decades.
 
-Our FARS data produces slightly different totals than the original paper (37,862 fatal crashes in 2001 versus the paper's 37,795), which reflects minor data revisions over the past two decades. The story is the same.
+The figure is visually convincing. The question is whether a visual comparison of one year against a five-year average, with a chi-squared test on three data points, is strong enough evidence for a causal claim about behavior.
 
-## A Better Counterfactual
+## Can These Data Answer a Causal Question?
 
-The original paper's counterfactual is the 1996-2000 monthly mean plus a small constant for the general trend. This works well enough for a two-page commentary, but it doesn't account for seasonality interactions with the trend, and it gives only a point estimate with a chi-squared test for inference.
+The paper is asking a causal question: did fear of flying cause excess traffic deaths? But the analysis is essentially a before-and-after comparison with no control group, applied to aggregate monthly counts. This is an interrupted time series design. The method itself is well-established, but applying it to three post-treatment observations from a single time series stretches it thin. Its validity depends entirely on the assumption that nothing else changed at the same time that could explain the spike.
 
-We fit a Bayesian interrupted time series (ITS) model using CausalPy, a Python library for causal inference built on PyMC. The model includes a linear trend and monthly seasonal indicators, fit on the pre-intervention period (January 1996 through September 2001). It then generates counterfactual predictions for October through December 2001 with full posterior uncertainty.
+That assumption deserves scrutiny. September 11 didn't just change flying behavior. It triggered a recession, disrupted transportation networks, altered commuting patterns in the Northeast, and produced widespread psychological distress. Alcohol consumption patterns shifted too, with some evidence of increased drinking in the months following the attacks. Any of these could affect traffic fatality rates independently of mode substitution.
+
+But even setting aside confounders, there's a more basic question: is the observed Q4 2001 spike actually unusual, or does year-to-year variation in quarterly crash counts routinely produce deviations of this size?
+
+### A Bayesian Interrupted Time Series
+
+To put the original analysis on firmer ground, we fit a Bayesian interrupted time series (ITS) model using CausalPy, a Python library for causal inference built on PyMC. The model includes a linear trend and monthly seasonal indicators, fit on the pre-intervention period (January 1996 through September 2001). It generates counterfactual predictions for October through December 2001 with full posterior uncertainty.
 
 {{< figure src="/img/dread-risk/its_causalpy.png" caption="Bayesian interrupted time series analysis. Top: observed vs. counterfactual with 95% credible interval. Middle: monthly causal impact. Bottom: cumulative excess fatal crashes." class="img-center" width="90%" >}}
 
-The model estimates 353 cumulative excess fatal crashes in October through December 2001, with a 95% highest density interval (HDI) of roughly 300 to 406. The posterior probability of an increase is 100%. The original paper estimated 317 excess crashes. Our slightly higher estimate reflects the trend-adjusted counterfactual, which produces a tighter baseline and attributes a bit more of the deviation to the intervention rather than noise.
+The model estimates 353 cumulative excess fatal crashes in October through December 2001, with a 95% highest density interval of roughly 300 to 406. Over 99.9% of posterior draws show an increase, though this confidence is conditional on the model specification being correct.
 
-The bottom line is the same, but now we can say it with calibrated uncertainty. The excess is real, it's substantial, and it's not an artifact of how we constructed the baseline.
+A note on units: our estimate of 353 excess fatal *crashes* is distinct from the original paper's 353 excess *fatalities*. The paper arrives at its fatality count by multiplying 317 excess crashes by the ratio of fatalities to fatal crashes (roughly 1.11). The near-identical headline numbers are a coincidence.
 
-## How Long Did the Dread Last?
+One modeling choice worth flagging: September 2001 is included in the pre-intervention period, but 20 of its 30 days fell after the attacks. This is consistent with the original paper's framing, and changing it doesn't materially affect the results, but it means the pre-period is slightly contaminated by any post-attack behavioral shift.
 
-The original paper stops at December 2001 because that's all the data available at the time. We have data through 2004, which lets us answer a question the paper could only speculate about. How long did the excess persist?
+Taken at face value, this looks like strong confirmation. The credible intervals are tight and exclude zero. But the model has learned a seasonal pattern from 68 months of pre-intervention data and is projecting it forward over just 3 months. We should check whether it would flag similarly large effects in years when nothing happened.
+
+### Placebo Tests
+
+A placebo test runs the same model but places a fake intervention at a time when no effect should exist. If the model is well-calibrated, placebo years should produce effects near zero. We ran the identical ITS specification pretending September 11 happened in October of 1997, 1998, 1999, and 2000.
+
+{{< figure src="/img/dread-risk/placebo_tests.png" caption="Placebo tests. The same ITS model is run with fake intervention dates in 1997-2000 (blue) versus the actual 2001 date (red). Error bars show 95% HDI." class="img-center" width="90%" >}}
+
+The results are sobering. Two of the four placebos (1997 and 2000) produce large, statistically significant effects. The model confidently estimates that Q4 1997 had 146 fewer fatal crashes per month than expected, and Q4 2000 had 175 fewer. These aren't real effects. They're just year-to-year variation that the model mistakes for an intervention.
+
+One caveat: the placebo pre-periods aren't all the same length. The 1997 placebo trains on just 21 months, while 2001 uses 69. Shorter pre-periods give the model less data to learn seasonal patterns, which may inflate false positive rates for the earlier placebos. Still, even the 2000 placebo, with 57 months of training data, produces a large spurious effect.
+
+The 2001 effect is the largest positive outlier, and it's the only year with a large positive effect. That's worth noting. But the placebos demonstrate that a 3-month window is too short for this model to reliably distinguish a real behavioral shift from ordinary quarterly noise. The tight credible intervals overstate our confidence. The original paper's chi-squared test, applied to three data points against a five-year average, suffers from the same problem.
+
+## Evidence That Survives Scrutiny
+
+The 3-month analysis is fragile. But we have data through 2004, which allows a stronger test. If the 2001 spike were just noise, it wouldn't persist into 2002. If it reflects a real behavioral shift, the excess should accumulate over time before fading as people resumed flying.
+
+### The Extended Timeline
 
 We fit the same ITS model but include all data through December 2004 in the post-intervention window.
 
 {{< figure src="/img/dread-risk/its_extended.png" caption="Extended ITS analysis through 2004. The cumulative impact panel shows excess fatal crashes continuing to accumulate through mid-2002 before leveling off." class="img-center" width="90%" >}}
 
-The quarterly breakdown tells the story.
-
-| Quarter | Avg Monthly Excess |
-|:--------|-------------------:|
+| Quarter | Avg Monthly Excess (posterior mean) |
+|:--------|-----------------------------------:|
 | 2001 Q4 | +118 |
 | 2002 Q1 | +148 |
 | 2002 Q2 | +69 |
@@ -59,41 +83,41 @@ The quarterly breakdown tells the story.
 | 2002 Q4 | -63 |
 | 2003+ | Mixed around zero |
 
-The effect didn't end in December 2001. It actually peaked in early 2002 and didn't fade until the second half of that year, roughly 9 to 12 months after the attacks. By 2003 the monthly excess bounces around zero with no consistent direction.
+These are posterior mean point estimates. The full posterior distributions are visible in the figure above, where the credible intervals widen as the projection extends further from the pre-period.
 
-This makes sense psychologically. Fear of flying didn't switch off on January 1, 2002. Airlines reported depressed passenger traffic well into 2002. The extended timeline suggests the three-month window in the original paper captured only the leading edge of a longer behavioral shift, and the total toll was considerably larger than 350.
+The effect peaked in early 2002 and faded by the second half of that year, roughly 9 to 12 months after the attacks. By 2003, the monthly excess bounces around zero. This pattern is harder to dismiss as noise. Quarterly variation could explain a single 3-month spike, but it can't easily explain a sustained elevation that gradually decays over the same period that airlines reported depressed passenger traffic.
 
-## Where the Effect Was Strongest
+The extended analysis is the most convincing evidence in favor of the dread-risk hypothesis, and it's one the original paper couldn't run.
 
-If the mechanism is genuinely people driving instead of flying, the effect should be stronger in states where more people fly. We split states into two groups based on passenger enplanement volume and compared October through December 2001 fatal crashes against the 1996-2000 baseline.
+### Geographic Heterogeneity
 
-{{< figure src="/img/dread-risk/state_excess.png" caption="Percentage change in fatal crashes (Oct-Dec 2001 vs. baseline) by state. Red bars are high air travel states. The excess concentrates in states where flying is common." class="img-center" width="90%" >}}
+If the mechanism is people driving instead of flying, the effect should be stronger in states where more people fly. We split states into two groups based on passenger enplanement volume and compared October through December 2001 fatal crashes against the 1996-2000 baseline.
 
-The difference is stark. High air travel states saw a 6.7% increase in fatal crashes. All other states saw just 0.9%. Among the top states: New York (+17%), Georgia (+17%), Pennsylvania (+13%), and Colorado (+40%, though with a smaller baseline). This is the pattern you'd predict if the excess fatalities came from mode substitution, and it's a pattern the original paper never tested.
+{{< figure src="/img/dread-risk/state_excess.png" caption="Percentage change in fatal crashes (Oct-Dec 2001 vs. baseline) by state. Red bars are high air travel states." class="img-center" width="90%" >}}
 
-Some caution is warranted with the small states. Hawaii (+45%) and DC (+29%) have low baseline crash counts, so a handful of extra crashes produces a dramatic percentage swing. The large-state results are more reliable, and they consistently support the dread-risk story.
+High air travel states saw a 6.7% increase in fatal crashes. All other states saw 0.9%. Among the larger states: New York (+17%), Georgia (+17%), Pennsylvania (+13%), and Colorado (+40%, though with a smaller baseline). This is the pattern you'd predict from mode substitution, and it's a pattern the original paper never tested. But these are raw group averages without formal uncertainty quantification on the difference, so the gap between groups could partly reflect sampling variability.
 
-## A Wrinkle in the Road Type Data
+The usual caveats apply. Small states produce noisy percentages. This is descriptive, not causal. And the same 3-month window that the placebo tests flagged as unreliable is at work here too. Still, the concentration in high-air-travel states is suggestive.
 
-The original paper notes that vehicle miles traveled on rural interstates spiked 5.3% after September 11, consistent with more long-distance driving. A natural prediction follows. If the fatality increase came from people driving instead of flying, it should concentrate on interstate highways.
+### Road Type
 
-FARS classifies each crash by road functional class. The codes distinguish rural interstates (code 1) from urban interstates (code 11), along with arterials, collectors, and local roads in both settings. A cross-country drive uses both rural and urban interstates, so we grouped them together and compared all interstate crashes against non-interstate.
+The original paper notes that rural interstate VMT spiked 5.3% after September 11, consistent with more long-distance driving. If the fatality increase came from mode substitution, it should show up on interstates.
 
-Interstates saw a modest 2.7% increase (+31 crashes), while non-interstate roads saw 4.3% (+371 crashes). Over 90% of the excess occurred off the interstate system.
+FARS classifies crashes by road functional class. We grouped rural interstates (code 1) and urban interstates (code 11) together and compared against non-interstate roads.
 
-{{< figure src="/img/dread-risk/road_type.png" caption="Fatal crashes by road type in 2001 vs. 1996-2000 baseline. Left: all interstates (rural + urban). Right: non-interstate roads. The post-9/11 excess concentrates on non-interstate roads." class="img-center" width="90%" >}}
+{{< figure src="/img/dread-risk/road_type.png" caption="Fatal crashes by road type in 2001 vs. 1996-2000 baseline. Left: all interstates. Right: non-interstate roads." class="img-center" width="90%" >}}
 
-This makes sense once you consider fatality rates. Interstates are the safest roads per mile driven. They carry a huge share of long-distance vehicle miles but account for only about 13% of fatal crashes nationally. A cross-country trip might be 80% interstate by distance but 80% non-interstate by fatality risk, because the dangerous parts are the arterials and local roads at each end.
-
-The pattern is consistent with mode substitution. People drove long distances that they would otherwise have flown. The extra miles added some risk on interstates, but the deadliest portion of each trip was the non-interstate segment, and that's where the excess shows up.
+Interstates saw a modest 2.7% increase (+31 crashes), while non-interstate roads saw 4.3% (+371 crashes). Over 90% of the excess occurred off the interstate system. Interstates are the safest roads per mile, so extra interstate miles produce fewer additional fatalities than the same miles on arterials and local roads. The 2.7% crash increase against a 5.3% VMT spike implies a sub-unit elasticity of fatal crashes to miles driven. This is common in traffic safety research (doubling VMT does not double fatalities), so the finding is ambiguous rather than contradictory. It's consistent with mode substitution, but also consistent with more benign explanations like increased travel on already-busy routes where marginal risk per mile is lower.
 
 ## What This Tells Us
 
-The original finding holds up. Traffic fatalities spiked after September 11, and the spike concentrated in exactly the places you'd expect if fear of flying drove people onto the roads. The Bayesian analysis puts the estimate on firmer statistical ground, with a properly constructed counterfactual and calibrated uncertainty intervals.
+The original paper asked the right question and got the direction of the answer roughly right. Traffic fatalities did increase after September 11, and the increase concentrated in high air travel states and persisted in a pattern consistent with gradually fading fear.
 
-The extensions add nuance. The effect lasted about a year, not three months. It hit high air travel states hardest. And the road type pattern suggests the story is somewhat more complicated than pure mode substitution.
+But the original analysis is too thin to support the precision of its headline claim. The chi-squared test on three data points against a five-year average isn't strong evidence. Our placebo tests show that the same methodology flags large "effects" in years when nothing happened. The 350-deaths number implies a certainty that the data can't support.
 
-The broader lesson is the one the original paper emphasized. Dread risks distort decision-making. A catastrophic event that kills hundreds in a single moment triggers a behavioral response that a diffuse risk spread across millions of car trips does not, even when the diffuse risk is objectively larger. The September 11 attacks were a tragedy. The subsequent road deaths were a second, quieter tragedy, one that better public communication about risk could have helped prevent.
+The stronger evidence comes from what the original paper couldn't do: extending the window through 2004 and watching the effect accumulate and decay. That sustained pattern is harder to explain away. The geographic concentration in high-air-travel states provides additional support, even if it's descriptive.
+
+"A sustained increase in traffic fatalities, concentrated in high-air-travel states, lasting about a year after September 11" is a more defensible summary than "exactly 350 excess deaths in three months." It's less quotable. It's closer to what the evidence shows.
 
 ## Replication Materials
 
