@@ -20,12 +20,14 @@ INTERSTATE_CODES = {1, 11}
 
 def load_accident_tables() -> pd.DataFrame:
     """Load and concatenate ACCIDENT.CSV from all year ZIPs."""
+
     frames = []
     for year in YEARS:
         zip_path = FARS_DIR / f"FARS{year}NationalCSV.zip"
         with zipfile.ZipFile(zip_path) as zf:
             with zf.open("ACCIDENT.CSV") as f:
                 df = pd.read_csv(f, usecols=lambda c: c in KEEP_COLS, encoding="latin-1")
+
         # Some early years encode YEAR as 2-digit (e.g. 96); normalize to 4-digit
         if "YEAR" not in df.columns:
             df["YEAR"] = year
@@ -33,11 +35,13 @@ def load_accident_tables() -> pd.DataFrame:
             df["YEAR"] = df["YEAR"] + 1900
         frames.append(df)
         print(f"  {year}: {len(df):,} crashes")
+
     return pd.concat(frames, ignore_index=True)
 
 
 def build_monthly_national(df: pd.DataFrame) -> pd.DataFrame:
     """Monthly fatal crashes and fatalities, national level."""
+
     return (
         df.groupby(["YEAR", "MONTH"])
         .agg(fatal_crashes=("FATALS", "size"), fatalities=("FATALS", "sum"))
@@ -48,6 +52,7 @@ def build_monthly_national(df: pd.DataFrame) -> pd.DataFrame:
 
 def build_monthly_by_state(df: pd.DataFrame) -> pd.DataFrame:
     """Monthly fatal crashes and fatalities by state."""
+
     return (
         df.groupby(["YEAR", "MONTH", "STATE"])
         .agg(fatal_crashes=("FATALS", "size"), fatalities=("FATALS", "sum"))
@@ -58,6 +63,7 @@ def build_monthly_by_state(df: pd.DataFrame) -> pd.DataFrame:
 
 def build_monthly_by_road_type(df: pd.DataFrame) -> pd.DataFrame:
     """Monthly fatal crashes and fatalities by road functional class."""
+
     return (
         df.assign(is_interstate=lambda d: d["ROAD_FNC"].isin(INTERSTATE_CODES).astype(int))
         .groupby(["YEAR", "MONTH", "is_interstate"])
@@ -68,6 +74,7 @@ def build_monthly_by_road_type(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
+
     print("Loading FARS ACCIDENT tables (1996-2004)...")
     df = load_accident_tables()
     print(f"\nTotal records: {len(df):,}")

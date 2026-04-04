@@ -50,7 +50,7 @@ def main():
 
     # September 11 reference line
     ax.axvline(9, color="red", linestyle="--", alpha=0.5, linewidth=1)
-    ax.text(9.15, ax.get_ylim()[0] + 50, "Sep 11", color="red", fontsize=9, alpha=0.7)
+    # ax.text(9.15, ax.get_ylim()[0] + 50, "Sep 11", color="red", fontsize=9, alpha=0.7)
 
     ax.set_xticks(months)
     ax.set_xticklabels(MONTHS)
