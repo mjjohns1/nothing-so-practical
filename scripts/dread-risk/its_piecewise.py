@@ -61,6 +61,28 @@ def main():
     summary = result.effect_summary(direction="two-sided", cumulative=True)
     print(summary)
 
+    # Extract level change (step) and slope change (ramp) coefficients separately.
+    # beta dimensions correspond to model labels in the design matrix.
+    import arviz as az  # type: ignore[import]
+    import numpy as np
+    idata = result.idata
+    beta = az.extract(idata, "beta").values  # shape (n_coeffs, n_draws)
+    labels = result.labels
+    print("\n" + "=" * 60)
+    print("COEFFICIENT LABELS")
+    print("=" * 60)
+    print(labels)
+    step_idx = [i for i, l in enumerate(labels) if "step" in str(l).lower()]
+    ramp_idx = [i for i, l in enumerate(labels) if "ramp" in str(l).lower()]
+    if step_idx:
+        step_draws = beta[step_idx[0], :]
+        lo, hi = np.percentile(step_draws, [2.5, 97.5])
+        print(f"\nLevel change (step): {step_draws.mean():.1f}  [95% HDI: {lo:.1f}, {hi:.1f}]")
+    if ramp_idx:
+        ramp_draws = beta[ramp_idx[0], :]
+        lo, hi = np.percentile(ramp_draws, [2.5, 97.5])
+        print(f"Slope change (ramp): {ramp_draws.mean():.3f}  [95% HDI: {lo:.3f}, {hi:.3f}] per month")
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     fig, _axes = result.plot(show=False)
     fig.suptitle(

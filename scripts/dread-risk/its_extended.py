@@ -71,7 +71,7 @@ def main():
     print("\n" + "=" * 60)
     print("FULL POST-PERIOD EFFECT (Oct 2001 – Dec 2004)")
     print("=" * 60)
-    print(result.effect_summary(direction="increase", cumulative=True))
+    print(result.effect_summary(direction="two-sided", cumulative=True))
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     fig, _axes = result.plot(show=False)

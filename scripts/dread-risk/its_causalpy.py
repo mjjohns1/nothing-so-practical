@@ -57,7 +57,7 @@ def main():
     print("\n" + "=" * 60)
     print("EFFECT SUMMARY")
     print("=" * 60)
-    summary = result.effect_summary(direction="increase", cumulative=True)
+    summary = result.effect_summary(direction="two-sided", cumulative=True)
     print(summary)
 
     # Save the built-in CausalPy plot

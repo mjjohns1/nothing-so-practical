@@ -54,14 +54,12 @@ def prepare_data():
         df.query("1996 <= YEAR <= 2000")
         .groupby("state_abbr")["fatal_crashes"]
         .agg(pre_mean="mean", pre_sd="std", pre_n="count")
-        .assign(pre_se=lambda d: d["pre_sd"] / np.sqrt(d["pre_n"]))
     )
 
     post = (
         df.query("YEAR == 2001")
         .groupby("state_abbr")["fatal_crashes"]
-        .mean()
-        .rename("post_mean")
+        .agg(post_mean="mean", post_sd="std", post_n="count")
     )
 
     return (
@@ -71,6 +69,11 @@ def prepare_data():
             delta=lambda d: d["post_mean"] - d["pre_mean"],
             pct_change=lambda d: d["delta"] / d["pre_mean"] * 100,
             high_air_travel=lambda d: d.index.isin(HIGH_AIR_TRAVEL),
+            # SE of the change score: sqrt(Var(pre_mean) + Var(post_mean))
+            # Post period has only 3 obs so we pool SD from pre for stability
+            delta_se=lambda d: np.sqrt(
+                d["pre_sd"] ** 2 / d["pre_n"] + d["pre_sd"] ** 2 / d["post_n"]
+            ),
         )
     )
 
@@ -88,7 +91,7 @@ def run_model(state_df):
     """
     group = state_df["high_air_travel"].astype(int).values
     delta = state_df["delta"].values
-    se = state_df["pre_se"].values
+    se = state_df["delta_se"].values
 
     with pm.Model() as model:
         mu = pm.Normal("mu", mu=0, sigma=200, shape=2)
