@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.11"
 dependencies = [
+    "bambi>=0.17.2",
     "causalpy>=0.8.0",
     "graphviz>=0.21",
     "matplotlib>=3.9.4",

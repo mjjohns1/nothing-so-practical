@@ -2,6 +2,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+import numpy as np
 import pandas as pd
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "static" / "img" / "dread-risk"
@@ -19,11 +20,11 @@ FIPS_TO_STATE = {
     54: "WV", 55: "WI", 56: "WY",
 }
 
-# Top 15 states by passenger enplanements in 2001 (FAA data)
+# Top 15 states by passenger enplanements in 2001 (FAA ACAIS CY2001 data)
 # These states contain the busiest airports and account for the bulk of air travel
 HIGH_AIR_TRAVEL = {
-    "CA", "TX", "FL", "IL", "NY", "GA", "CO", "AZ", "NV", "WA",
-    "NC", "VA", "NJ", "PA", "MN",
+    "CA", "TX", "FL", "IL", "GA", "NY", "PA", "AZ", "NV", "MO",
+    "CO", "NC", "MI", "VA", "MN",
 }
 
 
@@ -57,6 +58,31 @@ def prepare_state_df():
             high_air_travel=lambda d: d.index.isin(HIGH_AIR_TRAVEL),
         )
     )
+
+
+def permutation_test(state_df, n_permutations=10000, seed=42):
+    """Permutation test for the weighted % difference between high and low air travel states."""
+    rng = np.random.default_rng(seed)
+    n_high = int(state_df["high_air_travel"].sum())
+
+    def weighted_diff(df, high_mask):
+        high = df[high_mask]
+        low = df[~high_mask]
+        pct_high = (high["excess"].sum() / high["baseline_monthly_avg"].sum()) * 100
+        pct_low = (low["excess"].sum() / low["baseline_monthly_avg"].sum()) * 100
+        return pct_high - pct_low
+
+    observed = weighted_diff(state_df, state_df["high_air_travel"])
+    indices = np.arange(len(state_df))
+    diffs = []
+    for _ in range(n_permutations):
+        perm_high = rng.choice(indices, size=n_high, replace=False)
+        mask = np.zeros(len(state_df), dtype=bool)
+        mask[perm_high] = True
+        diffs.append(weighted_diff(state_df, mask))
+
+    p_value = float(np.mean(np.array(diffs) >= observed))
+    return observed, p_value, np.array(diffs)
 
 
 def main():
@@ -99,6 +125,14 @@ def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT_DIR / "state_excess.png", dpi=150)
     print(f"\nPlot saved to {OUT_DIR / 'state_excess.png'}")
+
+    # ── Permutation test ──
+    observed_diff, p_value, perm_diffs = permutation_test(state_df)
+    print(f"\n{'=' * 60}")
+    print("PERMUTATION TEST (high vs. other, 10,000 permutations)")
+    print(f"{'=' * 60}")
+    print(f"  Observed difference: {observed_diff:.1f}pp")
+    print(f"  p-value (one-sided, H1: high > other): {p_value:.4f}")
 
     # ── Print top/bottom states ──
     print("\n" + "=" * 60)

@@ -12,7 +12,7 @@ from pymc_extras.prior import Prior
 OUT_DIR = Path(__file__).resolve().parents[2] / "static" / "img" / "dread-risk"
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "fars" / "processed" / "monthly_national.csv"
 
-PLACEBO_YEARS = [1997, 1998, 1999, 2000]
+PLACEBO_YEARS = [1998, 1999, 2000]
 ACTUAL_YEAR = 2001
 
 
@@ -71,7 +71,7 @@ def main():
     for year in all_years:
         label = "actual" if year == ACTUAL_YEAR else "placebo"
         print(f"\nRunning ITS for {year} ({label})...")
-        direction = "increase" if year == ACTUAL_YEAR else "two-sided"
+        direction = "two-sided"
         result, summary = run_its(df, year, direction=direction)
         results[year] = (result, summary)
 
