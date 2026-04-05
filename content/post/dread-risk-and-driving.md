@@ -12,7 +12,7 @@ draft:       false
 
 The September 11 attacks killed nearly 3,000 people. In the months that followed, as the country processed what had happened, a secondary question emerged among researchers studying risk and behavior: could the fear response itself be deadly?
 
-After the attacks, Americans avoided flying and drove instead. Revenue passenger miles fell 20% in October 2001, 17% in November, and 12% in December compared with the year before. Some of that was practical. Airline schedules were disrupted, airspace was closed and security lines emerged where there had been none. Fear was certainly a factor — and fear has a well-documented tendency to mismatch the actual distribution of risk.
+Americans avoided flying after the attack. Revenue passenger miles fell 20% in October 2001, 17% in November, and 12% in December compared with the year before. Some of that was practical. Airline schedules were disrupted, airspace was closed and security lines emerged where there had been none. But fear was certainly a factor — and fear has a well-documented tendency to mismatch the actual distribution of risk.
 
 Psychologists have a name for the particular dread that plane crashes and terrorist attacks trigger. Public judgments about hazards don't track statistical probability. Instead, people assess risk along two dimensions: how mysterious a hazard feels, and how much dread it generates. Dread hazards feel uncontrollable, catastrophic in scale, capable of killing large numbers of people at once. Plane crashes and terrorist attacks score near the top of that scale. Car accidents score near the bottom, even though they kill roughly 40,000 Americans a year.
 

@@ -4,7 +4,7 @@ os.environ["PYTENSOR_FLAGS"] = "device=cpu,floatX=float64,cxx="
 
 import causalpy as cp  # type: ignore[import]
 import pandas as pd
-from pymc_extras.prior import Prior
+from pymc_extras.prior import Prior  # type: ignore[import]
 
 OUT_DIR = Path(__file__).resolve().parents[2] / "static" / "img" / "dread-risk"
 DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "fars" / "processed" / "monthly_national.csv"

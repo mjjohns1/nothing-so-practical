@@ -4,7 +4,6 @@ os.environ["PYTENSOR_FLAGS"] = "device=cpu,floatX=float64,cxx="
 
 from pathlib import Path
 
-import arviz as az  # type: ignore[import]
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 import numpy as np
@@ -80,7 +79,7 @@ def prepare_data():
 
 def run_model(state_df):
     """
-    Bayesian weighted DiD on state-level change scores.
+    Weighted comparison of state-level change scores.
 
       delta[s] ~ Normal(mu[group[s]], se[s])
       mu[0], mu[1] ~ Normal(0, 200)
@@ -117,9 +116,9 @@ def summarize_and_plot(idata, state_df):
 
     # ── Group means and DiD ──
     post = idata.posterior
-    mu_low  = post["mu"].sel(mu_dim_0=0).values.ravel()
+    mu_low = post["mu"].sel(mu_dim_0=0).values.ravel()
     mu_high = post["mu"].sel(mu_dim_0=1).values.ravel()
-    did     = post["DiD"].values.ravel()
+    did = post["DiD"].values.ravel()
 
     print("\n" + "=" * 60)
     print("BAYESIAN WEIGHTED DiD (Oct-Dec 2001 vs. 1996-2000)")
@@ -133,7 +132,7 @@ def summarize_and_plot(idata, state_df):
 
     # ── Convert to % using group baseline averages ──
     high_baseline = state_df.loc[state_df["high_air_travel"], "pre_mean"].mean()
-    low_baseline  = state_df.loc[~state_df["high_air_travel"], "pre_mean"].mean()
+    low_baseline = state_df.loc[~state_df["high_air_travel"], "pre_mean"].mean()
     did_pct = (mu_high / high_baseline - mu_low / low_baseline) * 100
     print(f"\n  DiD in % terms (approx): {did_pct.mean():+.1f}pp  "
           f"[{np.percentile(did_pct, 2.5):.1f}, {np.percentile(did_pct, 97.5):.1f}]")
@@ -154,8 +153,8 @@ def summarize_and_plot(idata, state_df):
     ax = axes[0]
     state_df_sorted = state_df.sort_values("delta")
     colors = ["#d62728" if h else "#1f77b4" for h in state_df_sorted["high_air_travel"]]
-    sizes  = (state_df_sorted["pre_mean"] / state_df_sorted["pre_mean"].max() * 200).clip(lower=10)
-    y_pos  = np.arange(len(state_df_sorted))
+    sizes = (state_df_sorted["pre_mean"] / state_df_sorted["pre_mean"].max() * 200).clip(lower=10)
+    y_pos = np.arange(len(state_df_sorted))
 
     ax.scatter(state_df_sorted["delta"], y_pos, c=colors, s=sizes, alpha=0.8, zorder=3)
     ax.axvline(0, color="black", linewidth=0.8)
