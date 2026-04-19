@@ -192,7 +192,7 @@ $$P(\text{SAT} \mid \text{do}(\text{Prep}), H\!=\!h) = P(\text{SAT} \mid \text{d
 
 With those paths closed, the influence of Hours only flows forward into SAT, so observing H gives the same result as intervening on H. Now both Prep and Hours are intervened on. Do we still need the do(Prep)? With Hours fixed, Prep has no remaining path to SAT. Here's where Rule 3 comes in.
 
-**Rule 3** lets you drop do() intervention entirely when the intervened-on variable has no remaining path to the outcome given the other terms in the probability expression. Just as Rule 1 removes an irrelevant observation, Rule 3 removes an irrelevant do(). In the SAT derivation, once both Prep and Hours are intervened on, we have P(SAT | do(Prep), do(H=h)). Prep's only route to SAT ran through Hours, but Hours is now set. With that path blocked, do(Prep) can't reach SAT through any channel. **Rule 3** says drop do(Prep). We're left with
+**Rule 3** lets you drop a do() intervention entirely when the intervened-on variable has no remaining path to the outcome given the other terms in the probability expression. Just as Rule 1 removes an irrelevant observation, Rule 3 removes an irrelevant do(). In the SAT derivation, once both Prep and Hours are intervened on, we have P(SAT | do(Prep), do(H=h)). Prep's only route to SAT ran through Hours, but Hours is now set. With that path blocked, do(Prep) can't reach SAT through any channel. **Rule 3** says drop do(Prep). We're left with
 
 $$P(\text{SAT} \mid \text{do}(H\!=\!h))$$
 
