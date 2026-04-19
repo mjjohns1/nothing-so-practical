@@ -2,7 +2,7 @@
 title:       "do-calculus for Humans"
 subtitle:    "Demystifying the do-operator"
 description: "Is it just a fancy way of saying control for all confounders?"
-date:        2026-04-05
+date:        2026-04-19
 author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
@@ -129,7 +129,7 @@ The front-door criterion exploits the fact that Hours Studied sits between Prep 
 
 $$P(Y \mid \text{do}(X)) = \sum_m \Bigl[ \underbrace{P(M = m \mid X)}_{\text{Piece 1}} \cdot \underbrace{\sum_x P(Y \mid M = m, X = x) \, P(X = x)}_{\text{Piece 2}} \Bigr]$$
 
-where $M$ is the mediator (Hours Studied), $X$ is the treatment (Prep Course), and $Y$ is the outcome (SAT Score). For each possible value of hours studied $m$, you multiply Piece 1 (how likely that hours value is under prep) by Piece 2 (the expected SAT outcome at that hours value, averaged over the prep distribution), then sum over all values of $m$. The inner sum over $x$ in Piece 2 is what controlling for Prep in the regression does: it averages the Hours → SAT relationship over the full population distribution of Prep rather than within any particular hours level. In the linear case, this reduces to multiplying two regression coefficients.
+where $M$ is the mediator (Hours Studied), $X$ is the treatment (Prep Course), and $Y$ is the outcome (SAT Score). For each possible value of hours studied $m$, you multiply Piece 1 (how likely that hours value is under prep) by Piece 2 (the expected SAT outcome at that hours value, averaged over the prep distribution), then sum over all values of $m$. The inner sum over $x$ in Piece 2 averages the Hours → SAT relationship over the full population of Prep rather than within any particular hours level. When that relationship looks roughly the same for students who took prep and those who didn't, controlling for Prep in a regression gets you to the same place, and the whole front-door formula reduces to multiplying two regression coefficients.
 
 {{% /notation-box %}}
 
@@ -172,7 +172,9 @@ Up to this point, we've taken the front-door formula as a given. Seeing how it i
 
 Our goal is to estimate P(SAT | do(Prep)), the causal effect of taking a prep course on SAT. To do that, we need to eliminate do(Prep) and replace it with quantities observed in the data. We'll start with Rule 1 but note that derivation only requires Rules 2 and 3.
 
-**Rule 1** lets you delete a variable from the probability expression when that variable becomes irrelevant. If a confounder (Z) has no active path to the outcome (Y) after incoming arrows to the treatment (X) are removed, conditioning on Z changes nothing. In the SAT example, we have P(SAT | do(Prep), Income, GPA) after applying the do-operator. Because do(Prep) severs all incoming arrows to Prep, income and GPA have no backdoor paths to SAT. Conditioning on them changes nothing so they can be dropped from the expression, leaving just P(SAT | do(Prep)). This is where the backdoor adjustment comes from.
+**Rule 1** lets you drop an observation from a probability expression when it carries no information about the outcome. If a variable has no open path to Y once the incoming arrows to any intervened-on variable are removed, conditioning on it changes nothing, so it can come out. It's the bookkeeping rule for trimming irrelevant terms.
+
+Imagine the dataset also records whether each student got a mailer advertising the prep course. The mailer nudges some students into signing up, but it doesn't affect SAT scores on its own — its only route to the outcome runs through Prep. Applying do(Prep) cuts that route. With no path left from mailer to SAT, Rule 1 says we can drop it from the expression.
 
 For the front-door adjustment scenario, the only route from Prep to SAT runs through Hours, so we need to expand through the mediator using the law of total probability.[^4]
 
@@ -226,7 +228,7 @@ Huang, Y., & Valtorta, M. (2006). Pearl's calculus of intervention is complete. 
 Shpitser, I., & Pearl, J. (2006). Identification of joint interventional distributions in recursive semi-Markovian causal models. *Proceedings of the 21st National Conference on Artificial Intelligence (AAAI)*, 1219-1226.
 
 
-[^1]: Anyone familiar with mediation analysis will recognize the front-door adjustment as nothing more than the indirect effect, $\alpha\beta$, where $\alpha$ is the coefficient on the path from $X$ to the mediator, and $\beta$ is the coefficient on the path from the mediator to $Y$. Under linearity, $\alpha\beta$ captures the indirect effect. It equals the total effect only when the direct effect of $X$ on $Y$ is zero (full mediation). Both assumptions are very strong and rarely hold in practice.
+[^1]: Anyone familiar with mediation analysis will recognize the front-door adjustment as nothing more than the indirect effect, $\alpha\beta$, where $\alpha$ is the coefficient on the path from $X$ to the mediator, and $\beta$ is the coefficient on the path from the mediator to $Y$. The indirect effect equals the total effect only when the direct effect of $X$ on $Y$ is zero (full mediation). Both assumptions are very strong and rarely hold in practice.
 
 [^2]: This equivalence holds when the treatment effect is roughly constant across confounder strata. With substantial effect heterogeneity, OLS with additive controls and the stratification formula use different implicit weights and can give different answers.
 
