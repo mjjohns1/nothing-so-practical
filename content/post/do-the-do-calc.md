@@ -172,9 +172,7 @@ Up to this point, we've taken the front-door formula as a given. Seeing how it i
 
 Our goal is to estimate P(SAT | do(Prep)), the causal effect of taking a prep course on SAT. To do that, we need to eliminate do(Prep) and replace it with quantities observed in the data. We'll start with Rule 1 but note that derivation only requires Rules 2 and 3.
 
-**Rule 1** lets you drop an observation from a probability expression when it carries no information about the outcome. If a variable has no open path to Y once the incoming arrows to any intervened-on variable are removed, conditioning on it changes nothing, so it can come out. It's the bookkeeping rule for trimming irrelevant terms.
-
-Imagine the dataset also records whether each student got a mailer advertising the prep course. The mailer nudges some students into signing up, but it doesn't affect SAT scores on its own — its only route to the outcome runs through Prep. Applying do(Prep) cuts that route. With no path left from mailer to SAT, Rule 1 says we can drop it from the expression.
+**Rule 1** lets you drop an observation from a probability expression when it carries no information about the outcome (Y). If a variable has no open path to Y once the incoming arrows to a variable are removed, conditioning on it changes nothing, so it can come out. It's the bookkeeping rule for trimming irrelevant terms. This doesn't apply to the SAT example because even after cutting the incoming paths to Prep, the confounders still have direct paths to SAT score.
 
 For the front-door adjustment scenario, the only route from Prep to SAT runs through Hours, so we need to expand through the mediator using the law of total probability.[^4]
 
