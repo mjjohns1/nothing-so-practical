@@ -1,24 +1,26 @@
 ---
-title:       "Do-calculus for Humans"
+title:       "do-calculus for Humans"
 subtitle:    "Demystifying the do-operator"
-description: "Is this just a fancy way of saying control for all confounders?"
-date:        2026-03-30
+description: "Is it just a fancy way of saying control for all confounders?"
+date:        2026-04-19
 author:      "MJ"
 image:       ""
 tags:        ["causal inference", "statistics"]
-categories:  []
-draft:       true
+categories:  ["explainer"]
+draft:       false
 ---
 
+## do-Calculus for Humans
 
-## Do-calculus for Humans
-The do-operator sits at the heart of Pearl's causal inference framework. At first glance, the $\text{do}()$ notation seems like nothing more than jargon that disguises something fairly easy to understand. You draw a DAG, find the backdoor paths, and adjust for those variables. Isn't this just a fancy way of saying "control for confounders"?
+Pearl's structural approach to causal inference is built around DAGs (directed acyclic graphs). In many cases, applying this framework boils down to measuring and adjusting for confounding variables. A key insight is that when working with purely observational data, controlling for all confounders can be equivalent to assigning the treatment level, as we would in an experiment. This claim rests on a curious concept: the do-operator.
 
-Sort of. For simple problems, the do-operator is just shorthand for eliminating all confounding. But it can be useful when confounders can't be measured, because the do-calculus can tell you if a causal effect is still identifiable. Whether that matters in practice depends on how much you trust your DAG. This post works through a concrete example to show what the do-operator does, where it goes beyond the basics, and when it can be useful.
+At first glance, $\text{do()}$ looks like an esoteric way of saying control for confounds. However, that interpretation only holds when key confounders are measured. When we can't measure all confounds, the role of the do-operator becomes clear. In such cases, the rules of do-calculus provide a system for determining whether a causal effect is identifiable from data given a set of assumptions about the data generating process. If identification is possible, do-calculus produces a formula for estimating the treatment effect. It can also tell you when the data are not capable of recovering the target estimand.
 
-### Seeing Is Not Doing
+The goal of this post is to demystify the do-operator using a concrete example to show what it does. We start with the simple case when all confounds are measured. Then we'll look at the more complicated situation where a key confound goes unmeasured. We'll show how the rules of do-calculus help us deal with this situation using the front-door formula.
 
-Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've assembled a dataset on about 10,000 students to try to answer this question. Here is what the (fake) sample looks like.
+### Seeing vs. Doing
+
+Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've assembled a dataset on about 10,000 students to try to answer this question. Here is what the simulated data looks like.
 
 | | No Prep | Prep | Overall |
 |:---|---:|---:|---:|
@@ -26,40 +28,37 @@ Suppose a university wants to know whether taking a prep course improves scores 
 | Female (%) | 51% | 54% | 52% |
 | SAT Score | 1,021 | 1,159 | 1,068 |
 | Family Income (k) | 71k | 85k | 76k |
-| Hours Studied | 9.5 | 22.0 | 13.7 |
 | GPA | 3.45 | 3.59 | 3.50 |
 
-Students who took a prep course scored 138 points higher on average. But students who take a prep course are different from those who don't. They come from wealthier families, are more academically motivated, and have stronger academic records. The 138-point gap reflects the prep course plus all the other ways prep-takers were going to outscore non-takers anyway.
+Students who took a prep course scored 138 points higher on average. But students who take a prep course are different from those who don't. They tend to come from households with higher incomes, are more academically motivated, and get better grades. The 138-point gap reflects the prep course plus all the other ways prep course takers were going to outscore the non-takers.
 
-A DAG makes the contamination visible.
+The DAG makes these confounding pathways visible.
 
 {{< figure src="/img/posts/do-calculus/sat-dag.svg" caption="A directed acyclic graph for the SAT prep example. Each arrow represents a direct causal relationship. Red arrows trace confounding paths. The dashed blue arrow is the causal effect we want to estimate." class="img-center" width="90%" >}}
 
-The arrows encode how background factors feed into both the decision to take prep and SAT performance directly.
+The arrows encode how background factors drive both the decision to take a prep course and SAT performance itself.
 
-In notation, the naive comparison is expressed:
+The naive comparison between the two prep groups can be expressed in notation as:
 
 $E[\text{SAT} \mid \text{Prep} = 1] - E[\text{SAT} \mid \text{Prep} = 0]$.
 
-This conditions on who *chose* prep, and by doing so, it also conditions on all the factors that influenced that choice. These are the backdoor paths, and they inflate the estimate.
+The comparison conditions on choosing to take a prep course. Because that choice was driven by motivation, income, and academic performance, those factors vary systematically between the two groups. The backdoor paths remain open, and the estimate is biased.
 
-The causal question requires a different condition:
+Answering the causal question requires a different condition:
 
 $E[\text{SAT} \mid \text{do}(\text{Prep} = 1)] - E[\text{SAT} \mid \text{do}(\text{Prep} = 0)]$.
 
-The $\text{do}$ means we're not looking at who chose prep. We're asking what would happen if we *assigned* students to prep (or not), the way a randomized experiment would. Forcing prep to take the value of 1 or 0 neutralizes all the reasons students select into the course. This counterfactual situation doesn't exist in the data. The do-operator just lets us pretend that it does.
+The $\text{do()}$ means we need to estimate what would happen if we *assigned* students to prep (or not), the way a randomized experiment would. Forcing prep to take the value of 1 or 0 neutralizes all the reasons students select into the course. The do-operator is how we figure out whether that counterfactual is hiding in the data.
 
-To apply the $\text{do}$ operator, we perform graph surgery by deleting every arrow pointing into the Prep Course node. In a randomized experiment, nothing about a student's background determines whether they take prep. The incoming arrows represent those background causes, and deleting them is the graphical way of saying these variables are irrelevant.
+To apply the $\text{do}$ operator, we perform graph surgery by deleting every arrow pointing into the SAT Prep Course node. In a randomized experiment, nothing about a student's background determines whether they take prep. The incoming arrows represent those background causes, and deleting them is the graphical way of saying these variables are irrelevant.
 
-{{< figure src="/img/posts/do-calculus/sat-dag-do.svg" caption="The graph under do(Prep), known in the literature as the 'mutilated graph.' Arrows into Prep Course have been severed (gray dashed), breaking every backdoor path. The highlighted node is now set externally rather than determined by confounders." class="img-center" width="90%" >}}
+{{< figure src="/img/posts/do-calculus/sat-dag-do.svg" caption="The graph under do(Prep), sometimes referred to as a 'mutilated' graph. Arrows into Prep Course have been severed (gray dashed), closing every backdoor path. The highlighted node is now set externally rather than determined by confounders." class="img-center" width="90%" >}}
 
-In the updated graph, Prep Course sits alone with no parents. The confounders haven't disappeared, but their influence on prep has. Any remaining association between Prep and SAT Score flows through the causal arrow. That's exactly the quantity $P(\text{SAT} \mid \text{do}(\text{Prep}))$ represents.
+In the updated graph, Prep Course sits alone with no parents. The confounders haven't disappeared, but their influence on prep has. Any remaining association between Prep and SAT Score flows through the causal arrow. That's exactly what the quantity $P(\text{SAT} \mid \text{do}(\text{Prep}))$ represents.
 
 ### The Adjustment Formula
 
-We can only delete the paths in theory. We didn't run an experiment. But under the right conditions, we can use the data to compute what an experiment would have shown.
-
-The most common approach is backdoor adjustment. Instead of comparing all prep-takers to non-takers, compare them *within* groups that share the same background. Using income as an example, you compute the effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
+We didn't run an experiment, so the surgery removing the paths is theoretical. But under the right conditions, we can use the data to estimate what an experiment would have shown. The most common approach is backdoor adjustment.
 
 {{% notation-box %}}
 
@@ -67,13 +66,15 @@ The most common approach is backdoor adjustment. Instead of comparing all prep-t
 
 $$P(Y \mid \text{do}(X)) = \sum_z P(Y \mid X, Z=z) \, P(Z=z)$$
 
-Calculate the treatment effect among people with the same confounder values ($Z = z$), then average across all confounder values weighted by how common they are in the sample. $Z$ must block all backdoor paths from $X$ to $Y$ and must not include anything caused by the treatment.
+This formula says: Calculate the treatment effect among people with the same confounder values ($Z = z$), then average across all confounder values weighted by how common they are in the sample. $Z$ must block all backdoor paths from $X$ to $Y$ and must not contain any descendant of $X$.
 
-The weighting by $P(Z=z)$ is what separates this from a simple subgroup analysis. Without it, the confounder profiles most common among the treated group would be over-represented, reintroducing the selection bias you're trying to eliminate. The population weights put everyone on equal footing.
+Weighting the average by $P(Z=z)$ is what separates this from a simple subgroup analysis. Without it, the confounder values most common among the treated group would be over-represented, reintroducing the selection bias we are trying to eliminate. The population weights put everyone on equal footing.
 
 {{% /notation-box %}}
 
-Here's what the adjustment looks like when we stratify by income group.
+Instead of comparing all prep-takers to non-takers, compare them *within* groups that share the same background. Using income as an example, compute the effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
+
+Here's what the adjustment looks like when we stratify by income alone.
 
 | Income Group | Share of Population | Prep Tx Effect | Weighted |
 |:---|---:|---:|---:|
@@ -84,11 +85,9 @@ Here's what the adjustment looks like when we stratify by income group.
 
 The new estimate is 110 points. We've reduced the bias, but we're still way off. Income alone doesn't capture the confounding through motivation and GPA.
 
-{{< figure src="/img/posts/do-calculus/confounded-vs-adjusted.svg" caption="<strong>Left:</strong> The naive comparison shows a 138-point gap between prep and no-prep students. <strong>Right:</strong> After stratifying by income tercile, the within-stratum differences barely budge. Income alone doesn't capture the confounding through motivation and GPA." class="img-center" width="95%" >}}
+{{< figure src="/img/posts/do-calculus/confounded-vs-adjusted.svg" caption="<strong>Left:</strong> The naive comparison shows a 138-point gap between prep and no-prep students. <strong>Right:</strong> After stratifying by income group, the within-stratum differences barely budge. Income alone doesn't capture the confounding through motivation and GPA." class="img-center" width="95%" >}}
 
-##### Regression Works Too
-
-The adjustment formula is just stratification by another name. You can also accomplish backdoor adjustment by adding the confounders to a regression of Y on X.
+Epidemiologists will recognize the adjustment formula as stratification by another name. You can also accomplish backdoor adjustment by adding the confounders to a regression of Y on X.[^2]
 
 With no controls, a regression of SAT on Prep gives us exactly the naive comparison:
 
@@ -112,116 +111,106 @@ $$\widehat{\text{SAT}} = 326 + \mathbf{56} \cdot \text{Prep} + 0.6 \cdot \text{I
 
 As we add controls, the coefficient for SAT prep approaches the true effect of 55 points. The last model is hypothetical, since motivation is unmeasured. That gap between 74 and 56 is the bias from the unmeasured confounder.
 
-<mark>The adjustment formula, graph surgery, and regression are all doing the same thing.</mark> The graph surgery tells you *what* confounding to remove. The formula tells you *which* variables accomplish that removal. Regression does the removing.
-
-The $\text{do}$-operator is the notation that connects all three. The critical observation is that $P(Y \mid \text{do}(X))$ is NOT the same as $P(Y \mid X)$. To see why, look at what $P(Y \mid X)$ actually computes. When we calculate $P(\text{SAT} \mid \text{Prep} = 1)$, the people contributing to that value are disproportionately wealthy, motivated, and high-GPA, because those are the people who chose to do prep. The average is tilted toward students who would have scored well regardless. That's why the naive estimate is 138 points.
-
-$P(\text{SAT} \mid \text{do}(\text{Prep} = 1))$ asks a different question: what if *everyone* were assigned to prep, regardless of background? The adjustment formula accomplishes this by reweighting. Instead of letting the confounder distribution of prep-takers drive the average, it weights each confounder stratum by its share of the overall population. That's what the $P(Z=z)$ term does. If you adjust for every confounder, the estimate will drop from 138 to something close to the true effect of 55.
+The adjustment formula, graph surgery, and regression are all doing the same thing. The graph surgery tells you *what* confounding to remove. The formula tells you how to accomplish that removal. Regression does the removing.
 
 ### When the Backdoor Fails
 
-Up to this point, the do-operator hasn't told us anything beyond the backdoor criterion alone. The do-calculus becomes useful when the backdoor criterion fails. To fully block the backdoor paths, we need to adjust for academic motivation. But motivation isn't in our dataset. Since it affects both whether a student takes prep and how well they score, there's a backdoor path we can't block.
+This works cleanly when the confounders are measured. In the SAT example, income and GPA are in the dataset. Motivation isn't, and that gap is exactly where backdoor adjustment comes up short. Because motivation affects both whether a student takes a prep course and how well they score, there's a backdoor path we can't block. This is where do-calculus becomes useful.
 
-But remember we have data on how many hours each student studied per week. Prep courses increase study time, and study time improves scores. If the entire causal effect of prep on SAT scores flows through hours studied, which is a *very* strong assumption, we have a front-door path.
+It turns out we also have data on how many hours each student studied per week. Prep courses increase study time, and study time improves scores. For the sake of simplicity, if we assume the entire causal effect of prep on SAT scores flows through hours studied — a *very* strong assumption — we have a front-door path.
 
-{{< figure src="/img/posts/do-calculus/frontdoor-dag.svg" caption="The front-door setup. Motivation confounds Prep Course and SAT Score (dashed arrows), but the causal effect flows entirely through Hours Studied." class="img-center" width="90%" >}}
+{{< figure src="/img/posts/do-calculus/frontdoor-dag.svg" caption="The front-door setup. Motivation confounds SAT Prep Course and SAT Score (dashed arrows), but the causal effect flows entirely through Hours Studied." class="img-center" width="90%" >}}
 
-The front-door criterion exploits the fact that Hours Studied sits between Prep and SAT. That position lets us attack the problem from both sides.
-
-**Piece one: the effect of Prep on Hours Studied.** Motivation makes some students more likely to take prep, and motivation also makes them study more. But in this DAG, motivation only reaches hours studied through the Prep Course node. So the observed relationship between prep and hours is unconfounded. Students who take the course study about 11 more hours on average. No adjustment needed.
-
-**Piece two: the effect of Hours Studied on SAT Score.** This one is trickier. Motivation affects SAT scores directly, and it reaches hours studied indirectly through Prep. That creates a backdoor path: Hours ← Prep ← Motivation → SAT. But Prep is on that path, so adjusting for it blocks the confounding. Among students who all took prep (or all didn't), the variation in hours studied is no longer driven by the choice to take prep. Within those groups, the relationship between hours and SAT scores reflects the causal effect of studying.
-
-Chain the two pieces together. Prep adds about 11 hours of study. Each additional hour adds about 5 SAT points (estimated from piece two). Multiply them and you get roughly 54 points. Far below the naive 138-point gap, and right near the true effect of 55. All without ever measuring motivation.[^1]
+The front-door criterion exploits the fact that Hours Studied sits between Prep and SAT. That position lets us split the problem into two pieces and chain them together.
 
 {{% notation-box %}}
 
 **The Front-Door Formula**
 
-$$P(Y \mid \text{do}(X)) = \sum_m P(M = m \mid X) \sum_x P(Y \mid M = m, X = x) \, P(X = x)$$
+$$P(Y \mid \text{do}(X)) = \sum_m \Bigl[ \underbrace{P(M = m \mid X)}_{\text{Piece 1}} \cdot \underbrace{\sum_x P(Y \mid M = m, X = x) \, P(X = x)}_{\text{Piece 2}} \Bigr]$$
 
-where $M$ is the mediator (Hours Studied), $X$ is the treatment (Prep Course), and $Y$ is the outcome (SAT Score). The first sum captures the effect of treatment on the mediator. The second is itself a backdoor adjustment: it estimates $P(Y \mid \text{do}(M=m))$ by adjusting for $X$, which blocks the backdoor path Hours ← Prep ← Motivation → SAT.
+where $M$ is the mediator (Hours Studied), $X$ is the treatment (Prep Course), and $Y$ is the outcome (SAT Score). For each possible value of hours studied $m$, you multiply Piece 1 (how likely that hours value is under prep) by Piece 2 (the expected SAT outcome at that hours value, averaged over the prep distribution), then sum over all values of $m$. The inner sum over $x$ in Piece 2 averages the Hours → SAT relationship over the full population of Prep rather than within any particular hours level. When that relationship looks roughly the same for students who took prep and those who didn't, controlling for Prep in a regression gets you to the same place, and the whole front-door formula reduces to multiplying two regression coefficients.
 
 {{% /notation-box %}}
 
-#### Front-Door in Practice
 
-The front-door formula also reduces to two regression models, run in sequence.
+**Piece one: Prep → Hours Studied.** Motivation makes some students more likely to take prep, and motivation also makes them study more. But in this DAG, motivation only reaches hours through a prep course, which means there's no backdoor between prep and hours. This is one of three conditions the front-door criterion requires. Students who take the course study about 11 more hours on average. No adjustment needed.
 
-**Step 1.** Regress Hours Studied on Prep Course. No controls needed, because the DAG tells us this relationship is unconfounded:
+**Piece two: Hours Studied → SAT Score.** This one is trickier. Motivation affects SAT scores directly, and it reaches hours studied through prep course completion. That opens a backdoor: Hours ← Prep ← Motivation → SAT. To close it, we need to control for Prep. Among students who took a prep course, variation in hours studied is no longer driven by motivation. Within each group, hours and scores tell a clean story.
+
+#### The Front-Door in Practice
+
+Here's what those two pieces look like as regressions.
+
+**Step 1.** Regress Hours Studied on Prep Course. No controls needed:
 
 $$\widehat{\text{Hours}} = 10.0 + \mathbf{11.0} \cdot \text{Prep}$$
 
-Prep adds 11 hours of study.
+SAT Prep adds 11 hours of study.
 
-**Step 2.** Regress SAT Score on Hours Studied, controlling for Prep to block the backdoor path (Hours ← Prep ← Motivation → SAT):
+{{< figure src="/img/posts/do-calculus/frontdoor-step1.svg" caption="Hours studied for students who took a prep course versus those who didn't. Prep shifts the distribution right by roughly 11 hours." class="img-center" width="80%" >}}
+
+**Step 2.** Regress SAT Score on Hours Studied, controlling for Prep to block the backdoor:
 
 $$\widehat{\text{SAT}} = 973 + \mathbf{4.9} \cdot \text{Hours} + 84.5 \cdot \text{Prep}$$
 
 Each additional hour of studying adds 4.9 SAT points.
 
-**Multiply the two coefficients** and you have the front-door causal estimate: $11.0 \times 4.9 \approx 54$ points. Close to the true effect of 55, and nowhere near the naive 138.
+{{< figure src="/img/posts/do-calculus/frontdoor-step2.svg" caption="Within each prep group, more hours studied predicts higher SAT scores. The slopes are what the Hours coefficient in the regression captures." class="img-center" width="80%" >}}
 
----
+Notice the Prep coefficient is 84 points. That coefficient absorbs the association between Prep and SAT that runs through the backdoor (Prep ← Motivation → SAT) rather than through Hours. By soaking up that confounding, it frees the Hours coefficient to reflect only the causal effect of studying. The front-door formula encodes exactly this logic, expressed as nested summations instead of two fitted models.
 
-{{< figure src="/img/posts/do-calculus/frontdoor-estimation.svg" caption="The front-door estimation in three steps. <strong>Left:</strong> Prep courses increase hours studied by about 11 hours. <strong>Center:</strong> Within each prep group, more hours studied predicts higher SAT scores. <strong>Right:</strong> Chaining these effects yields a front-door causal estimate (blue) much smaller than the naive comparison (red dashed), which is inflated by confounding." class="img-center" width="100%" >}}
+**Multiply the two coefficients** and you have the front-door causal estimate: $11.0 \times 4.9 \approx 54$ points. Close to the true effect of 55, nowhere near the naive 138, and all without ever measuring motivation.[^1]
 
----
+{{< figure src="/img/posts/do-calculus/frontdoor-step3.svg" caption="Bootstrap distribution of the chained front-door estimate (blue), well below the naive prep-vs-no-prep comparison (red dashed), which is inflated by confounding." class="img-center" width="80%" >}}
 
-Notice the coefficient on Prep in Step 2 is 84 points. That coefficient absorbs the association between Prep and SAT that runs through the backdoor (Prep ← Motivation → SAT) rather than through Hours. By soaking up that confounding, it frees the Hours coefficient to reflect only the causal effect of studying. This is the same logic the front-door formula encodes, expressed as two fitted models instead of nested summations.
+This front-door estimate relies on the strong assumption that motivation affects study hours *only* through the decision to take prep. Motivated students are going to study more regardless of whether they take a prep course, which makes that assumption unlikely to hold. The point is to illustrate the method, not to defend this particular DAG. That said, the front-door adjustment is rarely used in practice because the required conditions are difficult to find in real-world data.
 
-This front-door analysis relies on the strong assumption that motivation affects study hours *only* through the decision to take prep. This is unlikely to be true. Motivated students are going to study more regardless of whether they take a prep course. The point is to show the method, not to defend this particular DAG.
+### Time To Follow The Rules
 
-### Where the Rules Come In
+Up to this point, we've taken the front-door formula as a given. Seeing how it is derived makes clear what do-calculus is actually doing. This is where the three rules come in. Each rule describes a condition under which we can replace a hypothetical "experiment" with a plain observation. That's do-calculus in a nutshell: figure out how to turn "what if I had assigned treatment?" into "here's what I measured."[^3]
 
-The front-door formula was derived from three rules that together make up the do-calculus. Each rule answers one question: when can you remove $\text{do}()$ from a probability statement. Every $\text{do}()$ represents an intervention we didn't actually perform. We can't calculate $P(Y \mid \text{do}(X))$ from the data the way we can with $P(Y \mid X)$. To get an answer from observational data, every $\text{do}()$ has to go. Here's how the rules derive the front-door result.
+Our goal is to estimate P(SAT | do(Prep)), the causal effect of taking a prep course on SAT. To do that, we need to eliminate do(Prep) and replace it with quantities observed in the data. We'll start with Rule 1 but note that derivation only requires Rules 2 and 3.
 
-We start with what we want: $P(\text{SAT} \mid \text{do}(\text{Prep}))$. We can't compute this directly because of unmeasured motivation. The do-calculus gives us a way to rewrite it in terms of things we *can* compute.
+**Rule 1** lets you drop an observation from a probability expression when it carries no information about the outcome (Y). If a variable has no open path to Y once the incoming arrows to a variable are removed, conditioning on it changes nothing, so it can come out. It's the bookkeeping rule for trimming irrelevant terms. This doesn't apply to the SAT example because even after cutting the incoming paths to Prep, the confounders still have direct paths to SAT score.
 
-**Step 1. Expand through the mediator.** Since the effect of Prep on SAT flows entirely through Hours Studied, we can write
+For the front-door adjustment scenario, the only route from Prep to SAT runs through Hours, so we need to expand through the mediator using the law of total probability.[^4]
 
-$$P(\text{SAT} \mid \text{do}(\text{Prep})) = \sum_h P(\text{SAT} \mid \text{do}(\text{Prep}), H = h) \, P(H = h \mid \text{do}(\text{Prep}))$$
+$$P(\text{SAT} \mid \text{do}(\text{Prep})) = \sum_h P(\text{SAT} \mid \text{do}(\text{Prep}), H\!=\!h) \; P(H\!=\!h \mid \text{do}(\text{Prep}))$$
 
-where $H$ is Hours Studied. This is the law of total probability applied inside the interventional world.[^2] We still have $\text{do}$ operators to eliminate.
+Now do(Prep) appears in two places, one for each piece we need to estimate.
 
-**Step 2. The effect of Prep on Hours (Rule 2).** Start with $P(H \mid \text{do}(\text{Prep}))$. In the surgically modified graph (arrows into Prep removed), Prep has no parents, so there can't be a common cause of Prep and Hours. We can use adjustment to get the same answer as intervening. **Rule 2** lets us replace the $\text{do}$ with ordinary conditioning:
+**Rule 2** lets you swap a do() intervention for an observation (or vice versa) when the two are equivalent in the modified graph. The condition is that all backdoor paths into the intervened-on node are closed, leaving only forward-flowing paths. When that holds, observing the variable gives the same answer as assigning it externally. Note that Rule 2 also runs in the other direction. If you have an observed variable but realize a backdoor is still open, you can insert a do() to represent the intervention needed to close it.
+
+**Piece one: does prep affect hours?** Apply the do-operator to Prep and close the incoming paths. Now the only path from Prep to Hours runs forward through the causal arrow. Motivation used to flow into Prep, but that path is now cut. No backdoor survives. Seeing who took prep tells us the same thing as assigning prep ourselves. According to Rule 2, we can swap the Prep intervention for the version observed in the data.
 
 $$P(H \mid \text{do}(\text{Prep})) = P(H \mid \text{Prep})$$
 
-This is piece one. We can estimate it directly from the data.
+**Piece two: does hours affect SAT?** We start with P(SAT | do(Prep), H=h): Prep is intervened on, Hours is observed. There's a backdoor from Hours to SAT running through Prep and Motivation. We can't simply observe hours and call it causal. We need to close the incoming path to Hours. **Rule 2**: insert do(H), converting the observation into an intervention:
 
-**Step 3. The effect of Hours on SAT (Rules 2 and 3).** The term $P(\text{SAT} \mid \text{do}(\text{Prep}), H = h)$ still has an intervention on Prep. We need to get rid of it, but we can't just drop $\text{do}(\text{Prep})$ and observe $H$. Without the intervention, the backdoor path Hours ← Prep ← Motivation → SAT is open, and observing $H$ would carry that confounding. We need $\text{do}(H)$, not just $H$.
+$$P(\text{SAT} \mid \text{do}(\text{Prep}), H\!=\!h) = P(\text{SAT} \mid \text{do}(\text{Prep}), \text{do}(H\!=\!h))$$
 
-First, **Rule 2** converts the observation of $H$ into an intervention. In the graph with arrows into Prep removed and arrows out of $H$ removed, SAT is independent of $H$ given Prep (the only path from $H$ to SAT went through the arrow we just cut). So we can replace the observation with an intervention:
+With those paths closed, the influence of Hours only flows forward into SAT, so observing H gives the same result as intervening on H. Now both Prep and Hours are intervened on. Do we still need the do(Prep)? With Hours fixed, Prep has no remaining path to SAT. Here's where Rule 3 comes in.
 
-$$P(\text{SAT} \mid \text{do}(\text{Prep}), H = h) = P(\text{SAT} \mid \text{do}(\text{Prep}), \text{do}(H = h))$$
+**Rule 3** lets you drop do() intervention entirely when the intervened-on variable has no remaining path to the outcome given the other terms in the probability expression. Just as Rule 1 removes an irrelevant observation, Rule 3 removes an irrelevant do(). In the SAT derivation, once both Prep and Hours are intervened on, we have P(SAT | do(Prep), do(H=h)). Prep's only route to SAT ran through Hours, but Hours is now set. With that path blocked, do(Prep) can't reach SAT through any channel. **Rule 3** says drop do(Prep). We're left with
 
-Now **Rule 3** lets us drop $\text{do}(\text{Prep})$. Once we've intervened on Hours, Prep has no other path to SAT (there's no direct edge), so the intervention on Prep is redundant:
+$$P(\text{SAT} \mid \text{do}(H\!=\!h))$$
 
-$$P(\text{SAT} \mid \text{do}(\text{Prep}), \text{do}(H = h)) = P(\text{SAT} \mid \text{do}(H = h))$$
+One backdoor still runs from Hours back through Prep to Motivation to SAT, but Prep is observed, so we can adjust for it. Apply Rule 2 one more time: replace do(H=h) with an observation, controlling for Prep.
 
-Finally, we need to convert $\text{do}(H)$ into something observable. The backdoor from Hours to SAT runs through Prep (Hours ← Prep ← Motivation → SAT), and adjusting for Prep blocks it. **Rule 2** again converts the intervention into conditioning, with Prep as the adjustment variable:
+$$\sum_x P(\text{SAT} \mid H\!=\!h, \text{Prep}\!=\!x)\, P(\text{Prep}\!=\!x)$$
 
-$$P(\text{SAT} \mid \text{do}(H = h)) = \sum_x P(\text{SAT} \mid H = h, \text{Prep} = x)\, P(\text{Prep} = x)$$
-
-Every $\text{do}$ is gone. The entire expression is now estimable from observational data.
-
-Three rules, applied mechanically, derived a formula we couldn't have gotten from the backdoor criterion alone.
+Every intervention is gone and we have the two required pieces, which are estimable from our data.
 
 ### When Does It Matter
 
-If you can measure all the confounders, you don't need to think about do-calculus. The backdoor criterion handles it. Draw a DAG, identify the adjustment set, run your regression. Most applied causal inference lives here, and the do-operator is just a notation for what you're already doing.
+Most applied causal inference doesn't require thinking about do-calculus. If you can measure the confounders, the backdoor criterion handles it. Draw a DAG, identify the adjustment set, and run the regression. The do-operator is just shorthand for those steps.
 
-However, if you can't measure a key confounder, do-calculus tells you whether you're stuck. The front-door criterion is one example, but there are others. Instrumental variable setups, mediation-based strategies, and more exotic identification paths all fall out of the same three rules. Without do-calculus, you'd have to discover each strategy separately and hope you haven't missed one. With it, you have a systematic procedure. If the rules can eliminate all the $\text{do}$ operators, you have an identification strategy. If they can't, no amount of statistical sophistication will save you.
+When a confounder is unmeasured, the rules of do-calculus show their value. The front-door criterion is one example, but the same framework covers mediation-based strategies and more exotic identification paths. Without do-calculus, each strategy requires its own insight. With it, one procedure covers all of them.
 
-The most valuable thing do-calculus provides is the negative case. Knowing that a causal effect *cannot* be identified from your data, given your assumptions, is arguably more useful than any formula it derives. It stops you from running analyses that look rigorous but aren't. It tells you when you need better data, a different design, or stronger assumptions.
+The most valuable result isn't the formula derived from the rules. It's the negative case, when do-calculus tells you a causal effect *cannot* be identified from available data, given your assumptions. That stops us from running analyses that look rigorous but aren't. Knowing you're stuck is an important result. It tells you precisely what questions the data can't answer. That's more useful than a plausible-looking estimate built on unverifiable assumptions.
 
-### The Graph Carries the Knowledge
-
-The do-operator is the mathematical notation that makes graph surgery precise. It translates "delete the paths" into a probability statement, $P(Y \mid \text{do}(X))$, that you can manipulate with algebra. Do-calculus is the set of rules for that manipulation. If a causal effect can be identified from your DAG and your data, the rules will find the formula. If they can't, nothing can. Earlier methods could identify some causal effects, but they couldn't tell you when identification was impossible. Do-calculus can.
-
-But the calculus is only as good as the graph you give it. Draw the wrong DAG, miss a confounder, miss a path, and the derived formula will be wrong. The rules guarantee logical consistency given your assumptions. They can't tell you whether your assumptions are right. That still requires an understanding of the domain. Do-calculus carries the logic but the knowledge in the graph determines if we can answer our causal question.
-
+For most applied work, the do-operator really is just careful bookkeeping. But the three rules are what turn that bookkeeping into guarantees. If identification is possible from the data, the rules will find a formula. If it isn't, they'll tell you that too.
 
 ----
 ##### References
@@ -237,6 +226,10 @@ Huang, Y., & Valtorta, M. (2006). Pearl's calculus of intervention is complete. 
 Shpitser, I., & Pearl, J. (2006). Identification of joint interventional distributions in recursive semi-Markovian causal models. *Proceedings of the 21st National Conference on Artificial Intelligence (AAAI)*, 1219-1226.
 
 
-[^1]: Anyone familiar with mediation analysis will recognize the front-door adjustment as nothing more than the indirect effect, $\alpha\beta$, where $\alpha$ is the coefficient on the path from $X$ to the mediator, and $\beta$ is the coefficient on the path from the mediator to $Y$. The indirect effect equals the total effect only when the effect of $X$ on $Y$ is fully mediated. This is a very strong assumption that is almost never true.
+[^1]: Anyone familiar with mediation analysis will recognize the front-door adjustment as nothing more than the indirect effect, $\alpha\beta$, where $\alpha$ is the coefficient on the path from $X$ to the mediator, and $\beta$ is the coefficient on the path from the mediator to $Y$. The indirect effect equals the total effect only when the direct effect of $X$ on $Y$ is zero (full mediation). Both assumptions are very strong and rarely hold in practice.
 
-[^2]: The law of total probability says you can break any probability into a weighted sum over the values of another variable: $P(A) = \sum_b P(A \mid B = b) \, P(B = b)$. Here we're doing the same thing, but inside a world where Prep has been set by intervention. We split the effect of Prep on SAT into a sum over all possible values of Hours Studied, weighting each by how likely it is under the intervention.
+[^2]: This equivalence holds when the treatment effect is roughly constant across confounder strata. With substantial effect heterogeneity, OLS with additive controls and the stratification formula use different implicit weights and can give different answers.
+
+[^3]: See Heiss's wonderful post [Do-Calculus Adventures](https://www.andrewheiss.com/blog/2021/09/07/do-calculus-backdoors/) for a derivation of the backdoor formula.
+
+[^4]: The law of total probability says you can break any probability into a weighted sum over the values of another variable: $P(A) = \sum_b P(A \mid B = b) \, P(B = b)$. Here we're doing the same thing, but inside a world where Prep has been set by intervention. We split the effect of Prep on SAT into a sum over all possible values of Hours Studied, weighting each by how likely it is under the intervention.

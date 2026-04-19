@@ -37,14 +37,18 @@
     background: #F4F6FA;
     border-left: 4px solid #6B7D92;
     border-radius: 0 4px 4px 0;
-    padding: 1.1rem 1.5rem 0.8rem;
+    padding: 0.7rem 1.5rem 0.7rem;
     margin: 1.6rem 0;
 }
-.notation-box p {
-    margin-bottom: 0.3rem;
+.notation-box > :first-child {
+    margin-top: 0;
 }
-.notation-box p:last-child {
+.notation-box > :last-child {
     margin-bottom: 0;
+}
+.notation-box p {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
 }
 .notation-box ul {
     margin: 0.15rem 0 0.2rem;
