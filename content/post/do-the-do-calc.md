@@ -30,7 +30,7 @@ Suppose a university wants to know whether taking a prep course improves scores 
 | Family Income (k) | 71k | 85k | 76k |
 | GPA | 3.45 | 3.59 | 3.50 |
 
-Students who took a prep course scored 138 points higher on average. But students who take a prep course are different from those who don't. They tend to come from households with higher incomes, are more academically motivated, and perform better academically. The 138-point gap reflects the prep course plus all the other ways prep course takers were going to outscore the non-takers.
+Students who took a prep course scored 138 points higher on average. But students who take a prep course are different from those who don't. They tend to come from households with higher incomes, are more academically motivated, and get better grades. The 138-point gap reflects the prep course plus all the other ways prep course takers were going to outscore the non-takers.
 
 The DAG makes these confounding pathways visible.
 
@@ -38,7 +38,7 @@ The DAG makes these confounding pathways visible.
 
 The arrows encode how background factors drive both the decision to take a prep course and SAT performance itself.
 
-The naive comparison can be expressed in notation as:
+The naive comparison between the two prep groups can be expressed in notation as:
 
 $E[\text{SAT} \mid \text{Prep} = 1] - E[\text{SAT} \mid \text{Prep} = 0]$.
 
@@ -58,9 +58,7 @@ In the updated graph, Prep Course sits alone with no parents. The confounders ha
 
 ### The Adjustment Formula
 
-We didn't run an experiment, so the surgery removing the paths is theoretical. But under the right conditions, we can use the data to estimate what an experiment would have shown.
-
-The most common approach is backdoor adjustment. Instead of comparing all prep-takers to non-takers, compare them *within* groups that share the same background. Using income as an example, compute the effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
+We didn't run an experiment, so the surgery removing the paths is theoretical. But under the right conditions, we can use the data to estimate what an experiment would have shown. The most common approach is backdoor adjustment.
 
 {{% notation-box %}}
 
@@ -73,6 +71,8 @@ This formula says: Calculate the treatment effect among people with the same con
 Weighting the average by $P(Z=z)$ is what separates this from a simple subgroup analysis. Without it, the confounder values most common among the treated group would be over-represented, reintroducing the selection bias we are trying to eliminate. The population weights put everyone on equal footing.
 
 {{% /notation-box %}}
+
+Instead of comparing all prep-takers to non-takers, compare them *within* groups that share the same background. Using income as an example, compute the effect of prep within each level (low, middle, high) and average those effects together, weighted by each group's share of the sample. The confounding from income washes out.
 
 Here's what the adjustment looks like when we stratify by income alone.
 
@@ -168,7 +168,7 @@ This front-door estimate relies on the strong assumption that motivation affects
 
 ### Time To Follow The Rules
 
-Up to this point, we've taken the front-door formula as a given. Seeing how it is derived makes clear what do-calculus is actually doing. This is where the three rules of do-calculus come in. Each rule describes a condition under which you can replace a hypothetical "experiment" with a plain observation. That's do-calculus in a nutshell: figure out how to turn "what if I had assigned treatment?" into "here's what I measured."[^3]
+Up to this point, we've taken the front-door formula as a given. Seeing how it is derived makes clear what do-calculus is actually doing. This is where the three rules come in. Each rule describes a condition under which we can replace a hypothetical "experiment" with a plain observation. That's do-calculus in a nutshell: figure out how to turn "what if I had assigned treatment?" into "here's what I measured."[^3]
 
 Our goal is to estimate P(SAT | do(Prep)), the causal effect of taking a prep course on SAT. To do that, we need to eliminate do(Prep) and replace it with quantities observed in the data. We'll start with Rule 1 but note that derivation only requires Rules 2 and 3.
 
@@ -178,7 +178,7 @@ For the front-door adjustment scenario, the only route from Prep to SAT runs thr
 
 $$P(\text{SAT} \mid \text{do}(\text{Prep})) = \sum_h P(\text{SAT} \mid \text{do}(\text{Prep}), H\!=\!h) \; P(H\!=\!h \mid \text{do}(\text{Prep}))$$
 
-Now do(Prep) appears in two places, one for each piece we need to estimate. Now we need Rule 2.
+Now do(Prep) appears in two places, one for each piece we need to estimate.
 
 **Rule 2** lets you swap a do() intervention for an observation (or vice versa) when the two are equivalent in the modified graph. The condition is that all backdoor paths into the intervened-on node are closed, leaving only forward-flowing paths. When that holds, observing the variable gives the same answer as assigning it externally. Note that Rule 2 also runs in the other direction. If you have an observed variable but realize a backdoor is still open, you can insert a do() to represent the intervention needed to close it.
 
