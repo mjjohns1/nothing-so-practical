@@ -1,5 +1,5 @@
 ---
-title:       "Do-calculus for Humans"
+title:       "do-calculus for Humans"
 subtitle:    "Demystifying the do-operator"
 description: "Is it just a fancy way of saying control for all confounders?"
 date:        2026-04-05
@@ -10,12 +10,13 @@ categories:  ["explainer"]
 draft:       false
 ---
 
+## do-Calculus for Humans
 
-Pearl's structural approach to causal inference is built around DAGs (directed acyclic graphs), which we covered in [Causal Inference is Easy.](/post/causal-inference-is-easy/) In many cases, applying this framework boils down to measuring and adjusting for confounding variables. A key insight is that when working with purely observational data, controlling for all confounders can be equivalent to assigning the treatment level, as we would in an experiment. This claim rests on a curious concept: the do-operator.
+Pearl's structural approach to causal inference is built around DAGs (directed acyclic graphs). In many cases, applying this framework boils down to measuring and adjusting for confounding variables. A key insight is that when working with purely observational data, controlling for all confounders can be equivalent to assigning the treatment level, as we would in an experiment. This claim rests on a curious concept: the do-operator.
 
-At first glance, $\text{do()}$ looks like esoteric notation used to express the simple directive to control for confounds. However, that interpretation only holds when key confounders are measurable. When we can't measure all confounds, the utility of the do-operator becomes clear. In such cases, the rules of do-calculus provide a system for determining whether a causal effect is identifiable from data given a set of assumptions about the data generating process. If identification is possible, do-calculus produces a formula for estimating the treatment effect. It can also tell you when the data are not capable of recovering the target estimand.
+At first glance, $\text{do()}$ looks like an esoteric way of saying control for confounds. However, that interpretation only holds when key confounders are measured. When we can't measure all confounds, the role of the do-operator becomes clear. In such cases, the rules of do-calculus provide a system for determining whether a causal effect is identifiable from data given a set of assumptions about the data generating process. If identification is possible, do-calculus produces a formula for estimating the treatment effect. It can also tell you when the data are not capable of recovering the target estimand.
 
-The goal of this post is to demystify the do-operator using a concrete example to show what it does and when it can be useful. We start with the straightforward case when all confounders are measured. Then we'll look at the more complicated situation where a key confound goes unmeasured. We'll show how the three rules of do-calculus produce the front-door formula. To ground the material, we'll simulate an observational study of SAT prep course effectiveness.
+The goal of this post is to demystify the do-operator using a concrete example to show what it does. We start with the simple case when all confounds are measured. Then we'll look at the more complicated situation where a key confound goes unmeasured. We'll show how the rules of do-calculus help us deal with this situation using the front-door formula.
 
 ### Seeing vs. Doing
 
