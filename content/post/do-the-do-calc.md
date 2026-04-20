@@ -170,7 +170,7 @@ This front-door estimate relies on the strong assumption that motivation affects
 
 Up to this point, we've taken the front-door formula as a given. Seeing how it is derived makes clear what do-calculus is actually doing. This is where the three rules come in. Each rule describes a condition under which we can replace a hypothetical "experiment" with a plain observation. That's do-calculus in a nutshell: figure out how to turn "what if I had assigned treatment?" into "here's what I measured."[^3]
 
-Our goal is to estimate P(SAT | do(Prep)), the causal effect of taking a prep course on SAT. To do that, we need to eliminate do(Prep) and replace it with quantities observed in the data. We'll start with Rule 1 but note that derivation only requires Rules 2 and 3.
+Our goal is to estimate P(SAT | do(Prep)), the causal effect of taking a prep course on SAT. To do that, we need to eliminate do(Prep) and replace it with quantities observed in the data. We'll start with Rule 1 but note that the derivation only requires Rules 2 and 3.
 
 **Rule 1** lets you drop an observation from a probability expression when it carries no information about the outcome (Y). If a variable has no open path to Y once the incoming arrows to a variable are removed, conditioning on it changes nothing, so it can come out. It's the bookkeeping rule for trimming irrelevant terms. This doesn't apply to the SAT example because even after cutting the incoming paths to Prep, the confounders still have direct paths to SAT score.
 
