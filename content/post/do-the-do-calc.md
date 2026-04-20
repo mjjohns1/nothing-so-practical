@@ -230,6 +230,6 @@ Shpitser, I., & Pearl, J. (2006). Identification of joint interventional distrib
 
 [^2]: This equivalence holds when the treatment effect is roughly constant across confounder strata. With substantial effect heterogeneity, OLS with additive controls and the stratification formula use different implicit weights and can give different answers.
 
-[^3]: See Heiss's wonderful post [Do-Calculus Adventures](https://www.andrewheiss.com/blog/2021/09/07/do-calculus-backdoors/) for a derivation of the backdoor formula.
+[^3]: See Heiss's post [Do-Calculus Adventures](https://www.andrewheiss.com/blog/2021/09/07/do-calculus-backdoors/) for a derivation of the backdoor formula.
 
 [^4]: The law of total probability says you can break any probability into a weighted sum over the values of another variable: $P(A) = \sum_b P(A \mid B = b) \, P(B = b)$. Here we're doing the same thing, but inside a world where Prep has been set by intervention. We split the effect of Prep on SAT into a sum over all possible values of Hours Studied, weighting each by how likely it is under the intervention.
