@@ -1,15 +1,3 @@
-"""
-Generate markdown tables and inline numbers for the do-calculus blog post.
-
-Produces:
-  1. Descriptive stats table (prep vs. no-prep)
-  2. Backdoor adjustment table (income strata)
-  3. Front-door estimation numbers
-
-Run:
-    uv run python scripts/do-calculus/gen_tables.py
-"""
-
 import numpy as np
 from gen_sat_data import simulate_sat, FRONTDOOR_SEED
 
@@ -124,7 +112,18 @@ def frontdoor_numbers(data):
 
 
 def main():
-    # --- Main DGP (backdoor sections) ---
+    """
+    Generate markdown tables and inline numbers for the do-calculus blog post.
+
+    Produces:
+    1. Descriptive stats table (prep vs. no-prep)
+    2. Backdoor adjustment table (income strata)
+    3. Front-door estimation numbers
+
+    Run:
+        uv run python scripts/do-calculus/gen_tables.py
+    """
+
     data = simulate_sat()
     prep = data["prep_course"]
     sat = data["sat_score"]
@@ -167,7 +166,7 @@ def main():
     print(f"        Average slope = {fd['avg_slope']:.1f} pts/hr")
     print(f"Front-door estimate: {fd['hours_added']:.0f} hrs × "
           f"{fd['avg_slope']:.1f} pts/hr ≈ {fd['fd_estimate']:.0f} pts")
-    print(f"True ATE: ~55 pts (11 hrs × 5 pts/hr)")
+    print("True ATE: ~55 pts (11 hrs × 5 pts/hr)")
 
 
 if __name__ == "__main__":

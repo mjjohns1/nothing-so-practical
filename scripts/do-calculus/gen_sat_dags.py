@@ -1,17 +1,4 @@
-"""
-Generate DAG visualizations for the do-calculus blog post using Graphviz.
-
-DAG structure from Dagitty specification. Uses neato engine with pinned
-positions to match the intended layout exactly.
-
-Produces:
-  1. sat-dag.svg           Full SAT DAG with confounders
-  2. sat-dag-obs.svg       Observational graph (same as full)
-  3. sat-dag-do.svg        Mutilated graph (do operator)
-  4. frontdoor-dag.svg     Front-door criterion DAG
-"""
-
-import graphviz
+import graphviz  # type: ignore[missing imports]
 from pathlib import Path
 
 OUT_DIR: Path = (
