@@ -68,7 +68,7 @@ $$P(Y \mid \text{do}(X)) = \sum_z P(Y \mid X, Z=z) \, P(Z=z)$$
 
 This formula says: Calculate the treatment effect among people with the same confounder values ($Z = z$), then average across all confounder values weighted by how common they are in the sample. $Z$ must block all backdoor paths from $X$ to $Y$ and must not contain any descendant of $X$.
 
-Weighting the average by $P(Z=z)$ is what separates this from a simple subgroup analysis. Without it, the confounder values most common among the treated group would be over-represented, reintroducing the selection bias we are trying to eliminate. The population weights put everyone on equal footing.
+Weighting the average by $P(Z=z)$ is what separates this from a simple subgroup analysis. Without it, the confounder values most common among the treated group would be over-represented, reintroducing the selection bias we are trying to eliminate. The weights put everyone on equal footing.
 
 {{% /notation-box %}}
 
