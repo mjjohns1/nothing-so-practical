@@ -206,7 +206,7 @@ Every intervention is gone and we have the two required pieces, which are estima
 
 Most applied causal inference doesn't require thinking about do-calculus. If you can measure the confounders, the backdoor criterion handles it. Draw a DAG, identify the adjustment set, and run the regression. The do-operator is just shorthand for those steps.
 
-When a confounder is unmeasured, the rules of do-calculus show their value. The front-door criterion is one example, but the same framework covers mediation-based strategies and more exotic identification paths. Without do-calculus, each strategy requires its own insight. With it, one procedure covers all of them.
+When a confounder is unmeasured, the rules of do-calculus show their value. The front-door criterion is one example, but the same framework covers mediation-based strategies and more exotic identification paths. Without do-calculus, each strategy requires its own insight.
 
 The most valuable result isn't the formula derived from the rules. It's the negative case, when do-calculus tells you a causal effect *cannot* be identified from available data, given your assumptions. That stops us from running analyses that look rigorous but aren't. Knowing you're stuck is an important result. It tells you precisely what questions the data can't answer. That's more useful than a plausible-looking estimate built on unverifiable assumptions.
 
