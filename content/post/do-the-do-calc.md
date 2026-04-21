@@ -20,7 +20,7 @@ The goal of this post is to demystify the do-operator using a concrete example t
 
 ### Seeing vs. Doing
 
-Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've assembled a dataset on about 10,000 students to try to answer this question. Here is what the simulated data looks like.
+Suppose a university wants to know whether taking a prep course improves scores on the SAT. They've built a dataset on about 10,000 students to try to answer this question. Here is what the simulated data looks like.
 
 | | No Prep | Prep | Overall |
 |:---|---:|---:|---:|
